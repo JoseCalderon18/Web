@@ -1,4 +1,5 @@
-
+// Espera a que el DOM esté completamente cargado
+$(document).ready(function() {
     // Obtiene las referencias a los elementos
     const $btnHamburguesa = $("#botonHamburguesa");
     const $menuNav = $("#menuNav");
@@ -9,4 +10,6 @@
             $menuNav.toggleClass("hidden");
         });
     }
+});
+
 
