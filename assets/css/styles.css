@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Dancing+Script:wght@400..700&family=Pacifico&family=Parisienne&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Dancing+Script:wght@400..700&family=Pacifico&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Courgette&family=Dancing+Script:wght@400..700&family=Pacifico&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Courgette&family=Dancing+Script:wght@400..700&family=Lora:ital,wght@0,400..700;1,400..700&family=Pacifico&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Courgette&family=Dancing+Script:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lora:ital,wght@0,400..700;1,400..700&family=Pacifico&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Courgette&family=Dancing+Script:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lora:ital,wght@0,400..700;1,400..700&family=Pacifico&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Courgette&family=Dancing+Script:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lora:ital,wght@0,400..700;1,400..700&family=Pacifico&family=Parisienne&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import "tailwindcss";
+
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+@theme{
+    /*Color logo*/
+    --color-logo: #D2E1C4;
+    /* Color menta */
+    --color-menta: #C4D9BA;
+    /*Color beige claro*/
+    --color-beige: #F5F5DC;
+    /*Color terracota*/
+    --color-terracota: #D27D2C;
+    /*Color marron suave*/
+    --color-marron: #A67C52;
+    /*Color marron chocolate*/
+    --color-marronChocolate: #7B4B3A;
+    /*Color marron oscuro*/
+    --color-marronOscuro: #4A2C23;
+    /*Gris oscuro*/
+    --color-gris: #333333;
+    /*Gris claro*/
+    --color-grisClaro: #6E6E6E;
+    /*Verde bosque*/
+    --color-verde: #4A6D50;
+    /*Negro*/
+    --color-negro: #1A1A1A;
+
+    /* Fuentes */
+    --font-display-Pacifico: 'Pacifico', cursive;
+    --font-display-Parisienne: 'Parisienne', cursive;
+    --font-display-CormorantGaramond: 'Cormorant Garamond', serif;
+    --font-display-EBGaramond: 'EB Garamond', serif;
+    --font-display-Lora: 'Lora', serif;
+    --font-display-Poppins: 'Poppins', sans-serif;
+    --font-display-Courgette: 'Courgette', cursive;
+    --font-display-DancingScript: 'Dancing Script', cursive;
+    --font-display-PlayfairDisplay: 'Playfair Display', serif;
+
+    /* Breakpoints */
+    --breakpoint-mobile: 850px;
+}
+
+
+
+
