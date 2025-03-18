@@ -49,6 +49,7 @@
 
     /* Breakpoints */
     --breakpoint-mobile: 850px;
+    --breakpoint-md2: 769px;
 }
 
 

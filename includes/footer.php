@@ -1,6 +1,5 @@
 <html>
     <body>
-        <!-- Footer -->
         <footer class="w-full bg-gris">
             <div class="flex flex-col sm:flex-row w-2/3 sm:w-2/3 p-5 pt-8 mx-auto me-auto h-full text-white gap-2">
                 <!--Primer bloque-->
