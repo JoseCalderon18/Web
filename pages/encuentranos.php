@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encuentranos - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
-    <link href="../assets/css/styles.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
 </head>
 <body>
