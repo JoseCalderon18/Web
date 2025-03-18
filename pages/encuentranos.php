@@ -12,7 +12,7 @@
     <!-- Header -->
     <?php require_once '../includes/header.php'; ?>
 
-    <main class="bg-beige py-8">
+    <main class="bg-beige pt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-2/3 mx-auto">
             <!-- Columna izquierda: Horario y Carrusel -->
             <div class="grid grid-rows-2 gap-4">
@@ -104,7 +104,7 @@
                         class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde flex-grow"></textarea>
                     <div class="flex justify-center">
                         <button type="submit" 
-                            class="bg-green-700 hover:bg-green-900 text-white font-semibold py-3 px-4 rounded-md w-1/2">
+                            class="bg-green-700 hover:bg-green-900 text-white font-semibold py-1.5 px-2 md:py-3 md:px-4 rounded-md w-1/2 text-xs md:text-sm">
                             Enviar mensaje
                         </button>
                     </div>
@@ -114,7 +114,7 @@
 
         <!-- Mapa -->
         <div class="mt-8">
-            <div class="w-full ">
+            <div class="w-full h-96">
                 <iframe 
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3034.8605657687474!2d-3.6420819!3d40.5471799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422d0763e2c8b9%3A0x3c6e0c96e2214bcd!2sP.%C2%BA%20de%20Fuente%20Lucha%2C%207%2C%2028100%20Alcobendas%2C%20Madrid!5e0!3m2!1ses!2ses!4v1710835000000!5m2!1ses!2ses" 
                     class="w-full h-96 "
