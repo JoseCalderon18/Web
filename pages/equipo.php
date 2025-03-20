@@ -12,7 +12,7 @@
     <?php require_once '../includes/header.php'; ?>
 
     <main class="bg-beige pt-8 container mx-auto px-4 py-10 text-center">
-        <h1 class="text-4xl font-bold mb-10">Nuestro Equipo</h1>
+        <h1 class="text-5xl font-display-CormorantGaramond font-bold text-gray-500 mb-10">Nuestro Equipo</h1>
         <div class="flex justify-center gap-8">
             <!-- Miembro 1 -->
             <div class="flex flex-col items-center">
@@ -73,7 +73,7 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 2</h3>
-                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
+                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 3</h3>
-                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
+                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
                     </div>
                 </div>
             </div>
@@ -107,8 +107,7 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 4</h3>
-                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
-                    </div>
+                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
                 </div>
             </div>
         </div>

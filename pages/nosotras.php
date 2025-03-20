@@ -68,9 +68,9 @@
         </div>
         
         <!-- Sección de imágenes debajo de Misión y Valores -->
-        <div class="bg-white py-8 flex justify-center gap-4">
-            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-1/5 rounded-lg shadow-lg">
-            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-1/5 rounded-lg shadow-lg">
+        <div class="bg-white py-8 flex justify-center gap-8">
+            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-1/5 rounded-lg shadow-lg hover:scale-105 duration-300">
+            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-1/5 rounded-lg shadow-lg hover:scale-105 duration-300">
         </div>
     </main>
 
