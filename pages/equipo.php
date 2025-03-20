@@ -5,39 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equipo - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
+    <link href="../assets/css/styles.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
 </head>
 <body>
     <?php require_once '../includes/header.php'; ?>
 
     <main class="bg-beige pt-8 container mx-auto px-4 py-10 text-center">
-        <h1 class="text-4xl font-bold mb-10">Nuestro Equipo</h1>
-        <div class="flex justify-center gap-8">
+        <h1 class="text-4xl font-bold font-display-CormorantGaramond mb-10">Nuestro Equipo</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Miembro 1 -->
             <div class="flex flex-col items-center">
                 <img src="../assets/img/persona1.jpg" alt="Persona 1"
-                    class="w-56 h-56 object-cover rounded-full border-1 border-green-300"
+                    class="w-56 h-56 object-cover rounded-full border-[8px] border-gray-500 hover:scale-105 duration-300"
                     data-modal-target="modal1" data-modal-toggle="modal1">
                 <h2 class="mt-4 text-xl font-semibold">Nombre 1</h2>
             </div>
             <!-- Miembro 2 -->
             <div class="flex flex-col items-center">
                 <img src="../assets/img/persona2.jpg" alt="Persona 2"
-                    class="w-56 h-56 object-cover rounded-full border-1 border-green-300"
+                    class="w-56 h-56 object-cover rounded-full border-[8px] border-gray-500 hover:scale-105 duration-300"
                     data-modal-target="modal2" data-modal-toggle="modal2">
                 <h2 class="mt-4 text-xl font-semibold">Nombre 2</h2>
             </div>
             <!-- Miembro 3 -->
             <div class="flex flex-col items-center">
                 <img src="../assets/img/persona3.jpg" alt="Persona 3"
-                    class="w-56 h-56 object-cover rounded-full border-1 border-green-300"
+                    class="w-56 h-56 object-cover rounded-full border-[8px] border-gray-500 hover:scale-105 duration-300"
                     data-modal-target="modal3" data-modal-toggle="modal3">
                 <h2 class="mt-4 text-xl font-semibold">Nombre 3</h2>
             </div>
             <!-- Miembro 4 -->
             <div class="flex flex-col items-center">
                 <img src="../assets/img/persona4.jpg" alt="Persona 4"
-                    class="w-56 h-56 object-cover rounded-full border-1 border-green-300"
+                    class="w-56 h-56 object-cover rounded-full border-[8px] border-gray-500 hover:scale-105 duration-300"
                     data-modal-target="modal4" data-modal-toggle="modal4">
                 <h2 class="mt-4 text-xl font-semibold">Nombre 4</h2>
             </div>
@@ -55,7 +56,7 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 1</h3>
-                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
+                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
                     </div>
                 </div>
             </div>
@@ -72,7 +73,7 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 2</h3>
-                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
+                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
                     </div>
                 </div>
             </div>
@@ -89,7 +90,7 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 3</h3>
-                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
+                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
                     </div>
                 </div>
             </div>
@@ -106,12 +107,12 @@
                     </button>
                     <div class="p-6 text-center">
                         <h3 class="mb-5 text-lg font-normal text-gray-500">Nombre 4</h3>
-                        <p class="mb-5">Descripción detallada del miembro del equipo.</p>
+                        <p class="mb-5">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis nam et optio ratione reprehenderit, eos, sint nemo autem fuga totam asperiores aliquid voluptatum distinctio, voluptate qui! Deleniti exercitationem maxime ut.</p>
                     </div>
                 </div>
             </div>
         </div>
-
+        <br>
     </main>
 
     <?php require_once '../includes/footer.php'; ?>
