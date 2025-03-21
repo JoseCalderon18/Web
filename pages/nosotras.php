@@ -11,8 +11,8 @@
     <?php require_once '../includes/header.php'; ?>
 
     <main>
-        <div class="bg-beige pt-8 container mx-auto px-8 py-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto">
+        <div class="bg-beige pt-8 px-8 py-10 w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto w-3/4">
                 <!-- Columna de texto -->
                 <div class="flex flex-col justify-center">
                     <h1 class="text-3xl font-display-CormorantGaramond font-bold text-verde mb-4">"Porque el bienestar es un viaje, y aquí tienes un lugar donde te acompañamos"</h1>
@@ -69,8 +69,8 @@
         
         <!-- Sección de imágenes debajo de Misión y Valores -->
         <div class="bg-white py-8 flex justify-center gap-8">
-            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-1/5 rounded-lg shadow-lg hover:scale-105 duration-300">
-            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-1/5 rounded-lg shadow-lg hover:scale-105 duration-300">
+            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-60 h-60 rounded-lg shadow-lg hover:scale-105 duration-300">
+            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-60 h-60 rounded-lg shadow-lg hover:scale-105 duration-300">
         </div>
     </main>
 
