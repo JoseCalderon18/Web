@@ -13,15 +13,13 @@
     <main>
         <!-- Primer div -->
         <div class="bg-beige">
-            <div class="pt-4 py-6 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900">
-                <div class="flex flex-col  w-1/2">
-                    <h1 class="text-4xl font-bold font-display-CormorantGaramond mb-4">Salas de Terapias Naturales</h1>
-                    <p class=" text-base">En nuestro herbolario, hemos creado un espacio de armonía y</p>
-                    <p class=" text-base">y bienestar donde cuerpo, mente y espíritu</p>
-                    <p class=" text-base">encuentran equilibrio. </p>
+            <div class="pt-8 py-10 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900 px-4 md:px-8">
+                <div class="flex flex-col w-full sm:w-1/2 text-center sm:text-left mb-6 sm:mb-0">
+                    <h1 class="text-3xl md:text-4xl font-bold font-display-CormorantGaramond mb-4">Salas de Terapias Naturales</h1>
+                    <p class="text-sm md:text-base mb-2">En nuestro herbolario, hemos creado un espacio de armonía y bienestar donde cuerpo, mente y espíritu encuentran equilibrio.</p>
                 </div>
-                <div class="w-1/2 flex justify-center">
-                    <img src="../assets/img/terapias/figura.jpg" alt="Imagen de terapias" class="h-auto w-1/2">
+                <div class="w-full flex justify-center">
+                    <img src="../assets/img/terapias/figura.jpg" alt="Imagen de terapias" class="w-full object-cover h-96 sm:h-96 rounded-lg">
                 </div>
             </div>
         </div>
@@ -79,6 +77,6 @@
 </body>
     <!-- Scripts al final del body -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="node_modules/flowbite/dist/flowbite.min.js"></script>
-    <script src="assets/js/script.js" alt="Script principal"></script>
+    <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
+    <script src="../assets/js/script.js"></script>
 </html>
