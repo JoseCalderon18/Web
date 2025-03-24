@@ -8,8 +8,8 @@
     <link href="assets/css/src/output.css" rel="stylesheet" alt="Estilos personalizados">
 </head>
 <body>
-    <header>
-        <nav class="fixed top-0 left-0 right-0 z-50 flex flex-wrap justify-between items-center p-4 w-full h-32 bg-logo" aria-label="Navegación principal">
+    <header class="fixed top-0 left-0 right-0 z-50">
+        <nav class="flex flex-wrap justify-between items-center p-4 w-full h-32 bg-logo" aria-label="Navegación principal">
             <a href="index.php"><img src="assets/img/logo.png" alt="Logotipo de BioSpace - Centro de bienestar natural" class="h-24 md:h-26 lg:h-28"></a>
             
             <!-- Botón hamburguesa solo visible en móvil -->  
@@ -29,13 +29,12 @@
                 <li class="w-full sm:w-auto"><a href="pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
             </ul>
         </nav>
-        <!-- Espacio para compensar el nav fijo -->
-        <div class="h-32 bg-black"></div>
         <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
     </header>
-
+    <!-- Espacio para compensar el nav fijo -->
+    <div class="h-32 bg-black"></div>
     <main>
-    <h1 class="bg-logo text-white text-center text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-display-Parisienne font-bold tracking-widest w-full h-full" aria-label="Lema principal">"Recupera tu equilibrio de manera natural"</h1>
+    <h1 class="bg-logo text-white text-center text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-display-Parisienne font-bold tracking-widest w-full h-full mt-3" aria-label="Lema principal">"Recupera tu equilibrio de manera natural"</h1>
 
         <!-- Carrusel de fotos -->
         <div id="default-carousel" class="relative w-full h-72 md:h-80 lg:h-96 xl:h-[54rem]" data-carousel="slide" aria-label="Carrusel de imágenes de BioEspacio">
