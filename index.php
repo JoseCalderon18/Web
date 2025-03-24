@@ -21,6 +21,7 @@
             
             <!-- Menú de navegación -->
             <ul id="menuNav" class="hidden sm:flex w-full sm:w-auto flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6 xl:gap-8 bg-white sm:bg-transparent p-4 sm:p-0 text-[6px] sm:text-[8px] md:text-[10px] lg:text-xs font-display-Lora uppercase font-semibold absolute sm:relative left-0 top-full sm:top-auto" aria-label="Lista de navegación principal">
+                <li class="w-full sm:w-auto"><a href="index.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Inicio">Inicio</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/nosotras.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Nosotras">Nosotras</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/el_herbolario.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección El Herbolario">El Herbolario</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/terapias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Terapias">Terapias</a></li>
@@ -30,10 +31,10 @@
         </nav>
         <!-- Espacio para compensar el nav fijo -->
         <div class="h-32 bg-black"></div>
+        <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
     </header>
 
     <main>
-    <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
     <h1 class="bg-logo text-white text-center text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-display-Parisienne font-bold tracking-widest w-full h-full" aria-label="Lema principal">"Recupera tu equilibrio de manera natural"</h1>
 
         <!-- Carrusel de fotos -->
@@ -41,10 +42,6 @@
             <div class="relative h-72 md:h-80 lg:h-96 xl:h-[54rem] overflow-hidden">
                 <!-- Item 1 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item aria-label="Diapositiva 1 del carrusel">
-                    <div class="flex flex-col justify-between h-full">
-                        <h1 class="text-white text-2xl font-bold drop-shadow-[2px_2px_0px_black] absolute z-10 text-center md:text-5xl lg:text-7xl xl:text-9xl top-10 font-display-Parisienne tracking-widest w-full" aria-label="Título principal del carrusel">BioEspacio Bienestar</h1>
-                        <h1 class="text-white text-lg font-bold drop-shadow-[2px_2px_0px_black] absolute z-10 text-center md:text-2xl lg:text-4xl xl:text-7xl bottom-10 font-display-Parisienne tracking-widest w-full" aria-label="Subtítulo del carrusel">"Un lugar para conectar con la naturaleza y las plantas y recuperar tu equilibrio"</h1>
-                    </div>
                     <img src="assets/img/carousel/puerta.jpeg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Entrada principal de BioEspacio - Puerta de madera con detalles naturales">
                 </div>
                 <!-- Item 2 -->
@@ -228,38 +225,32 @@
             </div>
             <!--Tercer bloque-->
             <div class="flex flex-col gap-3 w-full sm:w-1/3 p-4 m-2 md:m-4 sm:mb-0">
-                    <!--Redes sociales-->
-                    <h1 class="text-base font-bold font-display-CormorantGaramond">Redes sociales</h1>
-                    <p>━━━━━━━</p>
-                    <p class="text-xs mb-2">Síguenos en nuestras redes sociales para estar al día de todas nuestras novedades y eventos.</p>
-                    <!--Social buttons-->
-                    <button type="button" class="text-white h-10 w-full sm:w-3/4 bg-[#3b5998] hover:bg-[#3b5998]/80 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2 cursor-pointer">
-                        <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 8 19">
-                            <path fill-rule="evenodd" d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z" clip-rule="evenodd"/>
-                        </svg>
-                        Síguenos en Facebook
-                    </button>
-                    <button type="button" class="text-white h-10 w-full sm:w-3/4 bg-black hover:bg-black/80 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2 cursor-pointer">
-                        <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H3.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z"/>
-                        </svg>
-                        Síguenos en X
-                    </button>
-                    <!--Google-->
-                    <button type="button" class="text-white h-10 w-full sm:w-3/4 bg-[#4285F4] hover:bg-[#4285F4]/80 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2 cursor-pointer">
-                        <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
-                            <path fill-rule="evenodd" d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z" clip-rule="evenodd"/>
-                        </svg>
-                        Síguenos en Google
-                    </button>
-                    <!--WhatsApp-->
-                    <button type="button" class="text-white h-10 w-full sm:w-3/4 bg-[#25D366] hover:bg-[#25D366]/80 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2 cursor-pointer">
-                        <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M20.463 3.488C18.217 1.24 15.231 0 12.05 0 5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893 0-3.181-1.237-6.167-3.479-8.413zM12.05 21.785h-.004a9.867 9.867 0 01-5.031-1.378l-.36-.214-3.741.981 1-3.648-.235-.374A9.844 9.844 0 012.157 11.892c0-5.46 4.444-9.902 9.897-9.902 2.641 0 5.123 1.03 6.988 2.898a9.837 9.837 0 012.898 6.994c-.003 5.46-4.447 9.903-9.89 9.903zm5.425-7.417c-.299-.149-1.764-.87-2.037-.969-.274-.099-.473-.149-.672.149-.199.298-.771.969-.945 1.168-.174.199-.348.223-.647.074-.3-.149-1.267-.467-2.413-1.488-.892-.796-1.494-1.777-1.669-2.076-.174-.299-.018-.46.131-.609.135-.134.299-.348.448-.522.149-.174.199-.298.298-.497.099-.199.05-.373-.025-.522-.075-.149-.672-1.619-.921-2.217-.242-.581-.487-.502-.672-.511-.174-.008-.373-.01-.572-.01-.199 0-.522.074-.796.373-.274.299-1.045 1.019-1.045 2.488 0 1.469 1.07 2.889 1.219 3.088.149.199 2.096 3.201 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.273-.198-.572-.347z" clip-rule="evenodd"/>
-                        </svg>
-                        Síguenos en WhatsApp
-                    </button>
-                </div>
+                <!--Redes sociales-->
+                <h1 class="text-base font-bold font-display-CormorantGaramond">Redes sociales</h1>
+                <p>━━━━━━━</p>
+                <p class="text-xs mb-2">Síguenos en nuestras redes sociales para estar al día de todas nuestras novedades y eventos.</p>
+                <!--WhatsApp-->
+                <a href="https://wa.me/+34916666666" target="_blank" class="text-white h-10 w-full sm:w-3/4 bg-[#25D366] hover:bg-[#25D366]/80 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2 cursor-pointer">
+                    <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M20.463 3.488C18.217 1.24 15.231 0 12.05 0 5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.304-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893 0-3.181-1.237-6.167-3.479-8.413zM12.05 21.785h-.004a9.867 9.867 0 01-5.031-1.378l-.36-.214-3.741.981 1-3.648-.235-.374A9.844 9.844 0 012.157 11.892c0-5.46 4.444-9.902 9.897-9.902 2.641 0 5.123 1.03 6.988 2.898a9.837 9.837 0 012.898 6.994c-.003 5.46-4.447 9.903-9.89 9.903zm5.425-7.417c-.299-.149-1.764-.87-2.037-.969-.274-.099-.473-.149-.672.149-.199.298-.771.969-.945 1.168-.174.199-.348.223-.647.074-.3-.149-1.267-.467-2.413-1.488-.892-.796-1.494-1.777-1.669-2.076-.174-.299-.018-.46.131-.609.135-.134.299-.348.448-.522.149-.174.199-.298.298-.497.099-.199.05-.373-.025-.522-.075-.149-.672-1.619-.921-2.217-.242-.581-.487-.502-.672-.511-.174-.008-.373-.01-.572-.01-.199 0-.522.074-.796.373-.274.299-1.045 1.019-1.045 2.488 0 1.469 1.07 2.889 1.219 3.088.149.199 2.096 3.201 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.273-.198-.572-.347z" clip-rule="evenodd"/>
+                    </svg>
+                    Síguenos en WhatsApp
+                </a>
+                <!--Instagram-->
+                <a href="https://www.instagram.com/" target="_blank" style="background: linear-gradient(45deg, #833AB4, #C13584, #E1306C, #FD1D1D); color: white;" class="h-10 w-full sm:w-3/4 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2">
+                    <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    </svg>
+                    Síguenos en Instagram
+                </a>
+                <!--YouTube-->
+                <a href="https://www.youtube.com/" target="_blank" class="bg-red-600 hover:bg-red-700 h-10 w-full sm:w-3/4 hover:scale-105 transition-all duration-300 font-medium rounded-lg text-xs px-4 py-2 text-center inline-flex items-center me-2 mb-2">
+                    <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    Síguenos en YouTube
+                </a>
+            </div>
         </div>
     <!--Copyright-->
     <div class="w-full bg-neutral-700 text-center text-sm text-gray-500 py-4">
