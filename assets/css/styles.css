@@ -15,18 +15,9 @@
 @theme{
     /*Color logo*/
     --color-logo: #D2E1C4;
-    /* Color menta */
-    --color-menta: #C4D9BA;
+
     /*Color beige claro*/
     --color-beige: #F5F5DC;
-    /*Color terracota*/
-    --color-terracota: #D27D2C;
-    /*Color marron suave*/
-    --color-marron: #A67C52;
-    /*Color marron chocolate*/
-    --color-marronChocolate: #7B4B3A;
-    /*Color marron oscuro*/
-    --color-marronOscuro: #4A2C23;
     /*Gris oscuro*/
     --color-gris: #333333;
     /*Gris claro*/

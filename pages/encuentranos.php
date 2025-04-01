@@ -6,6 +6,8 @@
     <title>Encuentranos - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <!-- Header -->
@@ -86,7 +88,7 @@
             <!-- Columna derecha: Formulario -->
             <div class="bg-white p-5 rounded-lg shadow-md h-90">
                 <h2 class="text-2xl font-display-CormorantGaramond font-bold text-verde mb-3">Contáctanos</h2>
-                <form class="space-y-3 text-center">
+                <form class="space-y-3 text-center" id="formulario">
                     <input type="text" id="nombre" name="nombre" placeholder="Introduce tu nombre" 
                         class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde">
                     <input type="email" id="email" name="email" placeholder="Introduce tu email" 
@@ -102,8 +104,8 @@
                     <textarea name="mensaje" id="mensaje" rows="8" placeholder="Introduce tu mensaje" 
                         class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde flex-grow"></textarea>
                     <div class="flex justify-center">
-                        <button type="submit" 
-                            class="bg-green-700 hover:bg-green-900 text-white font-semibold py-1.5 px-2 md:py-3 md:px-4 rounded-md w-1/2 text-xs md:text-sm">
+                        <button type="submit" id="btnEnviar"
+                            class="bg-green-700 hover:bg-green-900 h-full text-white font-semibold py-3 px-2 md:py-3 md:px-4 rounded-md w-1/2 text-base md:text-base">
                             Enviar mensaje
                         </button>
                     </div>
@@ -130,8 +132,7 @@
     <?php require_once '../includes/footer.php'; ?>
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
 </body>
 </html>
