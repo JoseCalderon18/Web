@@ -66,11 +66,11 @@
         <div class="bg-white py-8 flex flex-col items-center justify-center">
             <h1 class="text-5xl font-display-CormorantGaramond font-bold text-gray-500 mb-4">Misión y Valores</h1>
         </div>
-        
+
         <!-- Sección de imágenes debajo de Misión y Valores -->
-        <div class="bg-white py-8 flex flex-col-reverse md:flex-col items-center gap-8">
-            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-32 md:w-60 h-32 md:h-60 rounded-lg shadow-lg hover:scale-105 duration-300">
-            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-32 md:w-60 h-32 md:h-60 rounded-lg shadow-lg hover:scale-105 duration-300">
+        <div class="bg-white py-8 flex flex-col sm:flex-row items-center justify-center gap-8">
+            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-32 sm:w-60 h-auto rounded-lg shadow-lg hover:scale-105 duration-300">
+            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-32 sm:w-60 h-auto rounded-lg shadow-lg hover:scale-105 duration-300">
         </div>
     </main>
 

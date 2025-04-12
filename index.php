@@ -29,6 +29,7 @@
                 <li class="w-full sm:w-auto"><a href="pages/terapias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Terapias">Terapias</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/equipo.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Equipo">Equipo</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
+                <li class="w-full sm:w-auto"><a href="pages/reseñas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Reseñas">Reseñas</a></li>
             </ul>
         </nav>
         <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
