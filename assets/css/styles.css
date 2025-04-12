@@ -43,6 +43,31 @@
     --breakpoint-md2: 769px;
 }
 
+/* Estilos para las animaciones */
+.aparecer {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1.5s ease, transform 1.5s ease;
+    will-change: opacity, transform;
+}
+
+.aparecer.activo {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.aparecer-secuencial {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    will-change: opacity, transform;
+}
+
+.aparecer-secuencial.activo {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 
 
 

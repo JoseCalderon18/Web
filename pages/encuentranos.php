@@ -88,13 +88,13 @@
             <!-- Columna derecha: Formulario -->
             <div class="bg-white p-5 rounded-lg shadow-md h-90">
                 <h2 class="text-2xl font-display-CormorantGaramond font-bold text-verde mb-3">Contáctanos</h2>
-                <form class="space-y-3 text-center" id="formulario">
+                <form class="space-y-3 text-center" id="formularioContacto">
                     <input type="text" id="nombre" name="nombre" placeholder="Introduce tu nombre" 
-                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde">
+                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md ">
                     <input type="email" id="email" name="email" placeholder="Introduce tu email" 
-                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde">
+                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md ">
                     <select name="asunto" id="asunto" 
-                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde">
+                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md ">
                         <option value="" disabled selected class="text-xs md:text-sm">Selecciona un asunto</option>
                         <option value="1" class="text-xs md:text-sm">Solicitar Información</option>
                         <option value="2" class="text-xs md:text-sm">Consulta sobre algún producto</option>
@@ -102,7 +102,7 @@
                         <option value="4" class="text-xs md:text-sm">Otro</option>
                     </select>
                     <textarea name="mensaje" id="mensaje" rows="8" placeholder="Introduce tu mensaje" 
-                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md focus:ring-verde focus:border-verde flex-grow"></textarea>
+                        class="w-full p-3 text-xs md:text-sm border border-gray-300 rounded-md  flex-grow"></textarea>
                     <div class="flex justify-center">
                         <button type="submit" id="btnEnviar"
                             class="bg-green-700 hover:bg-green-900 h-full text-white font-semibold py-3 px-2 md:py-3 md:px-4 rounded-md w-1/2 text-base md:text-base">
@@ -130,9 +130,9 @@
 
     <!-- Footer -->
     <?php require_once '../includes/footer.php'; ?>
-
-    <!-- Scripts -->
-    <script src="../assets/js/script.js"></script>
-    <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
 </body>
+<!-- Scripts -->
+<script src="../assets/js/script.js"></script>
+<script src="../assets/js/formulario.js"></script>
+<script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
 </html>
