@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reseñas - BioEspacio</title>
+    <title>Blog - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -21,10 +21,13 @@
             <p class="text-gray-600 max-w-2xl mx-auto">Descubre lo que nuestros clientes dicen sobre su experiencia con BioEspacio. Nos enorgullece ofrecer productos y servicios que marcan la diferencia.</p>
         </div>
 
-        <!-- Botón -->
-        <div class="my-10 text-center">
+        <!-- Botones de añadir reseña y iniciar sesión -->
+        <div class="flex justify-between mx-auto py-10">
             <button class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
                 <i class="fas fa-plus-circle mr-2"></i> Añadir tu reseña
+            </button>
+            <button class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
+                <i class="fas fa-user-circle mr-2"></i> Iniciar sesión
             </button>
         </div>
 
@@ -34,7 +37,6 @@
             <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="font-serif text-xl font-semibold text-green-800">María García</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Verificada</span>
                 </div>
                 <div class="flex text-yellow-400 text-xl mb-3">
                     <i class="fas fa-star"></i>
@@ -50,7 +52,6 @@
             <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="font-serif text-xl font-semibold text-green-800">Carlos Rodríguez</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Verificada</span>
                 </div>
                 <div class="flex text-yellow-400 text-xl mb-3">
                     <i class="fas fa-star"></i>
@@ -66,7 +67,6 @@
             <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="font-serif text-xl font-semibold text-green-800">Laura Martínez</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Verificada</span>
                 </div>
                 <div class="flex text-yellow-400 text-xl mb-3">
                     <i class="fas fa-star"></i>
@@ -82,7 +82,6 @@
             <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="font-serif text-xl font-semibold text-green-800">Javier López</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Verificada</span>
                 </div>
                 <div class="flex text-yellow-400 text-xl mb-3">
                     <i class="fas fa-star"></i>
@@ -98,7 +97,6 @@
             <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="font-serif text-xl font-semibold text-green-800">Ana Sánchez</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Verificada</span>
                 </div>
                 <div class="flex text-yellow-400 text-xl mb-3">
                     <i class="fas fa-star"></i>
@@ -114,7 +112,6 @@
             <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border-l-4 border-green-500">
                 <div class="flex justify-between items-start mb-4">
                     <h2 class="font-serif text-xl font-semibold text-green-800">Miguel Torres</h2>
-                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Verificada</span>
                 </div>
                 <div class="flex text-yellow-400 text-xl mb-3">
                     <i class="fas fa-star"></i>

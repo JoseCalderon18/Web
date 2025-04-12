@@ -1,23 +1,23 @@
 $(document).ready(function() {
     // Funciones para manejar las cookies
     function mostrarBanner() {
-        $("#cookie-banner").fadeIn(300);
-        $("#cookie-overlay").fadeIn(300);
+        $("#banner-cookies").fadeIn(300);
+        $("#overlay-cookies").fadeIn(300);
     }
 
     function ocultarBanner() {
-        $("#cookie-banner").fadeOut(300);
-        $("#cookie-overlay").fadeOut(300);
+        $("#banner-cookies").fadeOut(300);
+        $("#overlay-cookies").fadeOut(300);
     }
 
-    function setCookie(nombre, valor, dias) {
+    function establecerCookie(nombre, valor, dias) {
         const fecha = new Date();
         fecha.setTime(fecha.getTime() + (dias * 24 * 60 * 60 * 1000));
         const expira = "expires=" + fecha.toUTCString();
         document.cookie = nombre + "=" + valor + ";" + expira + ";path=/";
     }
 
-    function getCookie(nombre) {
+    function obtenerCookie(nombre) {
         const nombreCookie = nombre + "=";
         const cookies = document.cookie.split(";");
         for(let i = 0; i < cookies.length; i++) {
@@ -33,27 +33,27 @@ $(document).ready(function() {
     }
 
     // Comprobar si ya se aceptaron las cookies
-    function checkCookieConsent() {
-        const cookieConsent = getCookie("cookie_consent");
-        if (cookieConsent === "") {
+    function verificarConsentimientoCookies() {
+        const consentimientoCookie = obtenerCookie("consentimiento_cookies");
+        if (consentimientoCookie === "") {
             setTimeout(mostrarBanner, 2000); // Mostrar banner después de 2 segundos
         }
     }
 
     // Inicializar al cargar la página
-    checkCookieConsent();
+    verificarConsentimientoCookies();
 
     // Manejar el clic en "Aceptar"
     $("#aceptar-cookies").click(function() {
-        setCookie("cookie_consent", "accepted", 365);
-        setCookie("cookies_analiticas", "true", 365);
-        setCookie("cookies_publicidad", "true", 365);
+        establecerCookie("consentimiento_cookies", "aceptado", 365);
+        establecerCookie("cookies_analiticas", "true", 365);
+        establecerCookie("cookies_publicidad", "true", 365);
         ocultarBanner();
         
         Swal.fire({
             icon: "success",
-            title: "Preferencias guardadas",
-            text: "Has aceptado el uso de cookies",
+            title: "¡Preferencias guardadas!",
+            text: "Has aceptado todas las cookies",
             confirmButtonColor: "#4A6D50",
             timer: 2000,
             timerProgressBar: true
@@ -62,15 +62,15 @@ $(document).ready(function() {
 
     // Manejar el clic en "Rechazar"
     $("#rechazar-cookies").click(function() {
-        setCookie("cookie_consent", "rejected", 365);
-        setCookie("cookies_analiticas", "false", 365);
-        setCookie("cookies_publicidad", "false", 365);
+        establecerCookie("consentimiento_cookies", "rechazado", 365);
+        establecerCookie("cookies_analiticas", "false", 365);
+        establecerCookie("cookies_publicidad", "false", 365);
         ocultarBanner();
         
         Swal.fire({
             icon: "info",
             title: "Preferencias guardadas",
-            text: "Has rechazado el uso de cookies opcionales",
+            text: "Has rechazado las cookies opcionales",
             confirmButtonColor: "#4A6D50",
             timer: 2000,
             timerProgressBar: true
@@ -108,21 +108,21 @@ $(document).ready(function() {
             cancelButtonText: "Cancelar",
             confirmButtonColor: "#4A6D50",
             preConfirm: () => {
-                const analiticas = $("#cookies-analiticas").is(":checked");
-                const publicidad = $("#cookies-publicidad").is(":checked");
+                const cookiesAnaliticas = $("#cookies-analiticas").is(":checked");
+                const cookiesPublicidad = $("#cookies-publicidad").is(":checked");
                 
-                setCookie("cookie_consent", "configured", 365);
-                setCookie("cookies_analiticas", analiticas, 365);
-                setCookie("cookies_publicidad", publicidad, 365);
+                establecerCookie("consentimiento_cookies", "configurado", 365);
+                establecerCookie("cookies_analiticas", cookiesAnaliticas, 365);
+                establecerCookie("cookies_publicidad", cookiesPublicidad, 365);
                 
-                return { analiticas, publicidad };
+                return { cookiesAnaliticas, cookiesPublicidad };
             }
-        }).then((result) => {
-            if (result.isConfirmed) {
+        }).then((resultado) => {
+            if (resultado.isConfirmed) {
                 ocultarBanner();
                 Swal.fire({
                     icon: "success",
-                    title: "Preferencias guardadas",
+                    title: "¡Preferencias guardadas!",
                     text: "Tu configuración de cookies ha sido guardada",
                     confirmButtonColor: "#4A6D50",
                     timer: 2000,
@@ -133,7 +133,7 @@ $(document).ready(function() {
     });
 
     // Manejar clics en enlaces de políticas
-    $(".politica-link").click(function(e) {
+    $(".enlace-politica").click(function(e) {
         e.preventDefault();
         const url = $(this).attr("href");
         window.location.href = url;
