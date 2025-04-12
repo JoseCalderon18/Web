@@ -26,9 +26,9 @@
             <button class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
                 <i class="fas fa-plus-circle mr-2"></i> Añadir tu reseña
             </button>
-            <button class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
+            <a href="login.php" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
                 <i class="fas fa-user-circle mr-2"></i> Iniciar sesión
-            </button>
+            </a>
         </div>
 
         <!-- Contenedor de tarjetas -->
