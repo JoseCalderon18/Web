@@ -41,7 +41,7 @@ $(document).ready(function() {
         if (errores.length > 0) {
             Swal.fire({
                 icon: "error",
-                title: "Por favor, completa de manera correcta todos los campos",
+                title: "Por favor, completa correctamente todos los campos",
                 html: errores.join("<br>"),
                 confirmButtonText: "Entendido",
                 confirmButtonColor: "#4A6D50"
@@ -49,7 +49,7 @@ $(document).ready(function() {
             return;
         }
 
-        // Si todo está correcto, mostrar mensaje de éxito
+        // Si no hay errores, mostrara un mensaje de exito
         Swal.fire({
             icon: "success",
             title: "¡Mensaje enviado!",

@@ -6,6 +6,7 @@
     <title>Registro - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="flex flex-col xl:min-h-screen min-h-screen">
     <?php include "../includes/header.php"; ?>
@@ -15,17 +16,17 @@
             <h1 class="text-4xl font-bold text-center mb-6 text-green-800 font-display-CormorantGaramond">Crear Cuenta</h1>
             
             <!-- Formulario de Registro -->
-            <form id="formularioRegistro" class="max-w-sm mx-auto mb-8 space-y-4">
+            <form id="formularioRegistro" class="max-w-sm mx-auto mb-8 space-y-4" >
                 <!-- Campo de Usuario -->
                 <div class="mb-4">
-                    <label for="usuario" class="block mb-2 text-sm text-gray-900">Usuario</label>
+                    <label for="usuario" class="block mb-2 text-sm text-gray-900">Nombre del usuario</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
                             </svg>
                         </span>
-                        <input type="text" id="usuario" class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="Ingrese su usuario">
+                        <input type="text" id="usuario" name="usuario" class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="Ingrese su nombre de usuario">
                     </div>
                 </div>
                 
@@ -39,7 +40,7 @@
                                 <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"/>
                             </svg>
                         </span>
-                        <input type="email" id="correo" class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="nombre@ejemplo.com">
+                        <input type="email" id="correo" name="correo" class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="nombre@ejemplo.com">
                     </div>
                 </div>
                 
@@ -52,7 +53,7 @@
                                 <path d="M14 7h-1.5V4.5a4.5 4.5 0 1 0-9 0V7H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-5 8a1 1 0 1 1-2 0v-3a1 1 0 1 1 2 0v3Zm1.5-8h-5V4.5a2.5 2.5 0 1 1 5 0V7Z"/>
                             </svg>
                         </span>
-                        <input type="password" id="contrasenia" class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="Ingrese su contraseña">
+                        <input type="password" id="contrasenia" name="contrasenia" class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="Ingrese su contraseña(Min 8 dígitos)" >
                         <!-- Botón para mostrar contraseña -->
                         <button type="button" id="mostrarContrasenia" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-s-0 border-gray-300 rounded-e-md hover:bg-gray-200 cursor-pointer">
                             <svg class="w-4 h-4 text-gray-500" id="iconoMostrarContrasenia" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -72,7 +73,7 @@
                                 <path d="M14 7h-1.5V4.5a4.5 4.5 0 1 0-9 0V7H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-5 8a1 1 0 1 1-2 0v-3a1 1 0 1 1 2 0v3Zm1.5-8h-5V4.5a2.5 2.5 0 1 1 5 0V7Z"/>
                             </svg>
                         </span>
-                        <input type="password" id="confirmarContrasenia" class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="Confirme su contraseña">
+                        <input type="password" id="confirmarContrasenia" name="confirmarContrasenia" class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" placeholder="Confirme su contraseña">
                         <!-- Botón para mostrar contraseña -->
                         <button type="button" id="mostrarConfirmarContrasenia" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-s-0 border-gray-300 rounded-e-md hover:bg-gray-200 cursor-pointer">
                             <svg class="w-4 h-4 text-gray-500" id="iconoMostrarConfirmarContrasenia" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -82,13 +83,18 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Codigo Captcha -->
+                <div class="flex justify-center">
+                    <div class="g-recaptcha" data-sitekey="6LdvVR4rAAAAAPT-iP-013nOxJyozIDXUxVtDR84"></div>
+                </div>
                 
                 <!-- Botón de Registrarse -->
                 <button type="submit" id="botonRegistro" 
                     class="w-full text-white bg-green-700 hover:bg-green-800 rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer mt-6">
                     Crear Cuenta
                 </button>
-                
+
                 <!-- Enlace a login -->
                 <div class="text-sm font-medium text-gray-500 text-center mt-4">
                     ¿Ya tienes cuenta? <a href="login.php" class="text-green-700 hover:underline">Inicia sesión aquí</a>
@@ -104,5 +110,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/registro.js"></script>
+    <script src="../assets/js/script.js"></script>
 </body>
 </html>

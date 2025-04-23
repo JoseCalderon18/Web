@@ -1,9 +1,9 @@
 $(document).ready(function() {
     // Alternar visibilidad de contraseña
     $("#mostrarContrasenia").on("click", function() {
-        const campoContrasenia = $("#contrasenia");
+        const contrasenia = $("#contrasenia");
         const icono = $("#iconoMostrarContrasenia");
-        alternarVisibilidadContrasenia(campoContrasenia, icono);
+        alternarVisibilidadContrasenia(contrasenia, icono);
     });
 
     // Alternar visibilidad de confirmar contraseña
@@ -32,56 +32,93 @@ $(document).ready(function() {
         }
     }
 
-    // Validación del formulario
+    // Validacion y envi del formulario de registro
     $("#formularioRegistro").on("submit", function(e) {
         e.preventDefault();
         
-        const nombreUsuario = $("#usuario").val().trim();
+        // Obtener datos del formulario
+        const nombre = $("#usuario").val().trim();
         const correo = $("#correo").val().trim();
         const contrasenia = $("#contrasenia").val();
         const confirmarContrasenia = $("#confirmarContrasenia").val();
         
-        if (!nombreUsuario) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'El nombre de usuario es obligatorio'
-            });
-            return false;
+        let errores = [];
+
+        // Validación del nombre de usuario
+        let regexUsuario = /^[a-zA-Z\s0-9]{4,}$/;
+        if (!regexUsuario.test(nombre)) {
+            errores.push("El nombre de usuario no puede tener caracteres especiales o números, y debe tener al menos 4 caracteres");
         }
 
+        // Validación del correo electrónico
         if (!correo) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'El correo electrónico es obligatorio'
-            });
-            return false;
+            errores.push("El correo electrónico es obligatorio");
         }
 
-        if (!contrasenia) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'La contraseña es obligatoria'
-            });
-            return false;
+        // Validación de la contraseña
+        let regexContrasenia = /^[a-zA-Z0-9]{8,}$/;
+        if (!regexContrasenia.test(contrasenia)) {
+            errores.push("La contraseña debe tener al menos 8 caracteres");
         }
 
         if (contrasenia !== confirmarContrasenia) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Las contraseñas no coinciden'
-            });
-            return false;
+            errores.push("Las contraseñas no coinciden");
         }
         
-        // Aquí iría la lógica de registro
-        Swal.fire({
-            icon: 'success',
-            title: '¡Registro exitoso!',
-            text: 'Tu cuenta ha sido creada correctamente'
+        // Si hay errores, mostrar alerta
+        if(errores.length > 0){
+            Swal.fire({
+                icon: "error",
+                title: "Por favor, completa correctamente todos los campos",
+                html: errores.join("<br>"),
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4A6D50"
+            });
+            return;
+        }
+
+        // Si no hay errores, enviar datos
+        $.ajax({
+            url: "../assets/php/MVC/Controlador/usuarios-controlador.php?accion=registrar",
+            type: "POST",
+            data: {
+                usuario: nombre,
+                correo: correo,
+                contrasenia: contrasenia
+            },
+            dataType: 'json',
+            success: function(response){
+                if(response.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "¡Registro exitoso!",
+                        text: response.message,
+                        confirmButtonColor: "#4A6D50"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "login.php";
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: response.message,
+                        confirmButtonColor: "#4A6D50"
+                    });
+                }
+            },
+            error: function(xhr, status, error){
+                console.log("Error Status:", status);
+                console.log("Error:", error);
+                console.log("Response Text:", xhr.responseText);
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Ocurrió un error al procesar el registro",
+                    confirmButtonColor: "#4A6D50"
+                });
+            }
         });
     });
 });

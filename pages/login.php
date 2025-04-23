@@ -15,19 +15,20 @@
                 <h1 class="text-3xl sm:text-4xl font-bold text-center mb-6 text-green-800 font-display-CormorantGaramond">Iniciar Sesión</h1>
                 
                 <!-- Formulario de Login -->
-                <form id="loginForm" class="w-full max-w-sm mx-auto mb-6 sm:mb-8 space-y-3 sm:space-y-4">
-                    <!-- Campo de Usuario -->
+                <form id="loginForm" class="w-full max-w-sm mx-auto mb-6 sm:mb-8 space-y-3 sm:space-y-4" >
+                    <!-- Campo de correo electrónico -->
                     <div class="mb-3 sm:mb-4">
-                        <label for="username-admin" class="block mb-2 text-sm text-gray-900">Usuario</label>
+                        <label for="correoElectronico" class="block mb-2 text-sm text-gray-900">Correo electrónico</label>
                         <div class="flex">
                             <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
-                                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
+                                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                                    <path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z"/>
+                                    <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"/>
                                 </svg>
                             </span>
-                            <input type="text" id="username-admin" 
+                            <input type="email" id="correoElectronico" 
                                 class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" 
-                                placeholder="Ingrese su usuario">
+                                placeholder="Ingrese su correo electrónico">
                         </div>
                     </div>
                     
@@ -86,4 +87,5 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
 <script src="../assets/js/script.js"></script>
+<script src="../assets/js/login.js"></script>
 </html>
