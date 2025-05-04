@@ -80,28 +80,18 @@ class UsuariosControlador {
     // Función para registrar un usuario
     public function registrarUsuario() {
         try {
-            // Verificar si se recibieron los datos
-            if (!isset($_POST['usuario']) || !isset($_POST['correo']) || !isset($_POST['contrasenia'])) {
+            // Validar que todos los campos necesarios estén presentes
+            if (empty($_POST['usuario']) || empty($_POST['correo']) || empty($_POST['contrasenia'])) {
                 echo json_encode([
                     'success' => false,
-                    'message' => 'Faltan datos requeridos'
+                    'message' => 'Todos los campos son obligatorios'
                 ]);
                 return;
             }
 
-            $nombre = $_POST['usuario'];
-            $email = $_POST['correo'];
+            $nombre = trim($_POST['usuario']);
+            $email = trim($_POST['correo']);
             $password = $_POST['contrasenia'];
-
-            // Verificar si el usuario ya existe
-            $usuarioExistente = $this->modelo->obtenerUsuarioPorNombre($nombre);
-            if ($usuarioExistente) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'El nombre de usuario ya está registrado'
-                ]);
-                return;
-            }
 
             // Intentar crear el usuario
             if ($this->modelo->crearUsuario($nombre, $email, $password)) {
@@ -109,18 +99,15 @@ class UsuariosControlador {
                     'success' => true,
                     'message' => 'Usuario registrado correctamente'
                 ]);
-                return;
+            } else {
+                throw new Exception("Error al crear el usuario");
             }
 
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al registrar el usuario'
-            ]);
-
         } catch (Exception $e) {
+            error_log("Error en registrarUsuario: " . $e->getMessage());
             echo json_encode([
                 'success' => false,
-                'message' => 'Error en el servidor: ' . $e->getMessage()
+                'message' => 'Error al registrar el usuario: ' . $e->getMessage()
             ]);
         }
     }
@@ -204,6 +191,49 @@ class UsuariosControlador {
             exit;
         }
     }
+
+    public function crearUsuario() {
+        try {
+            // Debug para ver qué está llegando
+            error_log('POST recibido: ' . print_r($_POST, true));
+
+            // Validar que todos los campos necesarios estén presentes
+            if (empty($_POST['nombre']) || empty($_POST['email']) || empty($_POST['password'])) {
+                error_log('Campos faltantes: ' . 
+                         'nombre=' . isset($_POST['nombre']) . 
+                         ', email=' . isset($_POST['email']) . 
+                         ', password=' . isset($_POST['password']));
+                
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Todos los campos son obligatorios'
+                ]);
+                return;
+            }
+
+            $nombre = trim($_POST['nombre']);
+            $email = trim($_POST['email']);
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $rol = $_POST['rol'] ?? 'usuario';
+
+            // Intentar crear el usuario
+            if ($this->modelo->crearUsuario($nombre, $email, $password, $rol)) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Usuario creado correctamente'
+                ]);
+            } else {
+                throw new Exception("Error al crear el usuario");
+            }
+
+        } catch (Exception $e) {
+            error_log("Error en crearUsuario: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al crear el usuario: ' . $e->getMessage()
+            ]);
+        }
+    }
 }
 
 // Solo procesar acciones AJAX
@@ -233,6 +263,9 @@ if (isset($_GET['accion'])) {
             break;
         case 'cambiarRol':
             $controlador->cambiarRol();
+            break;
+        case 'crearUsuario':
+            $controlador->crearUsuario();
             break;
     }
 }

@@ -11,17 +11,15 @@ class UsuariosModelo {
     // Verificar usuario para login
     public function verificarUsuario($email, $password) {
         try {
-            $sql = "SELECT id, nombre, email, password_hash, rol FROM usuarios WHERE email = :email";
+            $sql = "SELECT * FROM usuarios WHERE email = :email";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
+            $stmt->execute([':email' => $email]);
             
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($usuario && password_verify($password, $usuario['password_hash'])) {
-                // No enviar el hash de la contraseña
-                unset($usuario['password_hash']);
-                return $usuario;
+            while ($usuario = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                if (password_verify($password, $usuario['password_hash'])) {
+                    unset($usuario['password_hash']); // No enviar el hash
+                    return $usuario;
+                }
             }
             
             return false;
@@ -72,7 +70,8 @@ class UsuariosModelo {
             
             return $stmt->execute();
         } catch (PDOException $e) {
-            throw new Exception("Error al crear usuario: " . $e->getMessage());
+            error_log('Error en crearUsuario: ' . $e->getMessage());
+            return false;
         }
     }
 
@@ -103,6 +102,17 @@ class UsuariosModelo {
             return $stmt->execute();
         } catch (PDOException $e) {
             throw new Exception("Error al cambiar el rol: " . $e->getMessage());
+        }
+    }
+
+    public function emailExiste($email) {
+        try {
+            $sql = "SELECT COUNT(*) FROM usuarios WHERE email = :email";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':email' => $email]);
+            return $stmt->fetchColumn() > 0;
+        } catch (PDOException $e) {
+            throw new Exception("Error al verificar el email: " . $e->getMessage());
         }
     }
 }

@@ -44,4 +44,29 @@ require_once '../assets/php/MVC/Vista/usuarios-vista.php';
 </body>
 </html>
 
+<form id="registroForm" class="space-y-4">
+    <div>
+        <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+        <input type="text" 
+               id="nombre" 
+               name="nombre" 
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+    </div>
+    <div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" 
+               id="email" 
+               name="email" 
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+    </div>
+    <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+        <input type="password" 
+               id="password" 
+               name="password" 
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+    </div>
+    <button type="submit" class="...">Registrarse</button>
+</form>
+
 
