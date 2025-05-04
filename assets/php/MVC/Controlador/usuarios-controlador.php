@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../Modelo/usuarios-modelo.php';
 
 class UsuariosControlador {
@@ -11,52 +14,32 @@ class UsuariosControlador {
     // Función para login
     public function login() {
         try {
-            // Verificar si se recibieron los datos
-            if (!isset($_POST['correo']) || !isset($_POST['contrasenia'])) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Faltan datos requeridos'
-                ]);
-                return;
+            $correo = $_POST['correo'] ?? '';
+            $contrasenia = $_POST['contrasenia'] ?? '';
+
+            if (empty($correo) || empty($contrasenia)) {
+                throw new Exception("Faltan datos requeridos");
             }
 
-            $email = $_POST['correo'];
-            $password = $_POST['contrasenia'];
+            $usuario = $this->modelo->verificarUsuario($correo, $contrasenia);
             
-            // Obtener usuario por email
-            $usuario = $this->modelo->obtenerUsuarioPorEmail($email);
-            
-            if (!$usuario) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Usuario no encontrado'
-                ]);
-                return;
-            }
-
-            // Verificar contraseña
-            if (password_verify($password, $usuario['password_hash'])) {
-                // Si credenciales correctas inicia sesion
-                session_start();
+            if ($usuario) {
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre'];
+                $_SESSION['usuario_email'] = $usuario['email'];
+                $_SESSION['usuario_rol'] = $usuario['rol'];
                 
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Login exitoso',
+                    'message' => 'Inicio de sesión exitoso'
                 ]);
-                return;
+            } else {
+                throw new Exception("Credenciales incorrectas");
             }
-
-            echo json_encode([
-                'success' => false,
-                'message' => 'Contraseña incorrecta'
-            ]);
-
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
-                'message' => 'Error en el servidor: ' . $e->getMessage()
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -64,11 +47,6 @@ class UsuariosControlador {
     // Función para cerrar sesión
     public function cerrarSesion() {
         try {
-            // Iniciar la sesión si no está iniciada
-            if (session_status() == PHP_SESSION_NONE) {
-                session_start();
-            }
-            
             // Eliminar todas las variables de sesión
             $_SESSION = array();
             
@@ -148,27 +126,25 @@ class UsuariosControlador {
     }
 
     // Funcion para eliminar un usuario
-    public function eliminarUsuario($id) {
+    public function eliminar() {
         try {
-            if (empty($id)) {
-                throw new Exception("ID de usuario no válido");
+            $id = $_GET['id'] ?? null;
+            
+            if (!$id) {
+                throw new Exception("ID de usuario no proporcionado");
             }
 
             if ($this->modelo->eliminarUsuario($id)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Usuario eliminado correctamente'
-                ]);
-                return;
+                $_SESSION['mensaje'] = "Usuario eliminado correctamente";
+                header('Location: ../../../../pages/usuarios.php');
+                exit;
+            } else {
+                throw new Exception("No se pudo eliminar el usuario");
             }
-
-            throw new Exception("Error al eliminar el usuario");
-
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            $_SESSION['error'] = $e->getMessage();
+            header('Location: ../../../../pages/usuarios.php');
+            exit;
         }
     }
 
@@ -199,44 +175,64 @@ class UsuariosControlador {
     public function obtenerTodosLosUsuarios() {
         try {
             $usuarios = $this->modelo->obtenerTodosLosUsuarios();
-            
-            echo json_encode([
-                'success' => true,
-                'data' => $usuarios
-            ]);
-
+            return $usuarios; // Retorna directamente el array de usuarios
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            return []; // Retorna array vacío en caso de error
+        }
+    }
+
+    public function cambiarRol() {
+        try {
+            if (!isset($_GET['id']) || !isset($_GET['rol'])) {
+                throw new Exception("Faltan parámetros necesarios");
+            }
+
+            $id = $_GET['id'];
+            $nuevoRol = $_GET['rol'];
+
+            if ($this->modelo->cambiarRol($id, $nuevoRol)) {
+                $_SESSION['mensaje'] = "Rol actualizado correctamente";
+            } else {
+                throw new Exception("No se pudo actualizar el rol");
+            }
+
+            header('Location: ../../../../pages/usuarios.php');
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header('Location: ../../../../pages/usuarios.php');
+            exit;
         }
     }
 }
 
-// Manejo de las acciones de los usuarios
-header('Content-Type: application/json');
-$controlador = new UsuariosControlador();
+// Solo procesar acciones AJAX
+if (isset($_GET['accion'])) {
+    $controlador = new UsuariosControlador();
     
-$accion = $_GET['accion'] ?? 'login';
-
-switch ($accion) {
-    case 'login':
-        $controlador->login();
-        break;
-    case 'cerrarSesion':
-        $controlador->cerrarSesion();
-        break;
-    case 'registrar':
-        $controlador->registrarUsuario();
-        break;
-    case 'eliminar':
-        $controlador->eliminarUsuario($_POST['id']);
-        break;
-    case 'obtener':
-        $controlador->obtenerUsuario($_GET['nombre']);
-        break;
-    case 'obtenerTodos':
-        $controlador->obtenerTodosLosUsuarios();
-        break;
+    switch ($_GET['accion']) {
+        case 'login':
+            $controlador->login();
+            break;
+        case 'cerrarSesion':
+            $controlador->cerrarSesion();
+            break;
+        case 'registrar':
+            $controlador->registrarUsuario();
+            break;
+        case 'eliminar':
+            $controlador->eliminar();
+            break;
+        case 'obtener':
+            if (isset($_GET['nombre'])) {
+                $controlador->obtenerUsuario($_GET['nombre']);
+            }
+            break;
+        case 'obtenerTodos':
+            $controlador->obtenerTodosLosUsuarios();
+            break;
+        case 'cambiarRol':
+            $controlador->cambiarRol();
+            break;
+    }
 }

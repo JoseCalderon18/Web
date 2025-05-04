@@ -20,17 +20,6 @@ if (!isset($_SESSION['usuario_id'])) {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Estilos mínimos para el sistema de estrellas */
-        .rating-stars svg {
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .rating-stars svg:hover,
-        .rating-stars svg:hover ~ svg {
-            color: #FFB700 !important;
-        }
-    </style>
 </head>
 <body class="bg-beige flex flex-col min-h-screen">
     <!-- Header -->
@@ -56,14 +45,14 @@ if (!isset($_SESSION['usuario_id'])) {
                 <div class="bg-gray-50 border border-gray-300 rounded-lg p-4">
                     <label class="block mb-4 text-sm font-medium text-gray-900 text-center">¿Cómo calificarías tu experiencia?</label>
                     
-                    <div class="rating-stars flex flex-row-reverse justify-center space-x-1 space-x-reverse">
+                    <div class="flex flex-row-reverse justify-center space-x-1 space-x-reverse">
                         <!-- Estrella 5 -->
-                        <svg data-rating="5" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="5" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
                         
                         <!-- Estrella 4.5 -->
-                        <svg data-rating="4.5" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="4.5" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="halfStar45" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="50%" stop-color="currentColor" />
@@ -74,12 +63,12 @@ if (!isset($_SESSION['usuario_id'])) {
                         </svg>
                         
                         <!-- Estrella 4 -->
-                        <svg data-rating="4" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="4" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
                         
                         <!-- Estrella 3.5 -->
-                        <svg data-rating="3.5" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="3.5" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="halfStar35" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="50%" stop-color="currentColor" />
@@ -90,12 +79,12 @@ if (!isset($_SESSION['usuario_id'])) {
                         </svg>
                         
                         <!-- Estrella 3 -->
-                        <svg data-rating="3" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="3" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
                         
                         <!-- Estrella 2.5 -->
-                        <svg data-rating="2.5" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="2.5" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="halfStar25" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="50%" stop-color="currentColor" />
@@ -106,12 +95,12 @@ if (!isset($_SESSION['usuario_id'])) {
                         </svg>
                         
                         <!-- Estrella 2 -->
-                        <svg data-rating="2" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="2" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
                         
                         <!-- Estrella 1.5 -->
-                        <svg data-rating="1.5" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="1.5" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="halfStar15" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="50%" stop-color="currentColor" />
@@ -122,12 +111,12 @@ if (!isset($_SESSION['usuario_id'])) {
                         </svg>
                         
                         <!-- Estrella 1 -->
-                        <svg data-rating="1" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="1" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
                         
                         <!-- Estrella 0.5 -->
-                        <svg data-rating="0.5" class="w-8 h-8 text-gray-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg data-rating="0.5" class="w-8 h-8 text-gray-300 cursor-pointer hover:text-yellow-400 transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <linearGradient id="halfStar05" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="50%" stop-color="currentColor" />
@@ -160,7 +149,7 @@ if (!isset($_SESSION['usuario_id'])) {
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                                 </svg>
                                 <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Haz clic para subir</span> o arrastra y suelta</p>
-                                <p class="text-xs text-gray-500">PNG, JPG o JPEG (Máx. 5MB)</p>
+                                <p class="text-xs text-gray-500">PNG, JPG o JPEG</p>
                             </div>
                             <input id="fotos" name="fotos[]" type="file" class="hidden" multiple accept="image/png, image/jpeg, image/jpg" />
                         </label>
@@ -170,7 +159,7 @@ if (!isset($_SESSION['usuario_id'])) {
                 </div>
                 
                 <!-- Botón de enviar -->
-                <button type="submit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-3 text-center transition-colors duration-300">
+                <button type="submit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 font-medium rounded-lg text-sm px-5 py-3 text-center transition-colors duration-300">
                     <i class="fas fa-paper-plane mr-2"></i> Enviar mi reseña
                 </button>
             </form>

@@ -1,7 +1,3 @@
-<?php
-// Iniciar sesión al principio del archivo, antes de cualquier salida
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -35,7 +31,7 @@ session_start();
                     <i class="fas fa-plus-circle mr-2"></i> Añadir tu reseña
                 </a>';
                 
-                echo '<a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
+                echo '<a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" class="bg-red-600 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
                     <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
                 </a>';
             } else {

@@ -1,5 +1,5 @@
 <?php
-require_once '../assets/php/MVC/Configuracion/conexion.php';
+require_once __DIR__ . '/../Configuracion/conexion.php';
 
 class ReseniasModelo {
     private $conexion;
@@ -11,12 +11,12 @@ class ReseniasModelo {
         $this->resenias = array();
     }
     
-    public function crearResenia($usuario_id, $puntuacion, $comentario, $fuente = 'interna', $fotos = []) {
+    public function crearResenia($usuario_id, $puntuacion, $comentario, $fuente = 'interna', $fotos = null) {
         try {
             // Iniciar transacción
             $this->conexion->beginTransaction();
             
-            // Preparar la consulta para insertar la reseña
+            // Insertar la reseña
             $sql = "INSERT INTO resenias (usuario_id, puntuacion, comentario, fuente) 
                     VALUES (:usuario_id, :puntuacion, :comentario, :fuente)";
             
@@ -26,45 +26,45 @@ class ReseniasModelo {
             $stmt->bindParam(':comentario', $comentario);
             $stmt->bindParam(':fuente', $fuente);
             
-            // Ejecutar la consulta
             $stmt->execute();
-            
-            // Obtener el ID de la reseña insertada
             $resenia_id = $this->conexion->lastInsertId();
             
             // Si hay fotos, guardarlas
-            if (!empty($fotos)) {
-                // Crear directorio si no existe
-                $directorio = "../resenias/fotos/" . $resenia_id;
+            if ($fotos && is_array($fotos['name'])) {
+                // Crear directorio para las fotos
+                $directorio = __DIR__ . "/../../../../uploads/resenias/" . $resenia_id;
                 if (!file_exists($directorio)) {
                     mkdir($directorio, 0777, true);
                 }
                 
-                // Guardar cada foto y actualizar la URL en la base de datos
                 $foto_urls = [];
-                foreach ($fotos['tmp_name'] as $key => $tmp_name) {
-                    if ($fotos['error'][$key] === 0) {
-                        $nombre_archivo = uniqid() . '_' . $fotos['name'][$key];
+                
+                // Procesar cada foto
+                for ($i = 0; $i < count($fotos['name']); $i++) {
+                    if ($fotos['error'][$i] === UPLOAD_ERR_OK) {
+                        $extension = pathinfo($fotos['name'][$i], PATHINFO_EXTENSION);
+                        $nombre_archivo = uniqid() . '.' . $extension;
                         $ruta_destino = $directorio . '/' . $nombre_archivo;
                         
-                        // Mover el archivo
-                        if (move_uploaded_file($tmp_name, $ruta_destino)) {
-                            $foto_url = "uploads/resenias/" . $resenia_id . '/' . $nombre_archivo;
-                            $foto_urls[] = $foto_url;
-                            
-                            // Actualizar la URL de la foto en la base de datos
-                            $sql_foto = "UPDATE resenias SET foto_url = CONCAT(IFNULL(foto_url, ''), :foto_url, ';') 
-                                         WHERE id = :resenia_id";
-                            $stmt_foto = $this->conexion->prepare($sql_foto);
-                            $stmt_foto->bindParam(':foto_url', $foto_url);
-                            $stmt_foto->bindParam(':resenia_id', $resenia_id, PDO::PARAM_INT);
-                            $stmt_foto->execute();
+                        if (move_uploaded_file($fotos['tmp_name'][$i], $ruta_destino)) {
+                            $foto_urls[] = "uploads/resenias/" . $resenia_id . '/' . $nombre_archivo;
                         }
                     }
                 }
+                
+                // Si se guardaron fotos, actualizar la reseña
+                if (!empty($foto_urls)) {
+                    $urls_string = implode(';', $foto_urls);
+                    $sql_update = "UPDATE resenias SET foto_url = :foto_url WHERE id = :resenia_id";
+                    $stmt_update = $this->conexion->prepare($sql_update);
+                    $stmt_update->execute([
+                        ':foto_url' => $urls_string,
+                        ':resenia_id' => $resenia_id
+                    ]);
+                }
             }
             
-            // Confirmar la transacción
+            // Confirmar transacción
             $this->conexion->commit();
             
             return [
@@ -73,14 +73,9 @@ class ReseniasModelo {
                 'resenia_id' => $resenia_id
             ];
             
-        } catch (PDOException $e) {
-            // Revertir la transacción en caso de error
+        } catch (Exception $e) {
             $this->conexion->rollBack();
-            
-            return [
-                'success' => false,
-                'message' => 'Error al crear la reseña: ' . $e->getMessage()
-            ];
+            throw $e;
         }
     }
     

@@ -1,3 +1,13 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Si ya hay una sesión activa, redirigir a blog.php
+if (isset($_SESSION['usuario_id'])) {
+    header("Location: blog.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,19 +44,19 @@
                     
                     <!-- Campo de Contraseña -->
                     <div class="mb-3 sm:mb-4">
-                        <label for="password-admin" class="block mb-2 text-sm text-gray-900">Contraseña</label>
+                        <label for="contrasenia" class="block mb-2 text-sm text-gray-900">Contraseña</label>
                         <div class="flex">
                             <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                                 <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
                                     <path d="M14 7h-1.5V4.5a4.5 4.5 0 1 0-9 0V7H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-5 8a1 1 0 1 1-2 0v-3a1 1 0 1 1 2 0v3Zm1.5-8h-5V4.5a2.5 2.5 0 1 1 5 0V7Z"/>
                                 </svg>
                             </span>
-                            <input type="password" id="password-admin" 
+                            <input type="password" id="contrasenia" 
                                 class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" 
                                 placeholder="Ingrese su contraseña">
                             <!-- Botón para mostrar contraseña -->
-                            <button type="button" id="togglePassword" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-s-0 border-gray-300 rounded-e-md hover:bg-gray-200 cursor-pointer">
-                                <svg class="w-4 h-4 text-gray-500" id="showPasswordIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <button type="button" id="mostrarContrasenia" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-s-0 border-gray-300 rounded-e-md hover:bg-gray-200 cursor-pointer">
+                                <svg class="w-4 h-4 text-gray-500" id="iconoMostrarContrasenia" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>

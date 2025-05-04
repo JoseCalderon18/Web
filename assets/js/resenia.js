@@ -1,147 +1,116 @@
 $(document).ready(function () {
     // Sistema de calificación con estrellas
-    const $stars = $('.rating-stars svg');
-    const $ratingInput = $('#rating');
-    const $ratingValue = $('#ratingValue');
-
-    if ($stars.length && $ratingInput.length && $ratingValue.length) {
-        $stars.on('click', function () {
-            const rating = $(this).data('rating');
-            $ratingInput.val(rating);
-            $ratingValue.text(rating);
-            updateStars(rating);
+    let selectedRating = 0;
+    
+    $('.rating-stars svg').on('click', function() {
+        selectedRating = $(this).data('rating');
+        $('#rating').val(selectedRating);
+        $('#ratingValue').text(selectedRating.toFixed(1));
+        
+        // Actualizar estrellas
+        $('.rating-stars svg').each(function() {
+            const starValue = $(this).data('rating');
+            if (starValue <= selectedRating) {
+                $(this).removeClass('text-gray-300').addClass('text-yellow-400');
+            } else {
+                $(this).removeClass('text-yellow-400').addClass('text-gray-300');
+            }
         });
-
-        function updateStars(rating) {
-            $stars.each(function () {
-                const starRating = parseFloat($(this).data('rating'));
-                if (starRating <= rating) {
-                    $(this).removeClass('text-gray-300').addClass('text-yellow-400');
-                } else {
-                    $(this).removeClass('text-yellow-400').addClass('text-gray-300');
-                }
-            });
-        }
-    }
+    });
 
     // Vista previa de imágenes
-    const $photoUpload = $('#photo-upload');
-    const $imagePreview = $('#image-preview');
+    $('#fotos').on('change', function(e) {
+        const files = e.target.files;
+        const $preview = $('#image-preview');
+        $preview.empty();
 
-    if ($photoUpload.length && $imagePreview.length) {
-        $photoUpload.on('change', function (e) {
-            const files = e.target.files;
-            $imagePreview.html('');
-
-            if (files.length > 3) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Demasiadas imágenes',
-                    text: 'Por favor, selecciona un máximo de 3 imágenes',
-                    confirmButtonColor: '#15803d'
-                });
-                this.value = '';
-                return;
-            }
-
-            Array.from(files).forEach(file => {
-                if (file.size > 5 * 1024 * 1024) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Archivo demasiado grande',
-                        text: 'El tamaño máximo permitido es 5MB por imagen',
-                        confirmButtonColor: '#15803d'
-                    });
-                    this.value = '';
-                    $imagePreview.html('');
-                    return;
-                }
-
-                if (!file.type.match('image/jpeg|image/png|image/jpg')) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Formato no válido',
-                        text: 'Por favor, selecciona imágenes en formato JPG, JPEG o PNG',
-                        confirmButtonColor: '#15803d'
-                    });
-                    this.value = '';
-                    $imagePreview.html('');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const $imgContainer = $('<div>').addClass('relative group');
-                    const $img = $('<img>').attr('src', e.target.result).addClass('h-auto max-w-full rounded-lg object-cover aspect-square');
-                    const $removeBtn = $('<button type="button">').addClass('absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity').html('<i class="fas fa-times"></i>');
-
-                    $removeBtn.on('click', function () {
-                        $imgContainer.remove();
+        // Procesar cada archivo
+        $.each(files, function(i, file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const $container = $('<div>').addClass('relative');
+                const $img = $('<img>')
+                    .attr('src', e.target.result)
+                    .addClass('w-full h-32 object-cover rounded-lg');
+                const $removeBtn = $('<button>')
+                    .addClass('absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center m-1')
+                    .html('×')
+                    .on('click', function() {
+                        $container.remove();
                     });
 
-                    $imgContainer.append($img).append($removeBtn);
-                    $imagePreview.append($imgContainer);
-                };
-                reader.readAsDataURL(file);
-            });
+                $container.append($img, $removeBtn);
+                $preview.append($container);
+            };
+            reader.readAsDataURL(file);
         });
-    }
+    });
 
-    // Manejo del envío del formulario
-    const $reviewForm = $('#reviewForm');
+    // Envío del formulario
+    $('#reviewForm').on('submit', function(e) {
+        e.preventDefault();
 
-    if ($reviewForm.length) {
-        $reviewForm.on('submit', function (e) {
-            e.preventDefault();
-
-            const rating = $('#rating').val();
-            const comment = $('#comment').val();
-
-            if (!rating) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Por favor, selecciona una calificación',
-                    confirmButtonColor: '#15803d'
-                });
-                return;
-            }
-
-            if (!comment.trim()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Por favor, escribe un comentario',
-                    confirmButtonColor: '#15803d'
-                });
-                return;
-            }
-
-            const formData = new FormData(this);
-
+        // Validaciones
+        if (!selectedRating) {
             Swal.fire({
-                title: 'Enviando reseña...',
-                text: 'Por favor, espera un momento',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, selecciona una calificación',
+                confirmButtonColor: "#4A6D50"
             });
+            return;
+        }
 
-            $.ajax({
-                url: '../assets/php/MVC/Controlador/resenias-controlador.php?accion=crearResenia',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
+        const comentario = $('#comentario').val().trim();
+        if (!comentario) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, escribe un comentario',
+                confirmButtonColor: "#4A6D50"
+            });
+            return;
+        }
+
+        // Crear FormData y añadir los campos con los nombres correctos
+        const formData = new FormData();
+        formData.append('rating', selectedRating);
+        formData.append('comentario', comentario);
+        
+        // Añadir las fotos si existen
+        const fotos = $('#fotos')[0].files;
+        if (fotos.length > 0) {
+            for (let i = 0; i < fotos.length; i++) {
+                formData.append('fotos[]', fotos[i]);
+            }
+        }
+
+        // Mostrar loading
+        Swal.fire({
+            title: 'Enviando reseña...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Enviar datos
+        $.ajax({
+            url: '../assets/php/MVC/Controlador/resenias-controlador.php?accion=crearResenia',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                try {
                     const data = JSON.parse(response);
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
                             title: '¡Gracias!',
                             text: 'Tu reseña ha sido enviada correctamente',
-                            confirmButtonColor: '#15803d'
+                            confirmButtonColor: "#4A6D50"
                         }).then(() => {
                             window.location.href = 'blog.php';
                         });
@@ -149,22 +118,31 @@ $(document).ready(function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: data.message || 'Ha ocurrido un error al enviar tu reseña',
-                            confirmButtonColor: '#15803d'
+                            text: data.message || 'Error al enviar la reseña',
+                            confirmButtonColor: "#4A6D50"
                         });
                     }
-                },
-                error: function () {
+                } catch (e) {
+                    console.error('Error parsing response:', response);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Ha ocurrido un error al conectar con el servidor',
-                        confirmButtonColor: '#15803d'
+                        text: 'Error al procesar la respuesta del servidor',
+                        confirmButtonColor: "#4A6D50"
                     });
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.error('Ajax error:', {xhr, status, error});
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al conectar con el servidor',
+                    confirmButtonColor: "#4A6D50"
+                });
+            }
         });
-    }
+    });
 
     // Cargar reseñas existentes
     const $resenasContainer = $('#resenas-container');

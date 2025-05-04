@@ -15,37 +15,44 @@ class ReseniasControlador {
 
     // Funcion para crear una reseña
     public function crearResenia() {
-        
-        // Obtener datos del formulario
-        $usuario_id = $_SESSION['usuario_id'];
-        $puntuacion = isset($_POST['rating']) ? floatval($_POST['rating']) : 0;
-        $comentario = isset($_POST['comment']) ? trim($_POST['comment']) : '';
-        
-        // Validar datos
-        if ($puntuacion < 0.5 || $puntuacion > 5) {
+        try {
+            // Obtener datos del formulario
+            $usuario_id = $_SESSION['usuario_id'];
+            $puntuacion = isset($_POST['rating']) ? floatval($_POST['rating']) : 0;
+            $comentario = isset($_POST['comentario']) ? trim($_POST['comentario']) : '';
+            
+            // Validar datos
+            if ($puntuacion < 0.5 || $puntuacion > 5) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'La puntuación debe estar entre 0.5 y 5'
+                ]);
+                exit;
+            }
+            
+            if (empty($comentario)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'El comentario no puede estar vacío'
+                ]);
+                exit;
+            }
+            
+            // Procesar fotos si existen
+            $fotos = isset($_FILES['fotos']) ? $_FILES['fotos'] : null;
+            
+            // Crear la reseña
+            $resenia = $this->resenias->crearResenia($usuario_id, $puntuacion, $comentario, 'interna', $fotos);
+            
+            // Devolver el resultado
+            echo json_encode($resenia);
+            
+        } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
-                'message' => 'La puntuación debe estar entre 0.5 y 5'
+                'message' => 'Error al crear la reseña: ' . $e->getMessage()
             ]);
-            exit;
         }
-        
-        if (empty($comentario)) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'El comentario no puede estar vacío'
-            ]);
-            exit;
-        }
-        
-        // Procesar fotos si existen
-        $fotos = isset($_FILES['photos']) ? $_FILES['photos'] : null;
-        
-        // Crear la reseña
-        $resenia = $this->resenias->crearResenia($usuario_id, $puntuacion, $comentario, 'interna', $fotos);
-        
-        // Devolver el resultado
-        echo json_encode($resenia);
     }   
 
     // Funcion para listar las reseñas
