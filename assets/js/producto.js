@@ -1,12 +1,3 @@
-console.log('Archivo productos.js cargado - Versión 1.0');
-
-// Verificar que jQuery está disponible
-if (typeof jQuery === 'undefined') {
-    console.error('jQuery no está cargado');
-} else {
-    console.log('jQuery está disponible');
-}
-
 $(document).ready(function() {
     console.log('DOM cargado en productos.js');
     console.log('Formulario encontrado:', $('#productoForm').length);
