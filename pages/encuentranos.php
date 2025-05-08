@@ -113,12 +113,20 @@
             </div>
         </div>
 
+        <!--Reseñas-->
+        <div class="mt-8">
+            <h2 class="text-4xl font-display-CormorantGaramond font-bold text-verde mb-3 text-center">Reseñas de nuestros clientes</h2> 
+            <!-- Elfsight Google Reviews | Untitled Google Reviews -->
+            <script src="https://static.elfsight.com/platform/platform.js" async></script>
+            <div class="elfsight-app-fb064c10-161e-495f-b396-f6fefe8abfb3" data-elfsight-app-lazy></div>
+        </div>
+
         <!-- Mapa -->
         <div class="mt-8">
             <div class="w-full h-96">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3034.8605657687474!2d-3.6420819!3d40.5471799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422d0763e2c8b9%3A0x3c6e0c96e2214bcd!2sP.%C2%BA%20de%20Fuente%20Lucha%2C%207%2C%2028100%20Alcobendas%2C%20Madrid!5e0!3m2!1ses!2ses!4v1710835000000!5m2!1ses!2ses" 
-                    class="w-full h-96 "
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3031.537791266752!2d-3.6602848000000003!3d40.5517997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422dd4b4e4d15b%3A0x375649d95b7c987d!2sHerbolario%20Bioespacio%20Bienestar!5e0!3m2!1ses!2ses!4v1746532595845!5m2!1ses!2ses" 
+                    width="100%" 
+                    height="450" 
                     style="border:0;" 
                     allowfullscreen="" 
                     loading="lazy" 

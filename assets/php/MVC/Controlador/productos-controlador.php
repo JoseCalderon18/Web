@@ -97,11 +97,11 @@ class ProductosControlador {
     // Eliminar producto
     public function eliminarProducto() {
         try {
-            if (!isset($_GET['id'])) {
+            if (!isset($_POST['id'])) {
                 throw new Exception("ID de producto no proporcionado");
             }
 
-            $id = $_GET['id'];
+            $id = $_POST['id'];
             
             if ($this->modelo->eliminarProducto($id)) {
                 $_SESSION['mensaje'] = "Producto eliminado correctamente";

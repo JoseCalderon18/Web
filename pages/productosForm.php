@@ -35,10 +35,10 @@ if ($tipo) {
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </head>
-<body class="bg-beige flex flex-col min-h-screen">
+<body class="bg-beige flex flex-col">
     <?php include "../includes/header.php"; ?>
 
-    <main class="flex-grow py-12 px-4 md:px-24 max-w-7xl mx-auto">
+    <main class="flex-grow py-12 px-4 md:px-24">
         <!-- Encabezado de sección -->
         <div class="text-center mb-12">
             <h1 class="text-3xl md:text-4xl font-bold text-green-800 mb-4 font-display-CormorantGaramond">
@@ -47,11 +47,11 @@ if ($tipo) {
             <p class="text-gray-600 max-w-2xl my-5 mx-auto">
                 Complete los detalles del producto a continuación.
             </p>
-        </div>
+        </div>                     
 
         <!-- Formulario de producto -->
-        <div class="bg-white rounded-xl my-10 p-6 md:p-8 shadow-lg max-w-2xl mx-auto">
-            <form id="productoForm" method="post" enctype="multipart/form-data" class="space-y-6">
+        <div class="bg-white rounded-xl my-10 p-6 md:p-8 shadow-lg w-2/4 mx-auto">
+            <form id="productoForm" method="post" enctype="multipart/form-data" class="space-y-6 w-full">
                 <?php if ($tipo): ?>
                     <input type="hidden" name="id" value="<?= htmlspecialchars($producto['id']) ?>">
                 <?php endif; ?>
