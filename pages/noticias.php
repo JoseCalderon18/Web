@@ -48,7 +48,7 @@
         </div>
 
         <!-- Noticias -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <!-- Tarjeta 1 -->
             <div class="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-105" onclick="mostrarModal('Terapias naturales para el estrés', 'Las terapias naturales como la aromaterapia, la meditación y el yoga han demostrado ser efectivas para reducir los niveles de estrés y ansiedad. En BioEspacio ofrecemos sesiones personalizadas que combinan estas técnicas para ayudarte a encontrar tu equilibrio interior y mejorar tu bienestar general. Nuestros especialistas te guiarán en un viaje de autodescubrimiento y sanación.', '../assets/img/terapia-natural.jpg')">
                 <div class="h-48 bg-gray-200 flex items-center justify-center">

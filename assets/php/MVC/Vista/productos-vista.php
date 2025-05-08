@@ -80,13 +80,9 @@
                                 <tr class="border-b">
                                     <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base"><?= htmlspecialchars($producto["id"]) ?></td>
                                     <td class="px-3 md:px-8 py-3 md:py-5">
-                                        <?php 
-                                        $fotos = json_decode($producto["foto"], true);
-                                        if ($fotos && count($fotos) > 0): 
-                                            $primeraFoto = $fotos[0];
-                                        ?>
-                                            <img src="../<?= htmlspecialchars($primeraFoto) ?>" 
-                                                 onclick="mostrarGaleria(<?= htmlspecialchars(json_encode($fotos)) ?>, '<?= htmlspecialchars($producto["nombre"]) ?>')"
+                                        <?php if (!empty($producto["foto"])): ?>
+                                            <img src="../<?= htmlspecialchars($producto["foto"]) ?>" 
+                                                 onclick="mostrarGaleria('<?= htmlspecialchars($producto["foto"]) ?>', '<?= htmlspecialchars($producto["nombre"]) ?>')"
                                                  alt="Foto de <?= htmlspecialchars($producto["nombre"]) ?>"
                                                  class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
                                         <?php else: ?>

@@ -15,25 +15,25 @@ class ProductosModelo {
                     FROM productos ORDER BY id DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // No intentar decodificar JSON aquí, ya que las fotos se almacenan como strings
+            return $productos;
         } catch (PDOException $e) {
             throw new Exception("Error al obtener productos: " . $e->getMessage());
         }
     }
 
     // Crear producto
-    public function crearProducto($nombre, $stock, $fotos, $precio, $fecha_registro, $comentarios = '') {
+    public function crearProducto($nombre, $stock, $foto, $precio, $fecha_registro, $comentarios = '') {
         try {
-            // Convertir el array de fotos a JSON
-            $fotosJson = json_encode($fotos);
-            
             $sql = "INSERT INTO productos (nombre, stock, foto, precio, fecha_registro, comentarios) 
                     VALUES (:nombre, :stock, :foto, :precio, :fecha_registro, :comentarios)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':stock', $stock);
-            $stmt->bindParam(':foto', $fotosJson);
+            $stmt->bindParam(':foto', $foto);
             $stmt->bindParam(':precio', $precio);
             $stmt->bindParam(':fecha_registro', $fecha_registro);
             $stmt->bindParam(':comentarios', $comentarios);
@@ -57,11 +57,9 @@ class ProductosModelo {
     }
 
     // Actualizar producto
-    public function actualizarProducto($id, $nombre, $stock, $fotos, $precio, $fecha_registro, $comentarios) {
+    public function actualizarProducto($id, $nombre, $stock, $foto, $precio, $fecha_registro, $comentarios) {
         try {
-            // Convertir el array de fotos a JSON
-            $fotosJson = json_encode($fotos);
-            
+            // Ya no necesitamos convertir a JSON, porque foto es un string simple
             $sql = "UPDATE productos SET 
                     nombre = :nombre, 
                     stock = :stock, 
@@ -75,7 +73,7 @@ class ProductosModelo {
             $stmt->bindParam(':id', $id);
             $stmt->bindParam(':nombre', $nombre);
             $stmt->bindParam(':stock', $stock);
-            $stmt->bindParam(':foto', $fotosJson);
+            $stmt->bindParam(':foto', $foto);  // Ya no es $fotosJson
             $stmt->bindParam(':precio', $precio);
             $stmt->bindParam(':fecha_registro', $fecha_registro);
             $stmt->bindParam(':comentarios', $comentarios);
@@ -96,11 +94,7 @@ class ProductosModelo {
             $stmt->execute();
             $producto = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            // Decodificar el JSON de las fotos si existe
-            if ($producto && $producto['foto']) {
-                $producto['foto'] = json_decode($producto['foto'], true);
-            }
-            
+            // No decodificar JSON, ya que las fotos se almacenan como strings
             return $producto;
         } catch (PDOException $e) {
             throw new Exception("Error al obtener producto: " . $e->getMessage());
@@ -119,12 +113,11 @@ class ProductosModelo {
         }
     }
 
-    public function editarProducto($id, $nombre, $stock, $fotos, $precio, $fecha_registro, $comentarios) {
+    public function editarProducto($id, $nombre, $stock, $foto, $precio, $fecha_registro, $comentarios) {
         try {
-            $fotosJson = json_encode($fotos);
             $sql = "UPDATE productos SET nombre = ?, stock = ?, foto = ?, precio = ?, fecha_registro = ?, comentarios = ? WHERE id = ?";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$nombre, $stock, $fotosJson, $precio, $fecha_registro, $comentarios, $id]);
+            return $stmt->execute([$nombre, $stock, $foto, $precio, $fecha_registro, $comentarios, $id]);
         } catch (PDOException $e) {
             error_log('Error en editarProducto: ' . $e->getMessage());
             return false;

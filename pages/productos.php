@@ -38,7 +38,7 @@ if (!is_array($productos)) {
     <!-- Luego SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Después tus scripts -->
-    <script src="../assets/js/productos.js"></script>
+    <script src="../assets/js/productos-lista.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>

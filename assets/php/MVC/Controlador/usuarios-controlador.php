@@ -62,7 +62,7 @@ class UsuariosControlador {
             // Destruir la sesión
             session_destroy();
 
-            header('Location: ../../../../pages/blog.php');
+            header('Location: ../../../../pages/noticias.php');
             
             echo json_encode([
                 'success' => true,

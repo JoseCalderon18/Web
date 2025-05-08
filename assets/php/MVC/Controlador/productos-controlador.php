@@ -32,41 +32,19 @@ class ProductosControlador {
                 return;
             }
 
-            // Procesar las fotos
-            if (!isset($_FILES['fotos']) || empty($_FILES['fotos']['name'][0])) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Debe seleccionar al menos una foto'
-                ]);
-                return;
-            }
-
             $nombre = $_POST['nombre'];
             $stock = $_POST['stock'];
             $precio = $_POST['precio'];
             $fecha_registro = $_POST['fecha_registro'];
             $comentarios = $_POST['comentarios'] ?? '';
-            $fotos = [];
+            $foto = ''; // Default empty string for foto
 
-            // Procesar múltiples fotos
-            if (isset($_FILES['fotos']) && is_array($_FILES['fotos']['name'])) {
-                foreach ($_FILES['fotos']['tmp_name'] as $key => $tmp_name) {
-                    if ($_FILES['fotos']['error'][$key] === UPLOAD_ERR_OK) {
-                        $archivo = [
-                            'name' => $_FILES['fotos']['name'][$key],
-                            'type' => $_FILES['fotos']['type'][$key],
-                            'tmp_name' => $tmp_name,
-                            'error' => $_FILES['fotos']['error'][$key],
-                            'size' => $_FILES['fotos']['size'][$key]
-                        ];
-                        
-                        $rutaFoto = $this->procesarFoto($archivo);
-                        $fotos[] = $rutaFoto;
-                    }
-                }
+            // Process single photo if uploaded
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                $foto = $this->procesarFoto($_FILES['foto']);
             }
 
-            if ($this->modelo->crearProducto($nombre, $stock, $fotos, $precio, $fecha_registro, $comentarios)) {
+            if ($this->modelo->crearProducto($nombre, $stock, $foto, $precio, $fecha_registro, $comentarios)) {
                 echo json_encode([
                     'success' => true,
                     'message' => 'Producto creado correctamente'
@@ -131,6 +109,7 @@ class ProductosControlador {
             throw new Exception("Error al subir la imagen");
         }
 
+        // Devolver una ruta simple
         return "assets/img/productos/" . $nombreArchivo;
     }
 
@@ -147,7 +126,6 @@ class ProductosControlador {
     // Editar producto
     public function editarProducto() {
         try {
-            // Validaciones básicas
             if (empty($_POST['id']) || empty($_POST['nombre']) || empty($_POST['stock']) || 
                 empty($_POST['precio']) || empty($_POST['fecha_registro'])) {
                 echo json_encode([
@@ -164,42 +142,16 @@ class ProductosControlador {
             $fecha_registro = $_POST['fecha_registro'];
             $comentarios = $_POST['comentarios'] ?? '';
 
-            // Obtener el producto actual para las fotos
+            // Get current product to keep existing photo if no new one is uploaded
             $productoActual = $this->modelo->obtenerProductoPorId($id);
-            $fotos = []; // Inicializar array vacío
+            $foto = $productoActual['foto'] ?? '';
 
-            // Si hay fotos existentes, usarlas
-            if (!empty($productoActual['foto'])) {
-                // Si foto ya es un array, usarlo directamente
-                if (is_array($productoActual['foto'])) {
-                    $fotos = $productoActual['foto'];
-                } 
-                // Si es un string JSON, decodificarlo
-                else if (is_string($productoActual['foto'])) {
-                    $fotos = json_decode($productoActual['foto'], true) ?? [];
-                }
+            // Process new photo if uploaded
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                $foto = $this->procesarFoto($_FILES['foto']);
             }
 
-            // Procesar nuevas fotos si se han subido
-            if (isset($_FILES['fotos']) && !empty($_FILES['fotos']['name'][0])) {
-                foreach ($_FILES['fotos']['tmp_name'] as $key => $tmp_name) {
-                    if ($_FILES['fotos']['error'][$key] === UPLOAD_ERR_OK) {
-                        $archivo = [
-                            'name' => $_FILES['fotos']['name'][$key],
-                            'type' => $_FILES['fotos']['type'][$key],
-                            'tmp_name' => $tmp_name,
-                            'error' => $_FILES['fotos']['error'][$key],
-                            'size' => $_FILES['fotos']['size'][$key]
-                        ];
-                        
-                        $rutaFoto = $this->procesarFoto($archivo);
-                        $fotos[] = $rutaFoto;
-                    }
-                }
-            }
-
-            // Actualizar el producto
-            if ($this->modelo->editarProducto($id, $nombre, $stock, $fotos, $precio, $fecha_registro, $comentarios)) {
+            if ($this->modelo->editarProducto($id, $nombre, $stock, $foto, $precio, $fecha_registro, $comentarios)) {
                 echo json_encode([
                     'success' => true,
                     'message' => 'Producto actualizado correctamente'
