@@ -83,7 +83,7 @@ $(document).ready(function() {
                         confirmButtonColor: "#4A6D50"
                     }).then((result) => {
                         if(result.isConfirmed){
-                            window.location.href = "blog.php";
+                            window.location.href = "noticias.php";
                         }
                     });
                 } else {

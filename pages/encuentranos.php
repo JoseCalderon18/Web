@@ -136,6 +136,8 @@
         </div>
     </main>
 
+    <br><br>
+
     <!-- Footer -->
     <?php require_once '../includes/footer.php'; ?>
 </body>
