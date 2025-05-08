@@ -14,9 +14,9 @@
                 Última conexión: <?= date('d/m/Y H:i:s') ?>
             </span>
             <div class="flex gap-3 md:gap-5">
-                <a href="blog.php" 
+                <a href="noticias.php" 
                    class="px-4 py-2 md:px-6 md:py-3 text-sm md:text-base font-medium bg-green-800 hover:bg-green-800 rounded-lg shadow-md">
-                    <i class="fas fa-blog mr-2 md:mr-3"></i>Blog
+                    <i class="fas fa-blog mr-2 md:mr-3"></i>Noticias
                 </a>
                 <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
                    class="px-5 py-2 md:px-7 md:py-3 text-sm md:text-base font-medium bg-red-600 hover:bg-red-800 rounded-lg shadow-md">
