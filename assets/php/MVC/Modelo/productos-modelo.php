@@ -9,95 +9,85 @@ class ProductosModelo {
     }
 
     // Obtener todos los productos
-    public function obtenerTodosLosProductos() {
+    public function obtenerTodos() {
         try {
-            $sql = "SELECT id, nombre, stock, foto, precio, fecha_registro, comentarios 
-                    FROM productos ORDER BY id DESC";
-            $stmt = $this->db->prepare($sql);
+            $query = "SELECT * FROM productos ORDER BY id DESC";
+            $stmt = $this->db->prepare($query);
             $stmt->execute();
-            $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // No intentar decodificar JSON aquí, ya que las fotos se almacenan como strings
-            return $productos;
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error al obtener productos: " . $e->getMessage());
-        }
-    }
-
-    // Crear producto
-    public function crearProducto($nombre, $stock, $foto, $precio, $fecha_registro, $comentarios = '') {
-        try {
-            $sql = "INSERT INTO productos (nombre, stock, foto, precio, fecha_registro, comentarios) 
-                    VALUES (:nombre, :stock, :foto, :precio, :fecha_registro, :comentarios)";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':stock', $stock);
-            $stmt->bindParam(':foto', $foto);
-            $stmt->bindParam(':precio', $precio);
-            $stmt->bindParam(':fecha_registro', $fecha_registro);
-            $stmt->bindParam(':comentarios', $comentarios);
-            
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error al crear producto: " . $e->getMessage());
-        }
-    }
-
-    // Eliminar producto
-    public function eliminarProducto($id) {
-        try {
-            $sql = "DELETE FROM productos WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error al eliminar producto: " . $e->getMessage());
-        }
-    }
-
-    // Actualizar producto
-    public function actualizarProducto($id, $nombre, $stock, $foto, $precio, $fecha_registro, $comentarios) {
-        try {
-            // Ya no necesitamos convertir a JSON, porque foto es un string simple
-            $sql = "UPDATE productos SET 
-                    nombre = :nombre, 
-                    stock = :stock, 
-                    foto = :foto, 
-                    precio = :precio, 
-                    fecha_registro = :fecha_registro,
-                    comentarios = :comentarios 
-                    WHERE id = :id";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id);
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':stock', $stock);
-            $stmt->bindParam(':foto', $foto);  // Ya no es $fotosJson
-            $stmt->bindParam(':precio', $precio);
-            $stmt->bindParam(':fecha_registro', $fecha_registro);
-            $stmt->bindParam(':comentarios', $comentarios);
-            
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error al actualizar producto: " . $e->getMessage());
+            error_log("Error en obtenerTodos: " . $e->getMessage());
+            return [];
         }
     }
 
     // Obtener producto por ID
-    public function obtenerProductoPorId($id) {
+    public function obtenerPorId($id) {
         try {
-            $sql = "SELECT id, nombre, stock, foto, precio, fecha_registro, comentarios 
-                    FROM productos WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id);
+            $query = "SELECT * FROM productos WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            $producto = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            // No decodificar JSON, ya que las fotos se almacenan como strings
-            return $producto;
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error al obtener producto: " . $e->getMessage());
+            error_log("Error en obtenerPorId: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Crear nuevo producto
+    public function crear($nombre, $stock, $foto, $precio, $fecha_registro, $comentarios) {
+        try {
+            $query = "INSERT INTO productos (nombre, stock, foto, precio, fecha_registro, comentarios) 
+                      VALUES (:nombre, :stock, :foto, :precio, :fecha_registro, :comentarios)";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':stock', $stock, PDO::PARAM_INT);
+            $stmt->bindParam(':foto', $foto, PDO::PARAM_STR);
+            $stmt->bindParam(':precio', $precio, PDO::PARAM_STR);
+            $stmt->bindParam(':fecha_registro', $fecha_registro, PDO::PARAM_STR);
+            $stmt->bindParam(':comentarios', $comentarios, PDO::PARAM_STR);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en crear: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Actualizar producto
+    public function actualizar($id, $nombre, $stock, $foto, $precio, $comentarios) {
+        try {
+            $query = "UPDATE productos 
+                      SET nombre = :nombre, 
+                          stock = :stock, 
+                          foto = :foto, 
+                          precio = :precio, 
+                          comentarios = :comentarios 
+                      WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
+            $stmt->bindParam(':stock', $stock, PDO::PARAM_INT);
+            $stmt->bindParam(':foto', $foto, PDO::PARAM_STR);
+            $stmt->bindParam(':precio', $precio, PDO::PARAM_STR);
+            $stmt->bindParam(':comentarios', $comentarios, PDO::PARAM_STR);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en actualizar: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Eliminar producto
+    public function eliminar($id) {
+        try {
+            $query = "DELETE FROM productos WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en eliminar: " . $e->getMessage());
+            return false;
         }
     }
 

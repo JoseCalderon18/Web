@@ -2,6 +2,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Habilitar la visualización de errores para depuración
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../Modelo/productos-modelo.php';
 
 class ProductosControlador {
@@ -14,8 +20,9 @@ class ProductosControlador {
     // Obtener todos los productos
     public function obtenerTodosLosProductos() {
         try {
-            return $this->modelo->obtenerTodosLosProductos();
+            return $this->modelo->obtenerTodos();
         } catch (Exception $e) {
+            error_log("Error en obtenerTodosLosProductos: " . $e->getMessage());
             return [];
         }
     }
@@ -23,53 +30,51 @@ class ProductosControlador {
     // Crear producto
     public function crearProducto() {
         try {
-            // Validaciones
-            if (empty($_POST['nombre']) || empty($_POST['stock']) || empty($_POST['precio']) || empty($_POST['fecha_registro'])) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Todos los campos son obligatorios'
-                ]);
+            // Validar datos
+            if (!isset($_POST['nombre']) || !isset($_POST['stock']) || !isset($_POST['precio'])) {
+                echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios']);
                 return;
             }
 
             $nombre = $_POST['nombre'];
             $stock = $_POST['stock'];
             $precio = $_POST['precio'];
-            $fecha_registro = $_POST['fecha_registro'];
-            $comentarios = $_POST['comentarios'] ?? '';
-            $foto = ''; // Default empty string for foto
-
-            // Process single photo if uploaded
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-                $foto = $this->procesarFoto($_FILES['foto']);
+            $comentarios = isset($_POST['comentarios']) ? $_POST['comentarios'] : '';
+            $fecha_registro = date('Y-m-d');
+            
+            // Procesar la foto
+            $rutaFoto = '';
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0 && $_FILES['foto']['size'] > 0) {
+                $foto = $_FILES['foto'];
+                $nombreArchivo = uniqid() . '_' . basename($foto['name']);
+                $rutaDestino = 'assets/img/productos/' . $nombreArchivo;
+                
+                // Asegurarse de que el directorio existe
+                $directorioDestino = '../../../assets/img/productos/';
+                if (!is_dir($directorioDestino)) {
+                    mkdir($directorioDestino, 0755, true);
+                }
+                
+                if (move_uploaded_file($foto['tmp_name'], '../../../' . $rutaDestino)) {
+                    $rutaFoto = $rutaDestino;
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al subir la imagen']);
+                    return;
+                }
             }
-
-            if ($this->modelo->crearProducto($nombre, $stock, $foto, $precio, $fecha_registro, $comentarios)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Producto creado correctamente'
-                ]);
+            
+            // Crear el producto
+            $resultado = $this->modelo->crear($nombre, $stock, $rutaFoto, $precio, $fecha_registro, $comentarios);
+            
+            if ($resultado) {
+                echo json_encode(['success' => true, 'message' => 'Producto creado correctamente']);
             } else {
-                throw new Exception("Error al crear el producto");
+                echo json_encode(['success' => false, 'message' => 'Error al crear el producto']);
             }
-
         } catch (Exception $e) {
-            error_log('Error en crearProducto: ' . $e->getMessage());
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al crear el producto: ' . $e->getMessage()
-            ]);
+            error_log("Error en crearProducto: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
-    }
-
-    private function reordenarArchivos($files) {
-        $fotos = array();
-        foreach ($files as $key => $all) {
-            foreach ($all as $i => $val) {
-                $fotos[$i][$key] = $val;
-            }
-        }
-        return $fotos;
     }
 
     // Eliminar producto
@@ -81,13 +86,29 @@ class ProductosControlador {
 
             $id = $_POST['id'];
             
-            if ($this->modelo->eliminarProducto($id)) {
+            // Obtener el producto para eliminar la foto si existe
+            $producto = $this->modelo->obtenerPorId($id);
+            
+            if (!$producto) {
+                throw new Exception("Producto no encontrado");
+            }
+            
+            if ($this->modelo->eliminar($id)) {
+                // Si el producto tenía una foto, eliminarla
+                if (!empty($producto['foto'])) {
+                    $rutaCompleta = '../../../' . $producto['foto'];
+                    if (file_exists($rutaCompleta)) {
+                        unlink($rutaCompleta);
+                    }
+                }
+                
                 $_SESSION['mensaje'] = "Producto eliminado correctamente";
             } else {
                 throw new Exception("No se pudo eliminar el producto");
             }
 
         } catch (Exception $e) {
+            error_log("Error en eliminarProducto: " . $e->getMessage());
             $_SESSION['error'] = $e->getMessage();
         }
         
@@ -95,29 +116,12 @@ class ProductosControlador {
         exit;
     }
 
-    // Procesar foto
-    private function procesarFoto($archivo) {
-        $directorio = "../../../../assets/img/productos/";
-        if (!file_exists($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-        
-        $nombreArchivo = uniqid() . "_" . basename($archivo['name']);
-        $rutaCompleta = $directorio . $nombreArchivo;
-
-        if (!move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
-            throw new Exception("Error al subir la imagen");
-        }
-
-        // Devolver una ruta simple
-        return "assets/img/productos/" . $nombreArchivo;
-    }
-
     // Obtener producto por ID
     public function obtenerProductoPorId($id) {
         try {
-            return $this->modelo->obtenerProductoPorId($id);
+            return $this->modelo->obtenerPorId($id);
         } catch (Exception $e) {
+            error_log("Error en obtenerProductoPorId: " . $e->getMessage());
             $_SESSION['error'] = $e->getMessage();
             return null;
         }
@@ -126,12 +130,9 @@ class ProductosControlador {
     // Editar producto
     public function editarProducto() {
         try {
-            if (empty($_POST['id']) || empty($_POST['nombre']) || empty($_POST['stock']) || 
-                empty($_POST['precio']) || empty($_POST['fecha_registro'])) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Todos los campos son obligatorios'
-                ]);
+            // Validar datos
+            if (!isset($_POST['id']) || !isset($_POST['nombre']) || !isset($_POST['stock']) || !isset($_POST['precio'])) {
+                echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios']);
                 return;
             }
 
@@ -139,33 +140,56 @@ class ProductosControlador {
             $nombre = $_POST['nombre'];
             $stock = $_POST['stock'];
             $precio = $_POST['precio'];
-            $fecha_registro = $_POST['fecha_registro'];
-            $comentarios = $_POST['comentarios'] ?? '';
-
-            // Get current product to keep existing photo if no new one is uploaded
-            $productoActual = $this->modelo->obtenerProductoPorId($id);
-            $foto = $productoActual['foto'] ?? '';
-
-            // Process new photo if uploaded
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-                $foto = $this->procesarFoto($_FILES['foto']);
+            $comentarios = isset($_POST['comentarios']) ? $_POST['comentarios'] : '';
+            
+            // Obtener el producto actual para verificar si hay una foto existente
+            $productoActual = $this->modelo->obtenerPorId($id);
+            
+            if (!$productoActual) {
+                echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
+                return;
             }
-
-            if ($this->modelo->editarProducto($id, $nombre, $stock, $foto, $precio, $fecha_registro, $comentarios)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Producto actualizado correctamente'
-                ]);
+            
+            $rutaFoto = $productoActual['foto'];
+            
+            // Procesar la nueva foto si se ha subido
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0 && $_FILES['foto']['size'] > 0) {
+                $foto = $_FILES['foto'];
+                $nombreArchivo = uniqid() . '_' . basename($foto['name']);
+                $rutaDestino = 'assets/img/productos/' . $nombreArchivo;
+                
+                // Asegurarse de que el directorio existe
+                $directorioDestino = '../../../assets/img/productos/';
+                if (!is_dir($directorioDestino)) {
+                    mkdir($directorioDestino, 0755, true);
+                }
+                
+                if (move_uploaded_file($foto['tmp_name'], '../../../' . $rutaDestino)) {
+                    // Si hay una foto anterior, eliminarla
+                    if (!empty($rutaFoto)) {
+                        $rutaCompleta = '../../../' . $rutaFoto;
+                        if (file_exists($rutaCompleta)) {
+                            unlink($rutaCompleta);
+                        }
+                    }
+                    $rutaFoto = $rutaDestino;
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al subir la nueva imagen']);
+                    return;
+                }
+            }
+            
+            // Actualizar el producto
+            $resultado = $this->modelo->actualizar($id, $nombre, $stock, $rutaFoto, $precio, $comentarios);
+            
+            if ($resultado) {
+                echo json_encode(['success' => true, 'message' => 'Producto actualizado correctamente']);
             } else {
-                throw new Exception("Error al actualizar el producto");
+                echo json_encode(['success' => false, 'message' => 'Error al actualizar el producto']);
             }
-
         } catch (Exception $e) {
-            error_log('Error en editarProducto: ' . $e->getMessage());
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al actualizar el producto: ' . $e->getMessage()
-            ]);
+            error_log("Error en editarProducto: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
 }
@@ -185,7 +209,10 @@ if (isset($_GET['accion'])) {
             $controlador->eliminarProducto();
             break;
         case 'obtener':
-            $controlador->obtenerTodosLosProductos();
+            echo json_encode($controlador->obtenerTodosLosProductos());
+            break;
+        default:
+            echo json_encode(['success' => false, 'message' => 'Acción no válida']);
             break;
     }
 }

@@ -10,7 +10,7 @@ function confirmarEliminacion(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Create and submit a form to delete the product
+            // Crear y enviar un formulario para eliminar el producto
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '../assets/php/MVC/Controlador/productos-controlador.php?accion=eliminar';
@@ -27,7 +27,7 @@ function confirmarEliminacion(id) {
     });
 }
 
-// Function to show product gallery
+// Función para mostrar la galería de productos
 function mostrarGaleria(foto, nombreProducto) {
     if (!foto) {
         Swal.fire({
@@ -42,12 +42,13 @@ function mostrarGaleria(foto, nombreProducto) {
         title: nombreProducto,
         imageUrl: '../' + foto,
         imageAlt: 'Foto de ' + nombreProducto,
-        width: '80%',
+        width: '50%',
+        imageWidth: '80%',
         confirmButtonText: 'Cerrar'
     });
 }
 
-// Function to show comments
+// Función para mostrar comentarios
 function mostrarComentarios(nombreProducto, comentarios) {
     Swal.fire({
         title: `Comentarios de ${nombreProducto}`,
@@ -56,7 +57,7 @@ function mostrarComentarios(nombreProducto, comentarios) {
     });
 }
 
-// Search functionality
+// Funcionalidad de búsqueda
 document.addEventListener('DOMContentLoaded', function() {
     const barraBusqueda = document.getElementById('barraBusqueda');
     if (barraBusqueda) {

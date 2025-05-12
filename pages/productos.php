@@ -26,7 +26,7 @@ if (!is_array($productos)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 </head>
-<body class="bg-beige h-screen">
+<body class="bg-beige h-max-screen">
     <?php include "../includes/header.php"; ?>
 
     <?php require_once '../assets/php/MVC/Vista/productos-vista.php'; ?>

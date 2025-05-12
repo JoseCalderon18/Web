@@ -58,7 +58,6 @@
                 <table class="w-full">
                     <thead class="bg-black text-white">
                         <tr>
-                            <th class="px-3 md:px-8 py-3 md:py-4 text-left text-xs md:text-sm">ID</th>
                             <th class="px-3 md:px-8 py-3 md:py-4 text-left text-xs md:text-sm">FOTO</th>
                             <th class="px-3 md:px-8 py-3 md:py-4 text-left text-xs md:text-sm">NOMBRE</th>
                             <th class="px-3 md:px-8 py-3 md:py-4 text-left text-xs md:text-sm">STOCK</th>
@@ -78,7 +77,6 @@
                         <?php else: ?>
                             <?php foreach ($productos as $producto): ?>
                                 <tr class="border-b">
-                                    <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base"><?= htmlspecialchars($producto["id"]) ?></td>
                                     <td class="px-3 md:px-8 py-3 md:py-5">
                                         <?php if (!empty($producto["foto"])): ?>
                                             <img src="../<?= htmlspecialchars($producto["foto"]) ?>" 
