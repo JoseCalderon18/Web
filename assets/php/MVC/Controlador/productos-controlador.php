@@ -47,18 +47,34 @@ class ProductosControlador {
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0 && $_FILES['foto']['size'] > 0) {
                 $foto = $_FILES['foto'];
                 $nombreArchivo = uniqid() . '_' . basename($foto['name']);
-                $rutaDestino = 'assets/img/productos/' . $nombreArchivo;
+                
+                // IMPORTANTE: Determinar la ruta base del proyecto
+                $rutaBase = realpath(__DIR__ . '/../../../..');
+                
+                // Ruta relativa para guardar en la base de datos
+                $rutaRelativa = 'assets/img/productos/' . $nombreArchivo;
+                
+                // Ruta absoluta para guardar el archivo
+                $rutaAbsoluta = $rutaBase . '/' . $rutaRelativa;
                 
                 // Asegurarse de que el directorio existe
-                $directorioDestino = '../../../assets/img/productos/';
+                $directorioDestino = dirname($rutaAbsoluta);
                 if (!is_dir($directorioDestino)) {
                     mkdir($directorioDestino, 0755, true);
                 }
                 
-                if (move_uploaded_file($foto['tmp_name'], '../../../' . $rutaDestino)) {
-                    $rutaFoto = $rutaDestino;
+                // Información de depuración
+                echo "<script>console.log('Información de depuración:');</script>";
+                echo "<script>console.log('Ruta base del proyecto: " . addslashes($rutaBase) . "');</script>";
+                echo "<script>console.log('Ruta relativa: " . addslashes($rutaRelativa) . "');</script>";
+                echo "<script>console.log('Ruta absoluta: " . addslashes($rutaAbsoluta) . "');</script>";
+                
+                if (move_uploaded_file($foto['tmp_name'], $rutaAbsoluta)) {
+                    $rutaFoto = $rutaRelativa;
+                    echo "<script>console.log('Imagen subida correctamente a: " . addslashes($rutaFoto) . "');</script>";
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Error al subir la imagen']);
+                    echo "<script>console.log('Error al subir la imagen: " . addslashes(error_get_last()['message']) . "');</script>";
+                    echo json_encode(['success' => false, 'message' => 'Error al subir la imagen: ' . error_get_last()['message']]);
                     return;
                 }
             }
@@ -72,7 +88,7 @@ class ProductosControlador {
                 echo json_encode(['success' => false, 'message' => 'Error al crear el producto']);
             }
         } catch (Exception $e) {
-            error_log("Error en crearProducto: " . $e->getMessage());
+            echo "<script>console.log('Error: " . addslashes($e->getMessage()) . "');</script>";
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
@@ -150,31 +166,48 @@ class ProductosControlador {
                 return;
             }
             
+            // Usar la foto actual por defecto
             $rutaFoto = $productoActual['foto'];
             
             // Procesar la nueva foto si se ha subido
             if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0 && $_FILES['foto']['size'] > 0) {
                 $foto = $_FILES['foto'];
                 $nombreArchivo = uniqid() . '_' . basename($foto['name']);
-                $rutaDestino = 'assets/img/productos/' . $nombreArchivo;
+                
+                // IMPORTANTE: Determinar la ruta base del proyecto
+                $rutaBase = realpath(__DIR__ . '/../../../..');
+                
+                // Ruta relativa para guardar en la base de datos
+                $rutaRelativa = 'assets/img/productos/' . $nombreArchivo;
+                
+                // Ruta absoluta para guardar el archivo
+                $rutaAbsoluta = $rutaBase . '/' . $rutaRelativa;
                 
                 // Asegurarse de que el directorio existe
-                $directorioDestino = '../../../assets/img/productos/';
+                $directorioDestino = dirname($rutaAbsoluta);
                 if (!is_dir($directorioDestino)) {
                     mkdir($directorioDestino, 0755, true);
                 }
                 
-                if (move_uploaded_file($foto['tmp_name'], '../../../' . $rutaDestino)) {
+                // Información de depuración
+                echo "<script>console.log('Información de depuración:');</script>";
+                echo "<script>console.log('Ruta base del proyecto: " . addslashes($rutaBase) . "');</script>";
+                echo "<script>console.log('Ruta relativa: " . addslashes($rutaRelativa) . "');</script>";
+                echo "<script>console.log('Ruta absoluta: " . addslashes($rutaAbsoluta) . "');</script>";
+                
+                if (move_uploaded_file($foto['tmp_name'], $rutaAbsoluta)) {
                     // Si hay una foto anterior, eliminarla
                     if (!empty($rutaFoto)) {
-                        $rutaCompleta = '../../../' . $rutaFoto;
-                        if (file_exists($rutaCompleta)) {
-                            unlink($rutaCompleta);
+                        $rutaCompletaAnterior = $rutaBase . '/' . $rutaFoto;
+                        if (file_exists($rutaCompletaAnterior)) {
+                            unlink($rutaCompletaAnterior);
                         }
                     }
-                    $rutaFoto = $rutaDestino;
+                    $rutaFoto = $rutaRelativa;
+                    echo "<script>console.log('Imagen subida correctamente a: " . addslashes($rutaFoto) . "');</script>";
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Error al subir la nueva imagen']);
+                    echo "<script>console.log('Error al subir la imagen: " . addslashes(error_get_last()['message']) . "');</script>";
+                    echo json_encode(['success' => false, 'message' => 'Error al subir la imagen: ' . error_get_last()['message']]);
                     return;
                 }
             }
@@ -188,7 +221,7 @@ class ProductosControlador {
                 echo json_encode(['success' => false, 'message' => 'Error al actualizar el producto']);
             }
         } catch (Exception $e) {
-            error_log("Error en editarProducto: " . $e->getMessage());
+            echo "<script>console.log('Error: " . addslashes($e->getMessage()) . "');</script>";
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }

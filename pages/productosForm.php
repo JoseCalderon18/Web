@@ -95,9 +95,15 @@ if ($esEdicion) {
                     <label for="foto" class="block mb-2 text-sm font-medium text-gray-900">Foto del producto (Opcional)</label>
                     <?php if ($esEdicion && !empty($producto['foto'])): ?>
                         <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Foto actual:</p>
                             <img src="../<?= htmlspecialchars($producto['foto']) ?>" 
                                  alt="Foto actual del producto" 
                                  class="w-32 h-32 object-cover rounded-lg">
+                            <input type="hidden" name="foto_actual" value="<?= htmlspecialchars($producto['foto']) ?>">
+                            <script>
+                                console.log('Ruta de la imagen actual: <?= htmlspecialchars($producto['foto']) ?>');
+                                console.log('URL completa: <?= htmlspecialchars('../' . $producto['foto']) ?>');
+                            </script>
                         </div>
                     <?php endif; ?>
                     <input type="file" 
@@ -110,6 +116,13 @@ if ($esEdicion) {
                                   file:text-sm file:font-semibold
                                   file:bg-green-50 file:text-green-700
                                   hover:file:bg-green-100">
+                    <p class="mt-1 text-sm text-gray-500">
+                        <?php if ($esEdicion): ?>
+                            Sube una nueva imagen solo si deseas cambiar la actual.
+                        <?php else: ?>
+                            Selecciona una imagen para el producto.
+                        <?php endif; ?>
+                    </p>
                 </div>
                 
                 <!-- Comentarios -->

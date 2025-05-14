@@ -73,14 +73,17 @@ function setupProductosForm() {
             };
             reader.readAsDataURL(input.files[0]);
         } else {
-            previewContainer.addClass('hidden');
+            // Si no hay archivo seleccionado y no estamos en edición, ocultar la previsualización
+            if ($('input[name="foto_actual"]').length === 0) {
+                previewContainer.addClass('hidden');
+            }
         }
     }
     
     // Crear contenedor de previsualización si no existe
     if ($('#preview-container').length === 0) {
         const previewContainer = $('<div id="preview-container" class="mt-4 hidden"></div>');
-        previewContainer.append('<h4 class="text-sm font-medium text-gray-900 mb-2">Vista previa:</h4>');
+        previewContainer.append('<h4 class="text-sm font-medium text-gray-900 mb-2">Vista previa de la nueva imagen:</h4>');
         
         const imageContainer = $('<div class="relative inline-block"></div>');
         imageContainer.append('<img id="preview-image" class="w-32 h-32 object-cover rounded-lg">');
@@ -128,12 +131,6 @@ function setupProductosForm() {
         const action = isEditing ? 'editar' : 'crear';
         
         console.log('Acción:', action);
-        if (isEditing) {
-            console.log('ID:', formData.get('id'));
-        }
-        console.log('Nombre:', formData.get('nombre'));
-        console.log('Stock:', formData.get('stock'));
-        console.log('Precio:', formData.get('precio'));
         
         // Mostrar loading
         Swal.fire({
@@ -145,9 +142,9 @@ function setupProductosForm() {
             }
         });
         
-        // Enviar datos
+        // Enviar formulario
         $.ajax({
-            url: `../assets/php/MVC/Controlador/productos-controlador.php?accion=${action}`,
+            url: '../assets/php/MVC/Controlador/productos-controlador.php?accion=' + action,
             type: 'POST',
             data: formData,
             processData: false,
@@ -155,21 +152,31 @@ function setupProductosForm() {
             success: function(response) {
                 console.log('Respuesta del servidor:', response);
                 try {
-                    const result = JSON.parse(response);
-                    if (result.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: result.message
-                        }).then(() => {
-                            window.location.href = 'productos.php';
-                        });
+                    // Intentar extraer solo la parte JSON de la respuesta
+                    const jsonStartPos = response.indexOf('{');
+                    const jsonEndPos = response.lastIndexOf('}') + 1;
+                    
+                    if (jsonStartPos >= 0 && jsonEndPos > jsonStartPos) {
+                        const jsonStr = response.substring(jsonStartPos, jsonEndPos);
+                        const result = JSON.parse(jsonStr);
+                        
+                        if (result.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                text: result.message
+                            }).then(() => {
+                                window.location.href = 'productos.php';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: result.message || 'Ocurrió un error al procesar la solicitud'
+                            });
+                        }
                     } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: result.message || 'Ocurrió un error al procesar la solicitud'
-                        });
+                        throw new Error('No se encontró JSON válido en la respuesta');
                     }
                 } catch (e) {
                     console.error('Error al procesar la respuesta:', e);
