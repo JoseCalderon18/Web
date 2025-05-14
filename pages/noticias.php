@@ -27,8 +27,8 @@
             // Verificar si el usuario tiene sesión iniciada
             if(isset($_SESSION['usuario_id'])) {
                 // Si tiene sesión, mostrar botones para usuario logueado
-                echo '<a href="blogform.php" class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
-                    <i class="fas fa-plus-circle mr-2"></i> Añadir tu reseña
+                echo '<a href="noticiasForm.php" class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
+                    <i class="fas fa-plus-circle mr-2"></i> Añadir tu noticia
                 </a>';
                 
                 echo '<a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" class="bg-red-600 hover:bg-red-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center mx-auto">
