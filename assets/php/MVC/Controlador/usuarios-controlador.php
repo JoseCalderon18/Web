@@ -234,6 +234,31 @@ class UsuariosControlador {
             ]);
         }
     }
+
+    public function obtenerClientes() {
+        try {
+            // Verificar si el usuario es administrador
+            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No tienes permisos para realizar esta acción'
+                ]);
+                return;
+            }
+            
+            $clientes = $this->modelo->obtenerClientes();
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $clientes
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
 
 // Solo procesar acciones AJAX
@@ -266,6 +291,9 @@ if (isset($_GET['accion'])) {
             break;
         case 'crearUsuario':
             $controlador->crearUsuario();
+            break;
+        case 'obtenerClientes':
+            $controlador->obtenerClientes();
             break;
     }
 }

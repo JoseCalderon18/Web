@@ -115,4 +115,14 @@ class UsuariosModelo {
             throw new Exception("Error al verificar el email: " . $e->getMessage());
         }
     }
+
+    public function obtenerClientes() {
+        try {
+            $sql = "SELECT id, nombre, email FROM usuarios WHERE rol = 'cliente'";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener los clientes: " . $e->getMessage());
+        }
+    }
 }

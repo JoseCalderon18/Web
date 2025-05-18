@@ -20,6 +20,19 @@ class CitasModelo {
             throw new Exception("Error al obtener las citas: " . $e->getMessage());
         }
     }
+    
+    public function obtenerCitasTerapias() {
+        try {
+            $sql = "SELECT c.*, u.nombre as nombre_usuario 
+                    FROM citas c 
+                    JOIN usuarios u ON c.usuario_id = u.id 
+                    WHERE c.tipo = 'terapia'";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Error al obtener las citas de terapias: " . $e->getMessage());
+        }
+    }
 
     public function crearCita($usuario_id, $fecha_inicio, $fecha_fin, $motivo, $tipo = 'general') {
         try {
@@ -38,6 +51,49 @@ class CitasModelo {
             throw new Exception("Error al crear la cita: " . $e->getMessage());
         }
     }
+    
+    public function actualizarCita($id, $motivo, $fecha_inicio = null, $fecha_fin = null) {
+        try {
+            // Si se proporcionan fechas, actualizarlas también
+            if ($fecha_inicio && $fecha_fin) {
+                $sql = "UPDATE citas 
+                        SET motivo = :motivo, 
+                            fecha_inicio = :fecha_inicio, 
+                            fecha_fin = :fecha_fin 
+                        WHERE id = :id";
+                
+                $stmt = $this->db->prepare($sql);
+                return $stmt->execute([
+                    ':id' => $id,
+                    ':motivo' => $motivo,
+                    ':fecha_inicio' => $fecha_inicio,
+                    ':fecha_fin' => $fecha_fin
+                ]);
+            } else {
+                // Si no hay fechas, solo actualizar el motivo
+                $sql = "UPDATE citas SET motivo = :motivo WHERE id = :id";
+                
+                $stmt = $this->db->prepare($sql);
+                return $stmt->execute([
+                    ':id' => $id,
+                    ':motivo' => $motivo
+                ]);
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Error al actualizar la cita: " . $e->getMessage());
+        }
+    }
+    
+    public function eliminarCita($id) {
+        try {
+            $sql = "DELETE FROM citas WHERE id = :id";
+            
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            throw new Exception("Error al eliminar la cita: " . $e->getMessage());
+        }
+    }
 
     public function verificarDisponibilidad($fecha_inicio, $fecha_fin) {
         try {
@@ -48,6 +104,28 @@ class CitasModelo {
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
+                ':inicio' => $fecha_inicio,
+                ':fin' => $fecha_fin
+            ]);
+
+            return $stmt->fetchColumn() === 0;
+        } catch (PDOException $e) {
+            throw new Exception("Error al verificar disponibilidad: " . $e->getMessage());
+        }
+    }
+    
+    public function verificarDisponibilidadExcluyendo($fecha_inicio, $fecha_fin, $id_excluir) {
+        try {
+            $sql = "SELECT COUNT(*) FROM citas 
+                    WHERE id != :id_excluir AND (
+                        (fecha_inicio BETWEEN :inicio AND :fin 
+                        OR fecha_fin BETWEEN :inicio AND :fin)
+                        OR (:inicio BETWEEN fecha_inicio AND fecha_fin)
+                    )";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':id_excluir' => $id_excluir,
                 ':inicio' => $fecha_inicio,
                 ':fin' => $fecha_fin
             ]);
