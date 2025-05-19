@@ -42,15 +42,24 @@ if ($es_edicion) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
 </head>
-<body class="bg-beige">
+<body class="bg-beige flex flex-col">
     <!-- Header -->
     <?php require_once '../includes/header.php'; ?>
 
     <!-- Contenido principal -->
-    <main class="py-12 px-4 md:px-24 max-w-4xl mx-auto">
-        <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
-            <h1 class="text-2xl md:text-3xl font-serif font-bold text-green-800 mb-6 text-center"><?= $titulo_pagina ?></h1>
-            
+    <main class="flex-grow py-12 px-4 md:px-24">
+        <!-- Encabezado de sección -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-green-800 mb-4 font-display-CormorantGaramond">
+                <?= $titulo_pagina ?>
+            </h1>
+            <p class="text-gray-600 max-w-2xl my-5 mx-auto">
+                Complete los detalles de la noticia a continuación.
+            </p>
+        </div>
+
+        <!-- Formulario -->
+        <div class="bg-white rounded-xl my-4 md:my-10 p-4 md:p-8 shadow-lg max-w-2xl mx-auto">
             <form id="newsForm" class="space-y-6" enctype="multipart/form-data">
                 <?php if ($es_edicion): ?>
                     <input type="hidden" name="id" value="<?= $noticia['id'] ?>">
@@ -59,62 +68,79 @@ if ($es_edicion) {
                     <?php endif; ?>
                 <?php endif; ?>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <label for="titulo" class="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                        <input type="text" id="titulo" name="titulo" 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                               value="<?= $es_edicion ? htmlspecialchars($noticia['titulo']) : '' ?>" 
-                               required>
-                    </div>
-                    
-                    <div class="md:col-span-2">
-                        <label for="contenido" class="block text-sm font-medium text-gray-700 mb-1">Contenido</label>
-                        <textarea id="contenido" name="contenido" rows="8" 
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                                  required><?= $es_edicion ? htmlspecialchars($noticia['contenido']) : '' ?></textarea>
-                    </div>
-                    
-                    <div>
-                        <label for="fecha" class="block text-sm font-medium text-gray-700 mb-1">Fecha de publicación</label>
-                        <input type="date" id="fecha" name="fecha" 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                               value="<?= $es_edicion ? $noticia['fecha_publicacion'] : date('Y-m-d') ?>" 
-                               required>
-                    </div>
-                    
-                    <div>
-                        <label for="imagen" class="block text-sm font-medium text-gray-700 mb-1">
-                            <?= $es_edicion ? 'Imagen (dejar vacío para mantener la actual)' : 'Imagen' ?>
-                        </label>
-                        <input type="file" id="imagen" name="imagen" accept="image/*" 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" 
-                               <?= $es_edicion ? '' : 'required' ?>>
-                    </div>
-                    
-                    <div class="md:col-span-2">
-                        <?php if ($es_edicion && !empty($noticia['imagen_url'])): ?>
-                            <div class="mt-2">
-                                <p class="text-sm text-gray-500 mb-2">Imagen actual:</p>
-                                <img id="preview" src="/<?= htmlspecialchars($noticia['imagen_url']) ?>" 
-                                     alt="Vista previa" class="max-h-48 rounded-lg border border-gray-300">
-                            </div>
-                        <?php else: ?>
-                            <div class="mt-2">
-                                <p class="text-sm text-gray-500 mb-2">Vista previa:</p>
-                                <img id="preview" src="" alt="Vista previa" 
-                                     class="max-h-48 rounded-lg border border-gray-300 hidden">
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                <!-- Título -->
+                <div class="mb-4">
+                    <label for="titulo" class="block mb-2 text-sm font-medium text-gray-900">Título <span class="text-red-500">*</span></label>
+                    <input type="text" id="titulo" name="titulo" 
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                           value="<?= $es_edicion ? htmlspecialchars($noticia['titulo']) : '' ?>" 
+                           required>
                 </div>
                 
-                <div class="flex justify-center space-x-4 pt-4">
-                    <a href="noticias.php" class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                <!-- Contenido -->
+                <div class="mb-4">
+                    <label for="contenido" class="block mb-2 text-sm font-medium text-gray-900">Contenido <span class="text-red-500">*</span></label>
+                    <textarea id="contenido" name="contenido" rows="6" 
+                              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                              required><?= $es_edicion ? htmlspecialchars($noticia['contenido']) : '' ?></textarea>
+                    <p class="mt-1 text-sm text-gray-500">Describe detalladamente la noticia o artículo.</p>
+                </div>
+                
+                <!-- Fecha de publicación -->
+                <div class="mb-4">
+                    <label for="fecha" class="block mb-2 text-sm font-medium text-gray-900">Fecha de publicación <span class="text-red-500">*</span></label>
+                    <input type="date" id="fecha" name="fecha" 
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                           value="<?= $es_edicion ? $noticia['fecha_publicacion'] : date('Y-m-d') ?>" 
+                           required>
+                </div>
+                
+                <!-- Imagen (opcional) -->
+                <div class="mb-4">
+                    <label for="imagen" class="block mb-2 text-sm font-medium text-gray-900">
+                        Imagen <?= $es_edicion ? '(opcional)' : '(opcional)' ?>
+                    </label>
+                    <?php if ($es_edicion && !empty($noticia['imagen_url'])): ?>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Imagen actual:</p>
+                            <img id="preview" src="/<?= htmlspecialchars($noticia['imagen_url']) ?>" 
+                                 alt="Vista previa" class="w-32 h-32 object-cover rounded-lg">
+                            <input type="hidden" name="imagen_actual" value="<?= $noticia['imagen_url'] ?>">
+                        </div>
+                    <?php endif; ?>
+                    <input type="file" id="imagen" name="imagen" accept="image/*" 
+                           class="mt-1 block w-full text-sm text-gray-500
+                                  file:mr-4 file:py-2 file:px-4
+                                  file:rounded-md file:border-0
+                                  file:text-sm file:font-semibold
+                                  file:bg-green-50 file:text-green-700
+                                  hover:file:bg-green-100">
+                    <p class="mt-1 text-sm text-gray-500">
+                        <?php if ($es_edicion): ?>
+                            Sube una nueva imagen solo si deseas cambiar la actual.
+                        <?php else: ?>
+                            Selecciona una imagen para la noticia. Si no seleccionas ninguna, se usará un color de fondo verde en la tarjeta.
+                        <?php endif; ?>
+                    </p>
+                    
+                    <?php if (!$es_edicion || empty($noticia['imagen_url'])): ?>
+                        <div class="mt-2">
+                            <img id="preview" src="" alt="Vista previa" class="w-32 h-32 object-cover rounded-lg hidden">
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="flex justify-end space-x-4">
+                    <a href="noticias.php" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                         Cancelar
                     </a>
-                    <button type="submit" class="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors">
-                        <?= $es_edicion ? 'Actualizar' : 'Publicar' ?>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <?php if ($es_edicion): ?>
+                            Guardar cambios
+                        <?php else: ?>
+                            Publicar noticia
+                        <?php endif; ?>
                     </button>
                 </div>
             </form>
@@ -126,7 +152,7 @@ if ($es_edicion) {
 
     <!-- Scripts -->
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/noticias.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
+    <script src="../assets/js/productos.js"></script>
 </body>
 </html>

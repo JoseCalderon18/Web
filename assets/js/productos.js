@@ -6,6 +6,98 @@ $(document).ready(function() {
     
     // Funcionalidad para el formulario de productos (crear/editar)
     setupProductosForm();
+
+    // Funcionalidad para el formulario de noticias
+    if ($('#newsForm').length > 0) {
+        // Vista previa de imagen
+        $('#imagen').on('change', function() {
+            const file = this.files[0];
+            const preview = $('#preview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.attr('src', e.target.result).removeClass('hidden');
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.addClass('hidden').attr('src', '');
+            }
+        });
+        
+        // Envío del formulario de noticia
+        $('#newsForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            // Crear FormData para enviar archivos
+            const formData = new FormData(this);
+            
+            // Verificar si es edición o creación
+            const isEditing = formData.has('id') && formData.get('id') !== '';
+            
+            // URL de la acción
+            const url = '../assets/php/MVC/Controlador/noticias-controlador.php?accion=' + 
+                        (isEditing ? 'actualizarNoticia' : 'crearNoticia');
+            
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Espera mientras procesamos tu solicitud',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Enviar formulario
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    try {
+                        const data = JSON.parse(response);
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Éxito!',
+                                text: data.message,
+                                confirmButtonColor: '#4A6D50'
+                            }).then(() => {
+                                window.location.href = 'noticias.php';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message,
+                                confirmButtonColor: '#4A6D50'
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error al parsear la respuesta:', e);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al procesar la respuesta del servidor',
+                            confirmButtonColor: '#4A6D50'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al conectar con el servidor',
+                        confirmButtonColor: '#4A6D50'
+                    });
+                }
+            });
+        });
+    }
 });
 
 function setupProductosLista() {

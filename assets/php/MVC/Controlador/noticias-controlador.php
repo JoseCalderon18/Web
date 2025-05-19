@@ -14,201 +14,199 @@ class NoticiasControlador {
         $this->modelo = new NoticiasModelo();
     }
 
+    // Método para manejar las solicitudes
+    public function __destruct() {
+        // Si hay una acción en la URL, procesarla
+        if (isset($_GET['accion'])) {
+            $accion = $_GET['accion'];
+            
+            switch ($accion) {
+                case 'crearNoticia':
+                    $this->crearNoticia();
+                    break;
+                case 'actualizarNoticia':
+                    $this->actualizarNoticia();
+                    break;
+                case 'eliminarNoticia':
+                    $this->eliminarNoticia();
+                    break;
+                case 'obtenerNoticia':
+                    $this->obtenerNoticia();
+                    break;
+                // Otras acciones...
+            }
+        }
+    }
+
     // Obtener todas las noticias
     public function obtenerNoticias($limite = 10, $offset = 0) {
         return $this->modelo->obtenerNoticias($limite, $offset);
     }
 
-    // Obtener una noticia por su ID
+    // Obtener una noticia por ID
     public function obtenerNoticiaPorId($id) {
         return $this->modelo->obtenerNoticiaPorId($id);
     }
 
+    // Método para la API: obtener noticia
+    private function obtenerNoticia() {
+        // Verificar si se proporcionó un ID
+        if (!isset($_GET['id']) || empty($_GET['id'])) {
+            echo json_encode(['success' => false, 'message' => 'ID de noticia no proporcionado']);
+            return;
+        }
+        
+        $id = $_GET['id'];
+        $noticia = $this->modelo->obtenerNoticiaPorId($id);
+        
+        if ($noticia) {
+            echo json_encode(['success' => true, 'noticia' => $noticia]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Noticia no encontrada']);
+        }
+    }
+
     // Crear una nueva noticia
-    public function crearNoticia() {
-        // Verificar si se enviaron los datos del formulario
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Validar datos
-            if (empty($_POST['titulo']) || empty($_POST['contenido']) || empty($_POST['fecha'])) {
-                echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
-                return;
-            }
-
-            // Verificar si se subió una imagen
-            if (!isset($_FILES['imagen']) || $_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
-                echo json_encode(['success' => false, 'message' => 'Debes subir una imagen']);
-                return;
-            }
-
-            // Procesar la imagen
+    private function crearNoticia() {
+        // Verificar sesión
+        if (!isset($_SESSION['usuario_id'])) {
+            echo json_encode(['success' => false, 'message' => 'No autorizado']);
+            return;
+        }
+        
+        // Validar datos
+        if (!isset($_POST['titulo']) || empty($_POST['titulo']) || 
+            !isset($_POST['contenido']) || empty($_POST['contenido']) || 
+            !isset($_POST['fecha']) || empty($_POST['fecha'])) {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+            return;
+        }
+        
+        $titulo = $_POST['titulo'];
+        $contenido = $_POST['contenido'];
+        $fecha = $_POST['fecha'];
+        $usuario_id = $_SESSION['usuario_id'];
+        $imagen_url = '';
+        
+        // Procesar imagen si existe
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
             $imagen_url = $this->procesarImagen($_FILES['imagen']);
-            if (!$imagen_url) {
+            
+            if ($imagen_url === false) {
                 echo json_encode(['success' => false, 'message' => 'Error al procesar la imagen']);
                 return;
             }
-
-            // Obtener datos del formulario
-            $titulo = $_POST['titulo'];
-            $contenido = $_POST['contenido'];
-            $fecha = $_POST['fecha'];
-            $usuario_id = $_SESSION['usuario_id'];
-
-            // Crear la noticia
-            $resultado = $this->modelo->crearNoticia($titulo, $contenido, $imagen_url, $fecha, $usuario_id);
-            
-            if ($resultado) {
-                echo json_encode(['success' => true, 'message' => 'Noticia creada correctamente']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Error al crear la noticia']);
-            }
+        }
+        
+        // Crear noticia
+        $resultado = $this->modelo->crearNoticia($titulo, $contenido, $imagen_url, $fecha, $usuario_id);
+        
+        if ($resultado) {
+            echo json_encode(['success' => true, 'message' => 'Noticia creada con éxito']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            echo json_encode(['success' => false, 'message' => 'Error al crear la noticia']);
         }
     }
 
     // Actualizar una noticia existente
-    public function actualizarNoticia() {
-        // Verificar si se enviaron los datos del formulario
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Validar datos
-            if (empty($_POST['id']) || empty($_POST['titulo']) || empty($_POST['contenido']) || empty($_POST['fecha'])) {
-                echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+    private function actualizarNoticia() {
+        // Verificar sesión
+        if (!isset($_SESSION['usuario_id'])) {
+            echo json_encode(['success' => false, 'message' => 'No autorizado']);
+            return;
+        }
+        
+        // Validar datos
+        if (!isset($_POST['id']) || empty($_POST['id']) || 
+            !isset($_POST['titulo']) || empty($_POST['titulo']) || 
+            !isset($_POST['contenido']) || empty($_POST['contenido']) || 
+            !isset($_POST['fecha']) || empty($_POST['fecha'])) {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+            return;
+        }
+        
+        $id = $_POST['id'];
+        $titulo = $_POST['titulo'];
+        $contenido = $_POST['contenido'];
+        $fecha = $_POST['fecha'];
+        $imagen_url = null; // Usar null para mantener la imagen actual
+        
+        // Procesar imagen si existe una nueva
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+            $imagen_url = $this->procesarImagen($_FILES['imagen']);
+            
+            if ($imagen_url === false) {
+                echo json_encode(['success' => false, 'message' => 'Error al procesar la imagen']);
                 return;
             }
-
-            // Obtener datos del formulario
-            $id = $_POST['id'];
-            $titulo = $_POST['titulo'];
-            $contenido = $_POST['contenido'];
-            $fecha = $_POST['fecha'];
-            $imagen_actual = isset($_POST['imagen_actual']) ? $_POST['imagen_actual'] : null;
-            
-            // Verificar si se subió una nueva imagen
-            $imagen_url = null;
-            if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
-                $imagen_url = $this->procesarImagen($_FILES['imagen']);
-                if (!$imagen_url) {
-                    echo json_encode(['success' => false, 'message' => 'Error al procesar la imagen']);
-                    return;
-                }
-                
-                // Eliminar la imagen anterior si existe
-                if ($imagen_actual) {
-                    $ruta_imagen = $_SERVER['DOCUMENT_ROOT'] . '/' . $imagen_actual;
-                    if (file_exists($ruta_imagen)) {
-                        unlink($ruta_imagen);
-                    }
-                }
-            }
-
-            // Actualizar la noticia
-            $resultado = $this->modelo->actualizarNoticia($id, $titulo, $contenido, $imagen_url, $fecha);
-            
-            if ($resultado) {
-                echo json_encode(['success' => true, 'message' => 'Noticia actualizada correctamente']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Error al actualizar la noticia']);
-            }
+        }
+        
+        // Actualizar noticia
+        $resultado = $this->modelo->actualizarNoticia($id, $titulo, $contenido, $imagen_url, $fecha);
+        
+        if ($resultado) {
+            echo json_encode(['success' => true, 'message' => 'Noticia actualizada con éxito']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            echo json_encode(['success' => false, 'message' => 'Error al actualizar la noticia']);
         }
     }
 
     // Eliminar una noticia
-    public function eliminarNoticia() {
-        // Verificar si se enviaron los datos
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+    private function eliminarNoticia() {
+        try {
+            // Verificar sesión
+            if (!isset($_SESSION['usuario_id'])) {
+                echo json_encode(['success' => false, 'message' => 'No autorizado']);
+                return;
+            }
+            
+            // Validar ID
+            if (!isset($_POST['id']) || empty($_POST['id'])) {
+                echo json_encode(['success' => false, 'message' => 'ID de noticia no proporcionado']);
+                return;
+            }
+            
             $id = $_POST['id'];
             
-            // Obtener la noticia para conseguir la URL de la imagen
-            $noticia = $this->modelo->obtenerNoticiaPorId($id);
-            
-            // Eliminar la noticia
+            // Eliminar noticia
             $resultado = $this->modelo->eliminarNoticia($id);
             
             if ($resultado['success']) {
-                // Eliminar la imagen si existe
-                if (!empty($noticia['imagen_url'])) {
-                    $ruta_imagen = $_SERVER['DOCUMENT_ROOT'] . '/' . $noticia['imagen_url'];
-                    if (file_exists($ruta_imagen)) {
-                        unlink($ruta_imagen);
-                    }
-                }
-                
-                echo json_encode(['success' => true, 'message' => 'Noticia eliminada correctamente']);
+                echo json_encode(['success' => true, 'message' => 'Noticia eliminada con éxito']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Error al eliminar la noticia']);
             }
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+        } catch (Exception $e) {
+            error_log("Error en eliminarNoticia: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Error del servidor: ' . $e->getMessage()]);
         }
     }
 
-    // Obtener una noticia por AJAX
-    public function obtenerNoticia() {
-        if (isset($_GET['id'])) {
-            $noticia = $this->obtenerNoticiaPorId($_GET['id']);
-            if ($noticia) {
-                echo json_encode(['success' => true, 'noticia' => $noticia]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Noticia no encontrada']);
-            }
-        } else {
-            echo json_encode(['success' => false, 'message' => 'ID no proporcionado']);
-        }
-    }
-
-    // Procesar imagen subida
+    // Procesar imagen
     private function procesarImagen($archivo) {
-        $directorio_destino = $_SERVER['DOCUMENT_ROOT'] . '/assets/img/noticias/';
+        $directorio_destino = 'uploads/noticias/';
+        $ruta_completa = $_SERVER['DOCUMENT_ROOT'] . '/' . $directorio_destino;
         
         // Crear directorio si no existe
-        if (!file_exists($directorio_destino)) {
-            mkdir($directorio_destino, 0777, true);
+        if (!file_exists($ruta_completa)) {
+            mkdir($ruta_completa, 0777, true);
         }
         
-        // Generar nombre único para la imagen
-        $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
-        $nombre_archivo = uniqid('noticia_') . '.' . $extension;
-        $ruta_completa = $directorio_destino . $nombre_archivo;
+        // Generar nombre único
+        $nombre_archivo = uniqid() . '_' . basename($archivo['name']);
+        $ruta_archivo = $directorio_destino . $nombre_archivo;
         
         // Mover archivo
-        if (move_uploaded_file($archivo['tmp_name'], $ruta_completa)) {
-            return 'assets/img/noticias/' . $nombre_archivo;
+        if (move_uploaded_file($archivo['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . '/' . $ruta_archivo)) {
+            return $ruta_archivo;
         } else {
             return false;
         }
     }
 }
 
-// Verificar la acción solicitada
-if (isset($_GET['accion'])) {
+// Crear instancia del controlador si se accede directamente
+if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
     $controlador = new NoticiasControlador();
-    $accion = $_GET['accion'];
-    
-    switch ($accion) {
-        case 'obtenerNoticia':
-            $controlador->obtenerNoticia();
-            break;
-            
-        case 'crearNoticia':
-            $controlador->crearNoticia();
-            break;
-            
-        case 'actualizarNoticia':
-            $controlador->actualizarNoticia();
-            break;
-            
-        case 'eliminarNoticia':
-            $controlador->eliminarNoticia();
-            break;
-            
-        default:
-            echo json_encode(['success' => false, 'message' => 'Acción no válida']);
-            break;
-    }
-} else {
-    // Si no hay acción, no hacemos nada
-    // Esto permite incluir el controlador en otros archivos sin ejecutar código adicional
 }
 ?>

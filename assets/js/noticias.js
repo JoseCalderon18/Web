@@ -79,19 +79,17 @@ $(document).ready(function() {
     });
     
     // Eliminar noticia
-    $('.eliminar-noticia').on('click', function(e) {
-        e.preventDefault();
-        
+    $(document).on('click', '.eliminar-noticia', function() {
         const id = $(this).data('id');
-        const titulo = $(this).data('titulo');
+        const card = $(this).closest('.bg-white');
         
         Swal.fire({
             title: '¿Estás seguro?',
-            text: `¿Deseas eliminar la noticia "${titulo}"?`,
+            text: "Esta acción no se puede deshacer",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
+            confirmButtonColor: '#4A6D50',
+            cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
@@ -110,8 +108,16 @@ $(document).ready(function() {
                                     title: '¡Éxito!',
                                     text: data.message,
                                     confirmButtonColor: '#4A6D50'
-                                }).then(() => {
-                                    location.reload();
+                                });
+                                
+                                // Eliminar la tarjeta de la noticia del DOM
+                                card.fadeOut(300, function() {
+                                    $(this).remove();
+                                    
+                                    // Si no quedan noticias, mostrar mensaje
+                                    if ($('.bg-white').length === 0) {
+                                        $('.grid').html('<div class="col-span-full text-center py-8"><p class="text-gray-500">No hay noticias disponibles en este momento.</p></div>');
+                                    }
                                 });
                             } else {
                                 Swal.fire({
@@ -145,9 +151,7 @@ $(document).ready(function() {
     });
     
     // Ver noticia completa
-    $('.ver-noticia').on('click', function(e) {
-        e.preventDefault();
-        
+    $(document).on('click', '.ver-noticia', function() {
         const id = $(this).data('id');
         
         $.ajax({
@@ -165,10 +169,12 @@ $(document).ready(function() {
                             title: noticia.titulo,
                             html: `
                                 <div class="text-left">
-                                    ${noticia.imagen_url ? `<img src="/${noticia.imagen_url}" class="mx-auto mb-4 max-w-full h-auto rounded-lg">` : ''}
+                                    ${noticia.imagen_url ? `<img src="/${noticia.imagen_url}" class="mx-auto mb-4 max-w-full h-auto rounded-lg">` : 
+                                    `<div class="w-full h-48 bg-green-100 flex items-center justify-center mb-4 rounded-lg">
+                                        <i class="fas fa-newspaper text-green-800 text-4xl"></i>
+                                    </div>`}
                                     <p class="text-sm text-gray-500 mb-4">
                                         <i class="far fa-calendar-alt mr-2"></i>${new Date(noticia.fecha_publicacion).toLocaleDateString()}
-                                        ${noticia.autor_nombre ? `<span class="ml-4"><i class="far fa-user mr-2"></i>${noticia.autor_nombre}</span>` : ''}
                                     </p>
                                     <div class="text-gray-700 whitespace-pre-line">${noticia.contenido}</div>
                                 </div>
