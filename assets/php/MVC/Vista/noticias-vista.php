@@ -11,11 +11,10 @@ $es_admin = isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin';
 <main class="py-12 px-4 md:px-24 max-w-7xl mx-auto">
     <!-- Encabezado de sección -->
     <div class="text-center mb-12">
-        <h1 class="text-3xl md:text-4xl font-serif font-bold text-green-800 mb-4">Bienvenidos a nuestro blog</h1>
-        <p class="text-gray-600 max-w-2xl mx-auto">Aquí podrás informarte sobre novedades y noticias relacionadas con los cuidados, la salud y el bienestar tanto de tu cuerpo como de tu mente.</p>
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-green-800 mb-4">Noticias y Artículos</h1>
     </div>
 
-    <!-- Botones de añadir noticia -->
+    <!-- Botones de añadir noticia - Visible para todos los usuarios autenticados -->
     <div class="flex justify-center mx-auto py-10">
         <?php if(isset($_SESSION['usuario_id'])): ?>
             <a href="noticiasForm.php" class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center">
@@ -39,7 +38,7 @@ $es_admin = isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin';
                 <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
                     <?php if(!empty($noticia['imagen_url'])): ?>
                         <div class="h-48 overflow-hidden">
-                            <img src="../<?= htmlspecialchars($noticia['imagen_url']) ?>" 
+                            <img src="/<?= htmlspecialchars($noticia['imagen_url']) ?>" 
                                 alt="<?= htmlspecialchars($noticia['titulo']) ?>" 
                                 class="w-full h-full object-cover">
                         </div>
