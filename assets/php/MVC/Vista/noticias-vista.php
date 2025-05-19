@@ -4,120 +4,117 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Incluir el modelo para obtener las noticias
-require_once __DIR__ . '/../Modelo/noticias-modelo.php';
-
-// Crear instancia del modelo
-$noticias_modelo = new NoticiasModelo();
-
-// Obtener las noticias (con límite de 20)
-$resultado_noticias = $noticias_modelo->obtenerNoticias(20, 0);
-
-// Función para formatear fecha
-function formatearFecha($fecha) {
-    $timestamp = strtotime($fecha);
-    return date('d \d\e F \d\e Y', $timestamp);
-}
+// Verificar si el usuario es administrador
+$es_admin = isset($_SESSION['rol']) && $_SESSION['rol'] === 'admin';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noticias</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lightbox para las imágenes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
-</head>
-<body class="bg-gray-100 min-h-screen">
-    <!-- Contenedor principal -->
-    <div class="container mx-auto px-4 py-8">
-        <h2 class="text-3xl font-serif font-bold text-green-800 mb-8 text-center">Últimas Noticias</h2>
-        
-        <!-- Grid de noticias en 2 columnas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <?php 
-            // Verificar si hay noticias
-            if (empty($resultado_noticias) || !isset($resultado_noticias['noticias']) || empty($resultado_noticias['noticias'])) { 
-            ?>
-                <div class="col-span-2 text-center py-8">
-                    <p class="text-gray-500">No hay noticias disponibles en este momento.</p>
-                </div>
-            <?php 
-            } else {
-                // Iterar sobre las noticias
-                foreach ($resultado_noticias['noticias'] as $noticia) {
-                    // Formatear fecha
-                    $fecha = formatearFecha($noticia['fecha']);
-            ?>
-                <!-- Tarjeta de noticia -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between mb-4">
-                            <div>
-                                <h3 class="font-medium text-gray-900 text-xl mb-2"><?= htmlspecialchars($noticia['titulo']) ?></h3>
-                                <p class="text-sm text-gray-500"><?= $fecha ?></p>
-                            </div>
-                        </div>
-                        <p class="text-gray-700 mb-4"><?= nl2br(htmlspecialchars($noticia['contenido'])) ?></p>
-                        
-                        <?php 
-                        // Mostrar imagen si existe
-                        if (!empty($noticia['imagen_url'])) {
-                            echo '<div class="mt-4">';
-                            echo '<a href="../' . $noticia['imagen_url'] . '" class="block" data-lightbox="noticia-' . $noticia['id'] . '">';
-                            echo '<img src="../' . $noticia['imagen_url'] . '" alt="Imagen de noticia" class="rounded-lg object-cover w-full h-48">';
-                            echo '</a>';
-                            echo '</div>';
-                        }
-                        ?>
-                    </div>
-                </div>
-            <?php 
-                }
-            } 
-            ?>
-        </div>
-        
-        <!-- Formulario para añadir noticia (solo para administradores) -->
-        <?php if (isset($_SESSION['usuario_id']) && $_SESSION['rol'] === 'admin') { ?>
-        <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md mt-12">
-            <h2 class="text-2xl font-serif font-bold text-green-800 mb-6 text-center">Añadir Nueva Noticia</h2>
-            
-            <form id="form-noticia" action="../Controlador/noticias-controlador.php?accion=crearNoticia" method="post" enctype="multipart/form-data" class="space-y-6">
-                <!-- Título -->
-                <div>
-                    <label for="titulo" class="block mb-2 text-sm font-medium text-gray-900">Título</label>
-                    <input type="text" id="titulo" name="titulo" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500" required>
-                </div>
-                
-                <!-- Contenido -->
-                <div>
-                    <label for="contenido" class="block mb-2 text-sm font-medium text-gray-900">Contenido</label>
-                    <textarea id="contenido" name="contenido" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-green-500 focus:border-green-500" required></textarea>
-                </div>
-                
-                <!-- Subir imagen -->
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900">Imagen de la noticia</label>
-                    <input type="file" id="imagen" name="imagen" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
-                    <p class="mt-1 text-sm text-gray-500">Formatos permitidos: JPG, PNG, GIF</p>
-                    
-                    <!-- Vista previa de imagen -->
-                    <div id="image-preview" class="mt-2"></div>
-                </div>
-                
-                <!-- Botón de envío -->
-                <button type="submit" class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Publicar Noticia</button>
-            </form>
-        </div>
-        <?php } ?>
+<main class="py-12 px-4 md:px-24 max-w-7xl mx-auto">
+    <!-- Encabezado de sección -->
+    <div class="text-center mb-12">
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-green-800 mb-4">Bienvenidos a nuestro blog</h1>
+        <p class="text-gray-600 max-w-2xl mx-auto">Aquí podrás informarte sobre novedades y noticias relacionadas con los cuidados, la salud y el bienestar tanto de tu cuerpo como de tu mente.</p>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-    <script src="../js/noticia-vista.js"></script>
-</body>
-</html>
+    <!-- Botones de añadir noticia -->
+    <div class="flex justify-center mx-auto py-10">
+        <?php if(isset($_SESSION['usuario_id'])): ?>
+            <a href="noticiasForm.php" class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center">
+                <i class="fas fa-plus-circle mr-2"></i> Añadir Noticia
+            </a>
+        <?php else: ?>
+            <a href="login.php" class="bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md flex items-center">
+                <i class="fas fa-sign-in-alt mr-2"></i> Inicia sesión para publicar
+            </a>
+        <?php endif; ?>
+    </div>
+
+    <!-- Grid de noticias -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <?php if(empty($noticias)): ?>
+            <div class="col-span-full text-center py-12">
+                <p class="text-gray-500 text-lg">No hay noticias disponibles en este momento.</p>
+            </div>
+        <?php else: ?>
+            <?php foreach($noticias as $noticia): ?>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+                    <?php if(!empty($noticia['imagen_url'])): ?>
+                        <div class="h-48 overflow-hidden">
+                            <img src="../<?= htmlspecialchars($noticia['imagen_url']) ?>" 
+                                alt="<?= htmlspecialchars($noticia['titulo']) ?>" 
+                                class="w-full h-full object-cover">
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-xl font-bold text-green-800 mb-3"><?= htmlspecialchars($noticia['titulo']) ?></h2>
+                            
+                            <?php if($es_admin): ?>
+                                <div class="flex space-x-3">
+                                    <a href="noticiasForm.php?id=<?= $noticia['id'] ?>" 
+                                       class="text-blue-500 hover:text-blue-700 transition-colors">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" class="text-red-500 hover:text-red-700 transition-colors eliminar-noticia" 
+                                       data-id="<?= $noticia['id'] ?>" 
+                                       data-titulo="<?= htmlspecialchars($noticia['titulo']) ?>">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">
+                            <i class="far fa-calendar-alt mr-2"></i><?= date('d \d\e F \d\e Y', strtotime($noticia['fecha_publicacion'])) ?>
+                            <?php if(!empty($noticia['autor_nombre'])): ?>
+                                <span class="ml-4"><i class="far fa-user mr-2"></i><?= htmlspecialchars($noticia['autor_nombre']) ?></span>
+                            <?php endif; ?>
+                        </p>
+                        <div class="text-gray-700 mb-4">
+                            <?php 
+                            $contenido = $noticia['contenido'];
+                            echo (strlen($contenido) > 200) ? htmlspecialchars(substr($contenido, 0, 200)) . '...' : htmlspecialchars($contenido);
+                            ?>
+                        </div>
+                        <a href="#" class="ver-noticia inline-block bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300" data-id="<?= $noticia['id'] ?>">
+                            Leer más
+                        </a>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <!-- Paginación -->
+    <?php if($total_paginas > 1): ?>
+    <div class="flex justify-center my-12">
+        <nav aria-label="Paginación">
+            <ul class="flex items-center -space-x-px h-10 text-base">
+                <li>
+                    <a href="<?= $pagina > 1 ? '?pagina=' . ($pagina - 1) : '#' ?>" 
+                       class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 <?= $pagina <= 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                        <span class="sr-only">Anterior</span>
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                
+                <?php for($i = 1; $i <= $total_paginas; $i++): ?>
+                <li>
+                    <a href="?pagina=<?= $i ?>" 
+                       class="flex items-center justify-center px-4 h-10 leading-tight <?= $i == $pagina ? 'text-white bg-green-700 hover:bg-green-800' : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700' ?> border border-gray-300">
+                        <?= $i ?>
+                    </a>
+                </li>
+                <?php endfor; ?>
+                
+                <li>
+                    <a href="<?= $pagina < $total_paginas ? '?pagina=' . ($pagina + 1) : '#' ?>" 
+                       class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 <?= $pagina >= $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                        <span class="sr-only">Siguiente</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <?php endif; ?>
+</main>
