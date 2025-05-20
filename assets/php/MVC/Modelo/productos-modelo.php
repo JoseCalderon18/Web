@@ -22,15 +22,15 @@ class ProductosModelo {
     }
 
     // Obtener productos paginados
-    public function obtenerTodos($offset, $limit) {
+    public function obtenerTodos($inicio, $cantidadPorPagina) {
         try {
-            $offset = (int)$offset;
-            $limit = (int)$limit;
+            $inicio = (int)$inicio;
+            $cantidadPorPagina = (int)$cantidadPorPagina;
             
-            $sql = "SELECT * FROM productos ORDER BY id DESC LIMIT :offset, :limit";
+            $sql = "SELECT * FROM productos ORDER BY id ASC LIMIT :inicio, :cantidadPorPagina";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
+            $stmt->bindValue(':cantidadPorPagina', $cantidadPorPagina, PDO::PARAM_INT);
             $stmt->execute();
             
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

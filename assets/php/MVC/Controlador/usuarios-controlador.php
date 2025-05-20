@@ -199,11 +199,11 @@ class UsuariosControlador {
             // Asegurar que la página actual no exceda el total de páginas
             $paginaActual = min($paginaActual, $totalPaginas);
             
-            // Calcular el offset para la consulta SQL
-            $offset = ($paginaActual - 1) * $porPagina;
+            // Calcular el inicio para la consulta SQL
+            $inicio = ($paginaActual - 1) * $porPagina;
             
             // Obtener los usuarios para la página actual
-            $usuarios = $this->modelo->obtenerTodos($offset, $porPagina);
+            $usuarios = $this->modelo->obtenerTodos($inicio, $porPagina);
             
             return [
                 'usuarios' => $usuarios,
