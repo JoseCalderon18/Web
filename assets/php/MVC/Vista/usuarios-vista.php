@@ -82,7 +82,14 @@
                                 </td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($usuarios as $usuario): ?>
+                            <?php 
+                            // Ordenar usuarios por ID de menor a mayor
+                            usort($usuarios, function($a, $b) {
+                                return $a['id'] - $b['id'];
+                            });
+                            
+                            foreach ($usuarios as $usuario): 
+                            ?>
                                 <tr class="border-b">
                                     <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base font-medium"><?= htmlspecialchars($usuario["nombre"]) ?></td>
                                     <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base"><?= htmlspecialchars($usuario["email"]) ?></td>
