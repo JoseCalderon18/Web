@@ -49,15 +49,61 @@ $(document).ready(function() {
             return;
         }
 
-        // Si no hay errores, mostrara un mensaje de exito
-        Swal.fire({
-            icon: "success",
-            title: "¡Mensaje enviado!",
-            text: "Nos pondremos en contacto contigo pronto",
-            confirmButtonColor: "#4A6D50"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.reset(); // Limpiar el formulario
+        // Si no hay errores, enviar por AJAX
+        $.ajax({
+            url: '../assets/php/correo.php',
+            type: 'POST',
+            data: {
+                nombre: nombre,
+                email: email,
+                asunto: asunto,
+                mensaje: mensaje
+            },
+            beforeSend: function() {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Enviando mensaje...',
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false
+                });
+            },
+            success: function(response) {
+                try {
+                    const data = JSON.parse(response);
+                    if (data.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "¡Mensaje enviado!",
+                            text: "Nos pondremos en contacto contigo pronto",
+                            confirmButtonColor: "#4A6D50"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $("#formularioContacto")[0].reset(); // Limpiar el formulario
+                            }
+                        });
+                    } else {
+                        throw new Error(data.message || 'Error al enviar el mensaje');
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: error.message || "Hubo un error al enviar el mensaje",
+                        confirmButtonColor: "#4A6D50"
+                    });
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "No se pudo conectar con el servidor",
+                    confirmButtonColor: "#4A6D50"
+                });
             }
         });
     });

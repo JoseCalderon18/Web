@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . '/../Modelo/citas-modelo.php';
 
 class CitasControlador {

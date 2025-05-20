@@ -44,7 +44,7 @@ if ($es_edicion) {
 </head>
 <body class="bg-beige flex flex-col">
     <!-- Header -->
-    <?php require_once '../includes/header.php'; ?>
+    <?php include "../includes/header.php"; ?>
 
     <!-- Contenido principal -->
     <main class="flex-grow py-12 px-4 md:px-24">
@@ -148,7 +148,7 @@ if ($es_edicion) {
     </main>
 
     <!-- Footer -->
-    <?php require_once '../includes/footer.php'; ?>
+    <?php include "../includes/footer.php"; ?>
 
     <!-- Scripts -->
     <script src="../assets/js/script.js"></script>

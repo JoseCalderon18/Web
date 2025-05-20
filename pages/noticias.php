@@ -30,13 +30,13 @@ $total_paginas = ceil($total_noticias / 10);
 </head>
 <body class="bg-beige">
     <!-- Header -->
-    <?php require_once '../includes/header.php'; ?>
+    <?php include "../includes/header.php"; ?>
 
     <!-- Contenido principal - Vista de noticias -->
-    <?php require_once '../assets/php/MVC/Vista/noticias-vista.php'; ?>
+    <?php require_once "../assets/php/MVC/Vista/noticias-vista.php"; ?>
 
     <!-- Footer -->
-    <?php require_once '../includes/footer.php'; ?>
+    <?php include "../includes/footer.php"; ?>
 
     <!-- Scripts -->
     <script>

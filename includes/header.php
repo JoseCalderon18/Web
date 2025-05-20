@@ -34,17 +34,12 @@ if (session_status() === PHP_SESSION_NONE) {
             <li class="w-full sm:w-auto"><a href="../pages/equipo.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Equipo">Equipo</a></li>
             <li class="w-full sm:w-auto"><a href="../pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
             <li class="w-full sm:w-auto"><a href="../pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección noticias">Noticias</a></li>
-            <!-- Solo mostrar enlaces de admin si el usuario tiene rol admin -->
-            <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
-                <li class="w-full sm:w-auto">
-                    <a href="../pages/usuarios.php" 
-                       class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" 
-                       aria-label="Gestión de Usuarios">
-                        Usuarios
-                    </a>
-                </li>
+            <li class="w-full sm:w-auto"><a href="../pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección citas">Citas</a></li>
+            
+            <!-- Enlaces solo para administradores -->
+            <?php if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                <li class="w-full sm:w-auto"><a href="../pages/usuarios.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Gestión de Usuarios">Usuarios</a></li>
                 <li class="w-full sm:w-auto"><a href="../pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Productos">Productos</a></li>
-                <li class="w-full sm:w-auto"><a href="../pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección citas">Citas</a></li>
             <?php endif; ?>
         </ul>
     </nav>

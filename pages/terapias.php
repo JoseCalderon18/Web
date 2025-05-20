@@ -8,7 +8,7 @@
     <link href="../assets/css/src/output.css" rel="stylesheet" alt="Estilos personalizados">
 </head>
 <body>
-    <?php require_once '../includes/header.php'; ?>
+    <?php include "../includes/header.php"; ?>
     
     <main>
         <!-- Primer div -->
@@ -73,7 +73,7 @@
         </div>
     </main>
 
-    <?php require_once '../includes/footer.php'; ?>
+    <?php include "../includes/footer.php"; ?>
 </body>
     <!-- Scripts al final del body -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

@@ -123,7 +123,7 @@
             </div>
         </div>
     </main>
-    <?php require_once "../includes/footer.php"; ?>
+    <?php include "../includes/footer.php"; ?>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

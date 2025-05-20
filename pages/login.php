@@ -89,8 +89,8 @@ if (isset($_SESSION['usuario_id'])) {
             </div>
         </div> 
     </main>
-<!-- Footer -->
-<?php require_once "../includes/footer.php"; ?>
+    <!-- Footer -->
+    <?php include "../includes/footer.php"; ?>
 </body>
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

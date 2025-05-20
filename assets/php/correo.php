@@ -32,24 +32,35 @@ try {
     $mail->SMTPAuth = true;
     
     // Configura aquí tu correo y contraseña de aplicación de Gmail
-    $mail->Username = 'bioespacio.alcobendas@gmail.com';
-    $mail->Password = 'xxxx xxxx xxxx xxxx'; // Aquí va tu contraseña de aplicación
+    $mail->Username = 'tu_correo@gmail.com'; // Cambia esto por tu correo
+    $mail->Password = 'tu_contraseña_de_aplicacion'; // Cambia esto por tu contraseña de aplicación
     
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->CharSet = 'UTF-8';
 
     // Configurar el correo
-    $mail->setFrom('bioespacio.alcobendas@gmail.com', 'BioEspacio Web');
-    $mail->addAddress('bioespacio.alcobendas@gmail.com'); // Correo que recibirá los mensajes
+    $mail->setFrom($email, $nombre);
+    $mail->addAddress('correo_destino@gmail.com'); // Cambia esto por el correo donde quieres recibir los mensajes
     $mail->isHTML(true);
-    $mail->Subject = "Nuevo mensaje de contacto: $asunto";
+    
+    // Asunto según el valor seleccionado
+    $asuntoTexto = match($asunto) {
+        '1' => 'Solicitud de Información',
+        '2' => 'Consulta sobre producto',
+        '3' => 'Consulta sobre terapias',
+        '4' => 'Otro',
+        default => 'Contacto desde la web'
+    };
+
+    $mail->Subject = "Nuevo mensaje de contacto: $asuntoTexto";
     $mail->Body = "
-        <h1>Nuevo mensaje de contacto</h1>
+        <h2>Nuevo mensaje de contacto</h2>
         <p><strong>Nombre:</strong> $nombre</p>
         <p><strong>Email:</strong> $email</p>
-        <p><strong>Asunto:</strong> $asunto</p>
-        <p><strong>Mensaje:</strong> $mensaje</p>
+        <p><strong>Asunto:</strong> $asuntoTexto</p>
+        <p><strong>Mensaje:</strong></p>
+        <p>$mensaje</p>
     ";
 
     $mail->send();

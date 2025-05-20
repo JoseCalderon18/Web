@@ -79,6 +79,26 @@ $(document).ready(function() {
             timeGrid: {
                 dayMaxEventRows: 3
             }
+        },
+        viewDidMount: function(arg) {
+            const calendar = arg.view.calendar;
+            const container = calendar.el;
+            const parentContainer = container.closest('.bg-white');
+            
+            switch(arg.view.type) {
+                case 'dayGridMonth':
+                    container.style.height = '500px';
+                    parentContainer.style.height = 'auto';
+                    break;
+                case 'timeGridWeek':
+                    container.style.height = '700px';
+                    parentContainer.style.height = 'auto';
+                    break;
+                case 'timeGridDay':
+                    container.style.height = '800px';
+                    parentContainer.style.height = 'auto';
+                    break;
+            }
         }
     };
     

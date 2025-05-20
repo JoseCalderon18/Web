@@ -8,7 +8,7 @@
     <link href="../assets/css/src/output.css" rel="stylesheet">
 </head>
 <body>
-    <?php require_once '../includes/header.php'; ?>
+    <?php include "../includes/header.php"; ?>
 
     <main class="bg-beige pt-8 mx-auto px-4 py-10 text-center">
         <h1 class="text-5xl font-display-CormorantGaramond font-bold text-gray-800 mb-10">Nuestro Equipo</h1>
@@ -47,7 +47,7 @@
     </main>
 
 
-    <?php require_once '../includes/footer.php'; ?>
+    <?php include "../includes/footer.php"; ?>
 
     <!-- Scripts al final del body -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

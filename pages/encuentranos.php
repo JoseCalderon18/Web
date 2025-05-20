@@ -11,7 +11,7 @@
 </head>
 <body>
     <!-- Header -->
-    <?php require_once '../includes/header.php'; ?>
+    <?php include "../includes/header.php"; ?>
 
     <main class="bg-beige pt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-2/3 mx-auto">
@@ -139,7 +139,7 @@
     <br><br>
 
     <!-- Footer -->
-    <?php require_once '../includes/footer.php'; ?>
+    <?php include "../includes/footer.php"; ?>
 </body>
 <!-- Scripts -->
 <script src="../assets/js/script.js"></script>
