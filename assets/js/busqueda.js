@@ -7,8 +7,8 @@ $(document).ready(function() {
         const $filas = $('tbody tr');
         const $mensajeNoResultados = $('#mensajeNoResultados');
 
-        // Si hay menos de 2 caracteres, mostrar todas las filas y ocultar mensaje
-        if (searchTerm.length < 2) {
+        // Si no hay caracteres, mostrar todas las filas y ocultar mensaje
+        if (searchTerm.length < 1) {
             $filas.show();
             $mensajeNoResultados.hide();
             return;
