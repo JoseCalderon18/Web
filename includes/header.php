@@ -35,8 +35,14 @@ if (session_status() === PHP_SESSION_NONE) {
             <li class="w-full sm:w-auto"><a href="../pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
             <li class="w-full sm:w-auto"><a href="../pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección noticias">Noticias</a></li>
             <!-- Solo mostrar enlaces de admin si el usuario tiene rol admin -->
-            <?php if(isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
-                <li class="w-full sm:w-auto"><a href="../pages/usuarios.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Usuarios">Usuarios</a></li>
+            <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                <li class="w-full sm:w-auto">
+                    <a href="../pages/usuarios.php" 
+                       class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" 
+                       aria-label="Gestión de Usuarios">
+                        Usuarios
+                    </a>
+                </li>
                 <li class="w-full sm:w-auto"><a href="../pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Productos">Productos</a></li>
                 <li class="w-full sm:w-auto"><a href="../pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección citas">Citas</a></li>
             <?php endif; ?>
@@ -45,6 +51,6 @@ if (session_status() === PHP_SESSION_NONE) {
     <!-- Separador -->
     <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
 </header>
-    <!-- Espacio para compensar el nav fijo -->
-    <div class="h-32 bg-beige"></div>
+    <!-- separado del header -->
+    <div class="bg-beige h-32"></div>
 </html>

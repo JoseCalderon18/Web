@@ -79,25 +79,45 @@ class UsuariosControlador {
 
     // Función para registrar un usuario
     public function registrarUsuario() {
+        header('Content-Type: application/json');
+        
         try {
-            // Validar que todos los campos necesarios estén presentes
-            if (empty($_POST['usuario']) || empty($_POST['correo']) || empty($_POST['contrasenia'])) {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Todos los campos son obligatorios'
-                ]);
-                return;
+            // Debug para ver qué está llegando
+            error_log('POST recibido: ' . print_r($_POST, true));
+
+            // Validar datos
+            if (!isset($_POST['usuario']) || !isset($_POST['correo']) || !isset($_POST['contrasenia'])) {
+                throw new Exception("Faltan datos obligatorios");
             }
 
             $nombre = trim($_POST['usuario']);
             $email = trim($_POST['correo']);
             $password = $_POST['contrasenia'];
 
+            // Verificar si el correo ya existe
+            if ($this->modelo->emailExiste($email)) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Este correo electrónico ya está registrado'
+                ]);
+                return;
+            }
+
+            // Determinar el rol
+            $rol = 'usuario'; // Por defecto, todos son usuarios normales
+            
+            // Solo si es admin puede crear otros admins
+            if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin' && 
+                isset($_POST['from']) && $_POST['from'] === 'admin') {
+                $rol = 'admin';
+            }
+
             // Intentar crear el usuario
-            if ($this->modelo->crearUsuario($nombre, $email, $password)) {
+            if ($this->modelo->crearUsuario($nombre, $email, $password, $rol)) {
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Usuario registrado correctamente'
+                    'message' => 'Usuario registrado correctamente',
+                    'isAdmin' => isset($_POST['from']) && $_POST['from'] === 'admin'
                 ]);
             } else {
                 throw new Exception("Error al crear el usuario");
@@ -161,10 +181,46 @@ class UsuariosControlador {
     // Funcion para obtener todos los usuarios
     public function obtenerTodosLosUsuarios() {
         try {
-            $usuarios = $this->modelo->obtenerTodosLosUsuarios();
-            return $usuarios; // Retorna directamente el array de usuarios
+            // Verificar si el usuario es administrador
+            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
+                throw new Exception("No tienes permisos para ver esta página");
+            }
+
+            $porPagina = 10; // Número de usuarios por página
+            $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $paginaActual = max(1, $paginaActual); // Asegurarse de que no sea menor que 1
+            
+            // Obtener total de registros
+            $totalRegistros = $this->modelo->obtenerTotalUsuarios();
+            
+            // Calcular total de páginas
+            $totalPaginas = max(1, ceil($totalRegistros / $porPagina));
+            
+            // Asegurar que la página actual no exceda el total de páginas
+            $paginaActual = min($paginaActual, $totalPaginas);
+            
+            // Calcular el offset para la consulta SQL
+            $offset = ($paginaActual - 1) * $porPagina;
+            
+            // Obtener los usuarios para la página actual
+            $usuarios = $this->modelo->obtenerTodos($offset, $porPagina);
+            
+            return [
+                'usuarios' => $usuarios,
+                'paginaActual' => $paginaActual,
+                'totalPaginas' => $totalPaginas,
+                'porPagina' => $porPagina,
+                'total' => $totalRegistros
+            ];
         } catch (Exception $e) {
-            return []; // Retorna array vacío en caso de error
+            error_log("Error en obtenerTodosLosUsuarios: " . $e->getMessage());
+            return [
+                'usuarios' => [],
+                'paginaActual' => 1,
+                'totalPaginas' => 1,
+                'porPagina' => $porPagina,
+                'total' => 0
+            ];
         }
     }
 
@@ -197,40 +253,36 @@ class UsuariosControlador {
             // Debug para ver qué está llegando
             error_log('POST recibido: ' . print_r($_POST, true));
 
-            // Validar que todos los campos necesarios estén presentes
-            if (empty($_POST['nombre']) || empty($_POST['email']) || empty($_POST['password'])) {
-                error_log('Campos faltantes: ' . 
-                         'nombre=' . isset($_POST['nombre']) . 
-                         ', email=' . isset($_POST['email']) . 
-                         ', password=' . isset($_POST['password']));
-                
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Todos los campos son obligatorios'
-                ]);
-                return;
+            // Validar datos
+            if (!isset($_POST['usuario']) || !isset($_POST['correo']) || !isset($_POST['contrasenia'])) {
+                throw new Exception("Faltan datos obligatorios");
             }
 
-            $nombre = trim($_POST['nombre']);
-            $email = trim($_POST['email']);
-            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-            $rol = $_POST['rol'] ?? 'usuario';
+            $nombre = trim($_POST['usuario']);
+            $email = trim($_POST['correo']);
+            $password = $_POST['contrasenia'];
 
             // Intentar crear el usuario
-            if ($this->modelo->crearUsuario($nombre, $email, $password, $rol)) {
+            if ($this->modelo->crearUsuario($nombre, $email, $password)) {
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Usuario creado correctamente'
+                    'message' => 'Usuario registrado correctamente'
                 ]);
+                
+                // Si la petición viene del panel de administración, redirigir a usuarios.php
+                if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
+                    header('Location: ../../../../pages/usuarios.php');
+                    exit;
+                }
             } else {
                 throw new Exception("Error al crear el usuario");
             }
 
         } catch (Exception $e) {
-            error_log("Error en crearUsuario: " . $e->getMessage());
+            error_log("Error en registrarUsuario: " . $e->getMessage());
             echo json_encode([
                 'success' => false,
-                'message' => 'Error al crear el usuario: ' . $e->getMessage()
+                'message' => 'Error al registrar el usuario: ' . $e->getMessage()
             ]);
         }
     }

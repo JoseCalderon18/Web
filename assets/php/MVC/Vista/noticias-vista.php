@@ -4,24 +4,59 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
-
 <main class="mx-auto py-8 w-3/4">
-    <div class="text-center mb-8">
-        <h1 class="text-6xl font-bold text-green-800 mb-3 font-display-CormorantGaramond">Noticias y Artículos</h1>
-        <p class="text-gray-600 max-w-2xl mx-auto">
-            Mantente informado sobre las últimas novedades en agricultura ecológica.
-        </p>
-        
-        <?php if (isset($_SESSION['usuario_id'])): ?>
-            <div class="mt-4">
-                <a href="noticiasForm.php" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                    <i class="fas fa-plus mr-2"></i> Añadir Noticia
-                </a>
-            </div>
-        <?php endif; ?>
+    <!-- Cabecera con título y botones -->
+    <div class="flex justify-between items-center mb-8">
+        <!-- Título -->
+        <div class="text-center flex-grow">
+            <h1 class="text-5xl font-bold text-green-800 mb-3 font-display-CormorantGaramond py-6">Noticias y Artículos</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                Mantente informado sobre las últimas novedades en agricultura ecológica.
+            </p>
+        </div>
     </div>
 
-    <!-- Grid con Tailwind -->
+    <!-- Barra de botones -->
+    <div class="flex justify-between items-center mb-8 px-4">
+        <!-- Botón de añadir noticia (izquierda) -->
+        <div>
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <a href="noticiasForm.php" 
+                   class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
+                    <i class="fas fa-plus-circle mr-2"></i>
+                    Añadir Artículo
+                </a>
+            <?php endif; ?>
+        </div>
+
+        <!-- Botón de inicio de sesión (derecha) -->
+        <div>
+            <?php if (!isset($_SESSION['usuario_id'])): ?>
+                <a href="login.php" 
+                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Iniciar Sesión
+                </a>
+            <?php else: ?>
+                <div class="flex gap-4">
+                    <?php if ($_SESSION['usuario_rol'] === 'admin'): ?>
+                        <a href="usuarios.php" 
+                           class="inline-flex items-center px-6 py-3 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors shadow-md">
+                            <i class="fas fa-users mr-2"></i>
+                            Usuarios
+                        </a>
+                    <?php endif; ?>
+                    <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
+                       class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-md">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Cerrar Sesión
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Grid de noticias -->
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <?php if(empty($noticias)): ?>
             <div class="col-span-full text-center py-8">

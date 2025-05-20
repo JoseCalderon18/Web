@@ -28,15 +28,36 @@ class UsuariosModelo {
         }
     }
 
-    // Obtener todos los usuarios
-    public function obtenerTodosLosUsuarios() {
+    // Obtener total de usuarios
+    public function obtenerTotalUsuarios() {
         try {
-            $sql = "SELECT id, nombre, email, rol FROM usuarios";
+            $sql = "SELECT COUNT(*) as total FROM usuarios";
+            $stmt = $this->db->query($sql);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$resultado['total'];
+        } catch (PDOException $e) {
+            error_log("Error en obtenerTotalUsuarios: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    // Obtener usuarios paginados
+    public function obtenerTodos($offset, $limit) {
+        try {
+            // Asegurarnos de que los parámetros son enteros
+            $offset = (int)$offset;
+            $limit = (int)$limit;
+            
+            $sql = "SELECT id, nombre, email, rol FROM usuarios ORDER BY id DESC LIMIT :offset, :limit";
             $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
             $stmt->execute();
+            
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error al obtener usuarios: " . $e->getMessage());
+            error_log("Error en obtenerTodos: " . $e->getMessage());
+            return [];
         }
     }
 
@@ -54,24 +75,33 @@ class UsuariosModelo {
     }
 
     // Crear usuario
-    public function crearUsuario($nombre, $email, $password) {
+    public function crearUsuario($nombre, $email, $password, $rol = 'usuario') {
         try {
+            // Hashear la contraseña
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
-            $rol = 'usuario'; // Rol por defecto
-
-            $sql = "INSERT INTO usuarios (nombre, email, password_hash, rol) 
-                    VALUES (:nombre, :email, :password_hash, :rol)";
             
+            // Preparar la consulta
+            $sql = "INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES (:nombre, :email, :password_hash, :rol)";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':password_hash', $password_hash);
-            $stmt->bindParam(':rol', $rol);
             
-            return $stmt->execute();
+            // Ejecutar la consulta
+            $resultado = $stmt->execute([
+                ':nombre' => $nombre,
+                ':email' => $email,
+                ':password_hash' => $password_hash,
+                ':rol' => $rol
+            ]);
+
+            if ($resultado) {
+                error_log("Usuario creado correctamente: " . $nombre);
+                return true;
+            } else {
+                error_log("Error al crear usuario: " . $nombre);
+                return false;
+            }
         } catch (PDOException $e) {
-            error_log('Error en crearUsuario: ' . $e->getMessage());
-            return false;
+            error_log("Error en crearUsuario: " . $e->getMessage());
+            throw new Exception("Error al crear el usuario: " . $e->getMessage());
         }
     }
 

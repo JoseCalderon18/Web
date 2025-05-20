@@ -32,7 +32,7 @@ $(document).ready(function() {
         }
     }
 
-    // Validacion y envi del formulario de registro
+    // Manejar el envío del formulario
     $("#formularioRegistro").on("submit", function(e) {
         e.preventDefault();
         
@@ -42,36 +42,49 @@ $(document).ready(function() {
         const contrasenia = $("#contrasenia").val();
         const confirmarContrasenia = $("#confirmarContrasenia").val();
         
+        // Validaciones
         let errores = [];
 
         // Validación del nombre de usuario
-        let regexUsuario = /^[a-zA-Z\s0-9]{4,}$/;
-        if (!regexUsuario.test(nombre)) {
-            errores.push("El nombre de usuario no puede tener caracteres especiales o números, y debe tener al menos 4 caracteres");
+        if (!nombre) {
+            errores.push("El nombre de usuario es obligatorio");
+        } else if (nombre.length < 4) {
+            errores.push("El nombre de usuario debe tener al menos 4 caracteres");
         }
 
         // Validación del correo electrónico
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!correo) {
             errores.push("El correo electrónico es obligatorio");
+        } else if (!emailRegex.test(correo)) {
+            errores.push("El formato del correo electrónico no es válido");
         }
 
         // Validación de la contraseña
-        let regexContrasenia = /^[a-zA-Z0-9]{8,}$/;
-        if (!regexContrasenia.test(contrasenia)) {
+        if (!contrasenia) {
+            errores.push("La contraseña es obligatoria");
+        } else if (contrasenia.length < 8) {
             errores.push("La contraseña debe tener al menos 8 caracteres");
         }
 
+        // Validación de confirmación de contraseña
         if (contrasenia !== confirmarContrasenia) {
             errores.push("Las contraseñas no coinciden");
         }
+
+        // Verificar reCAPTCHA
+        const recaptchaResponse = grecaptcha.getResponse();
+        if (!recaptchaResponse) {
+            errores.push("Por favor, completa el captcha");
+        }
         
         // Si hay errores, mostrar alerta
-        if(errores.length > 0){
+        if(errores.length > 0) {
             Swal.fire({
                 icon: "error",
-                title: "Por favor, completa correctamente todos los campos",
+                title: "Por favor, corrige los siguientes errores:",
                 html: errores.join("<br>"),
-                confirmButtonText: "Aceptar",
+                confirmButtonText: "Entendido",
                 confirmButtonColor: "#4A6D50"
             });
             return;
@@ -84,10 +97,12 @@ $(document).ready(function() {
             data: {
                 usuario: nombre,
                 correo: correo,
-                contrasenia: contrasenia
+                contrasenia: contrasenia,
+                'g-recaptcha-response': recaptchaResponse,
+                from: new URLSearchParams(window.location.search).get('from')
             },
             dataType: 'json',
-            success: function(response){
+            success: function(response) {
                 if(response.success) {
                     Swal.fire({
                         icon: "success",
@@ -96,7 +111,8 @@ $(document).ready(function() {
                         confirmButtonColor: "#4A6D50"
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = "login.php";
+                            // Usar la respuesta del servidor para determinar la redirección
+                            window.location.href = response.isAdmin ? "usuarios.php" : "login.php";
                         }
                     });
                 } else {
@@ -108,10 +124,11 @@ $(document).ready(function() {
                     });
                 }
             },
-            error: function(xhr, status, error){
+            error: function(xhr, status, error) {
                 console.log("Error Status:", status);
                 console.log("Error:", error);
                 console.log("Response Text:", xhr.responseText);
+                
                 Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -121,4 +138,4 @@ $(document).ready(function() {
             }
         });
     });
-});
+}); 

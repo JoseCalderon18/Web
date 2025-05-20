@@ -42,9 +42,11 @@ function mostrarGaleria(foto, nombreProducto) {
         title: nombreProducto,
         imageUrl: '../' + foto,
         imageAlt: 'Foto de ' + nombreProducto,
-        width: '50%',
-        imageWidth: '80%',
-        confirmButtonText: 'Cerrar'
+        width: '60%',
+        imageWidth: 'auto',
+        imageHeight: '50vh',
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#166534'
     });
 }
 

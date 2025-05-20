@@ -1,6 +1,4 @@
 <div class="bg-beige">
-    <!-- separado del header -->
-    <div class="bg-beige h-2"></div>
     <!-- Header con datos del usuario -->
     <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8">
         <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
@@ -25,18 +23,31 @@
         </div>
     </div>
 
-    <!-- Título principal -->
-    <h1 class="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-center text-verde font-display-CormorantGaramond my-6 sm:my-8 md:my-10 lg:my-12 px-4">
-        Lista de Productos
-    </h1>
+    <!-- Título y descripción -->
+    <div class=" mx-auto px-4 my-8 py-6">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-verde font-display-CormorantGaramond mb-4 py-4">
+            Lista de Productos
+        </h1>
+        <p class="text-gray-700 text-center">
+            Administra el inventario del herbolario, gestiona productos, precios, stock y mantén la información actualizada.
+        </p>
+    </div>
 
     <div class="mx-auto px-6 mb-6 md:mb-10 w-full">
         <!-- Barra de búsqueda y botón de añadir -->
         <div class="flex flex-row text-black">
             <!-- Barra de búsqueda -->
             <div class="me-auto px-2 mb-6 md:mb-10 w-1/2">
-                <input type="text" id="barraBusqueda" placeholder="Buscar producto" 
-                       class="w-full p-2 border border-black rounded-md">
+                <div class="relative flex items-center">
+                    <input type="text" 
+                           id="barraBusqueda" 
+                           placeholder="Buscar producto..." 
+                           class="w-full pl-4 pr-12 py-3 text-gray-700 bg-white rounded-lg border-3 border-black outline-none"
+                           autocomplete="off">
+                    <button class="absolute right-0 h-full px-4 text-white bg-green-800 rounded-r-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Botón de añadir producto -->
@@ -53,7 +64,7 @@
         </div>
 
         <!-- Tabla de productos -->
-        <div class="mx-auto px-2 mb-12">
+        <div class="mx-auto px-2 mb-12 py-4">
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border">
                 <table class="w-full">
                     <thead class="bg-black text-white">
@@ -132,6 +143,47 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Mensaje cuando no hay resultados -->
+            <div id="mensajeNoResultados" class="text-center py-4 text-gray-500" style="display: none;">
+                No se encontraron resultados para la búsqueda
+            </div>
         </div>
+
+        <!-- Paginación -->
+        <?php if ($totalPaginas > 0): ?>
+            <div class="flex justify-center mt-4 gap-2 pt-8">
+                <!-- Primera página -->
+                <a href="?pagina=1" 
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+
+                <!-- Números de página -->
+                <?php
+                $inicio = max(1, $paginaActual - 2);
+                $fin = min($totalPaginas, $paginaActual + 2);
+
+                for ($i = $inicio; $i <= $fin; $i++):
+                ?>
+                    <a href="?pagina=<?= $i ?>" 
+                       class="px-3 py-2 rounded-lg <?= $i === $paginaActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                        <?= $i ?>
+                    </a>
+                <?php endfor; ?>
+
+                <!-- Última página -->
+                <a href="?pagina=<?= $totalPaginas ?>" 
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </div>
+
+            <!-- Información de paginación -->
+            <div class="text-center mt-4 text-gray-600 mb-8 pb-8">
+                Mostrando página <?= $paginaActual ?> de <?= $totalPaginas ?> 
+                (<?= $total ?> productos en total)
+            </div>
+        <?php endif; ?>
     </div>
 </div>
+<script src="../assets/js/busqueda.js"></script>

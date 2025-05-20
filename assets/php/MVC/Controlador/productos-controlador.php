@@ -20,10 +20,46 @@ class ProductosControlador {
     // Obtener todos los productos
     public function obtenerTodosLosProductos() {
         try {
-            return $this->modelo->obtenerTodos();
+            // Verificar si el usuario es administrador
+            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
+                throw new Exception("No tienes permisos para ver esta página");
+            }
+
+            $porPagina = 10; // Número de productos por página
+            $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $paginaActual = max(1, $paginaActual);
+            
+            // Obtener total de registros
+            $totalRegistros = $this->modelo->obtenerTotalProductos();
+            
+            // Calcular total de páginas
+            $totalPaginas = max(1, ceil($totalRegistros / $porPagina));
+            
+            // Asegurar que la página actual no exceda el total de páginas
+            $paginaActual = min($paginaActual, $totalPaginas);
+            
+            // Calcular el offset para la consulta SQL
+            $offset = ($paginaActual - 1) * $porPagina;
+            
+            // Obtener los productos para la página actual
+            $productos = $this->modelo->obtenerTodos($offset, $porPagina);
+            
+            return [
+                'productos' => $productos,
+                'paginaActual' => $paginaActual,
+                'totalPaginas' => $totalPaginas,
+                'porPagina' => $porPagina,
+                'total' => $totalRegistros
+            ];
         } catch (Exception $e) {
             error_log("Error en obtenerTodosLosProductos: " . $e->getMessage());
-            return [];
+            return [
+                'productos' => [],
+                'paginaActual' => 1,
+                'totalPaginas' => 1,
+                'porPagina' => $porPagina,
+                'total' => 0
+            ];
         }
     }
 

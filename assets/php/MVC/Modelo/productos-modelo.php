@@ -8,12 +8,31 @@ class ProductosModelo {
         $this->db = Conexion::conectar();
     }
 
-    // Obtener todos los productos
-    public function obtenerTodos() {
+    // Obtener total de productos
+    public function obtenerTotalProductos() {
         try {
-            $query = "SELECT * FROM productos ORDER BY id DESC";
-            $stmt = $this->db->prepare($query);
+            $sql = "SELECT COUNT(*) as total FROM productos";
+            $stmt = $this->db->query($sql);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$resultado['total'];
+        } catch (PDOException $e) {
+            error_log("Error en obtenerTotalProductos: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    // Obtener productos paginados
+    public function obtenerTodos($offset, $limit) {
+        try {
+            $offset = (int)$offset;
+            $limit = (int)$limit;
+            
+            $sql = "SELECT * FROM productos ORDER BY id DESC LIMIT :offset, :limit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
             $stmt->execute();
+            
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             error_log("Error en obtenerTodos: " . $e->getMessage());
