@@ -75,47 +75,47 @@
 
         <!-- Modal 1 -->
         <div id="modal1" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                    <div class="relative p-4 w-full max-w-2xl max-h-full">
-                        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Misión
-                                </h3>
-                            </div>
-                            <div class="p-4 md:p-5 space-y-4">
-                                <img src="../assets/img/mision.png" alt="Misión" class="w-full h-auto rounded-lg">
-                                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                    Misión de la empresa.
-                                </p>
-                            </div>
-                            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                <button data-modal-hide="modal1" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
-                            </div>
-                        </div>
+            <div class="relative p-4 w-full max-w-xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Misión
+                        </h3>
+                    </div>
+                    <div class="p-4 md:p-5 space-y-4">
+                        <img src="../assets/img/mision.png" alt="Misión" class="w-full h-auto rounded-lg">
+                        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                            Misión de la empresa.
+                        </p>
+                    </div>
+                    <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <button data-modal-hide="modal1" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
                     </div>
                 </div>
-
-                <!-- Modal 2 -->
-                <div id="modal2" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                    <div class="relative p-4 w-full max-w-2xl max-h-full">
-                        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                    Valores
-                                </h3>
-                            </div>
-                            <div class="p-4 md:p-5 space-y-4">
-                                <img src="../assets/img/valores.png" alt="Valores" class="w-full h-auto rounded-lg">
-                                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                    Valores de la empresa.
-                                </p>
-                            </div>
-                            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                <button data-modal-hide="modal2" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
-                            </div>
-                        </div>
+            </div>
+        </div>
+                
+        <!-- Modal 2 -->
+        <div id="modal2" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div class="relative p-4 w-full max-w-xl max-h-full">
+                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Valores
+                        </h3>
+                    </div>
+                    <div class="p-4 md:p-5 space-y-4">
+                        <img src="../assets/img/valores.png" alt="Valores" class="w-full h-auto rounded-lg">
+                        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                            Valores de la empresa.
+                        </p>
+                    </div>
+                    <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <button data-modal-hide="modal2" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
                     </div>
                 </div>
+            </div>
+        </div>
         
     </main>
 
