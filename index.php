@@ -42,6 +42,10 @@ if (session_status() === PHP_SESSION_NONE) {
                     <li class="w-full sm:w-auto"><a href="pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Productos">Productos</a></li>
                     <li class="w-full sm:w-auto"><a href="pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Citas">Citas</a></li>
                 <?php endif; ?>
+                <!-- Enlace de login con imagen de usuario -->
+                <a href="pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
+                    <img src="assets/img/logoUsuario.png" alt="Icono de usuario" class="w-8 h-8">
+                </a>
             </ul>
         </nav> 
         <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>

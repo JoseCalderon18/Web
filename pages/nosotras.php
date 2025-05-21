@@ -82,7 +82,7 @@
                             Misión
                         </h3>
                     </div>
-                    <div class="p-4 md:p-5 space-y-4">
+                    <div class="p-4 md:p-5 space-y-4 text-center">
                         <img src="../assets/img/mision.png" alt="Misión" class="w-full h-auto rounded-lg">
                         <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                             Misión de la empresa.
@@ -104,7 +104,7 @@
                             Valores
                         </h3>
                     </div>
-                    <div class="p-4 md:p-5 space-y-4">
+                    <div class="p-4 md:p-5 space-y-4 text-center">
                         <img src="../assets/img/valores.png" alt="Valores" class="w-full h-auto rounded-lg">
                         <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                             Valores de la empresa.
