@@ -36,12 +36,20 @@ if (session_status() === PHP_SESSION_NONE) {
             <li class="w-full sm:w-auto"><a href="../pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección noticias">Noticias</a></li>
             <li class="w-full sm:w-auto"><a href="../pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección citas">Citas</a></li>
             
+
+            
             <!-- Enlaces solo para administradores -->
             <?php if (isset($_SESSION['usuario_id']) && $_SESSION['usuario_rol'] === 'admin'): ?>
                 <li class="w-full sm:w-auto"><a href="../pages/usuarios.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Gestión de Usuarios">Usuarios</a></li>
                 <li class="w-full sm:w-auto"><a href="../pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Productos">Productos</a></li>
             <?php endif; ?>
+
+            <!-- Enlace de login con imagen de usuario -->
+            <a href="../pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
+                <img src="../assets/img/logoUsuario.png" alt="Icono de usuario" class="w-8 h-8">
+            </a>
         </ul>
+
     </nav>
     <!-- Separador -->
     <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>

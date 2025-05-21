@@ -11,10 +11,12 @@
                 Última conexión: <?= date('d/m/Y H:i:s') ?>
             </span>
             <div class="flex gap-4">
-                <a href="noticias.php" 
-                   class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
-                    <i class="fas fa-blog mr-2"></i>Noticias
-                </a>
+                <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                    <a href="productos.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-2"></i>Productos
+                    </a>
+                <?php endif; ?>
                 <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
                    class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
                     <i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesión

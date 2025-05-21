@@ -4,6 +4,34 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
+    <?php if (isset($_SESSION['usuario_id'])): ?>
+    <!-- Header con datos del usuario -->
+    <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
+        <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-user mr-2"></i>
+                Usuario: <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+            </span>
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-clock mr-2"></i>
+                Última conexión: <?= date('d/m/Y H:i:s') ?>
+            </span>
+            <div class="flex gap-4">
+                <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                    <a href="productos.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-2"></i>Productos
+                    </a>
+                <?php endif; ?>
+                <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
+                   class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
 <main class="mx-auto py-8 w-3/4">
     <!-- Cabecera con título y botones -->
     <div class="flex justify-between items-center mb-8">
@@ -26,32 +54,6 @@ if (session_status() === PHP_SESSION_NONE) {
                     <i class="fas fa-plus-circle mr-2"></i>
                     Añadir Artículo
                 </a>
-            <?php endif; ?>
-        </div>
-
-        <!-- Botón de inicio de sesión (derecha) -->
-        <div>
-            <?php if (!isset($_SESSION['usuario_id'])): ?>
-                <a href="login.php" 
-                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md">
-                    <i class="fas fa-sign-in-alt mr-2"></i>
-                    Iniciar Sesión
-                </a>
-            <?php else: ?>
-                <div class="flex gap-4">
-                    <?php if ($_SESSION['usuario_rol'] === 'admin'): ?>
-                        <a href="usuarios.php" 
-                           class="inline-flex items-center px-6 py-3 bg-green-800 text-white rounded-lg hover:bg-green-900 transition-colors shadow-md">
-                            <i class="fas fa-users mr-2"></i>
-                            Usuarios
-                        </a>
-                    <?php endif; ?>
-                    <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
-                       class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-md">
-                        <i class="fas fa-sign-out-alt mr-2"></i>
-                        Cerrar Sesión
-                    </a>
-                </div>
             <?php endif; ?>
         </div>
     </div>

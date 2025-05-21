@@ -1,7 +1,7 @@
 <div class="bg-beige">
     <!-- Header con datos del usuario -->
     <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
-        <div class=" mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
+        <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
             <span class="py-2 text-sm md:text-base">
                 <i class="fas fa-user mr-2"></i>
                 Usuario: <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
@@ -10,14 +10,16 @@
                 <i class="fas fa-clock mr-2"></i>
                 Última conexión: <?= date('d/m/Y H:i:s') ?>
             </span>
-            <div class="flex gap-3 md:gap-5">
-                <a href="noticias.php" 
-                   class="px-4 py-2 md:px-6 md:py-3 text-sm md:text-base font-medium bg-green-800 hover:bg-green-800 rounded-lg shadow-md">
-                    <i class="fas fa-blog mr-2 md:mr-3"></i>Noticias
-                </a>
+            <div class="flex gap-4">
+                <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                    <a href="productos.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-2"></i>Productos
+                    </a>
+                <?php endif; ?>
                 <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
-                   class="px-5 py-2 md:px-7 md:py-3 text-sm md:text-base font-medium bg-red-600 hover:bg-red-800 rounded-lg shadow-md">
-                    <i class="fas fa-sign-out-alt mr-2 md:mr-3"></i>Cerrar sesión
+                   class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesión
                 </a>
             </div>
         </div>
