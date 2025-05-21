@@ -42,7 +42,7 @@ class CitasModelo {
     }
 
     // Obtener citas de un usuario
-    public function obtenerCitasUsuario($usuarioId) {
+    public function obtenerCitasPorUsuario($usuarioId) {
         try {
             $sql = "SELECT * FROM citas WHERE usuario_id = :usuario_id ORDER BY fecha ASC, hora ASC";
             $stmt = $this->db->prepare($sql);
@@ -50,22 +50,38 @@ class CitasModelo {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error en obtenerCitasUsuario: " . $e->getMessage());
+            error_log("Error en obtenerCitasPorUsuario: " . $e->getMessage());
             return [];
         }
     }
 
-    // Crear nueva cita
-    public function crearCita($usuarioId, $fecha, $hora, $motivo) {
+    /**
+     * Crea una nueva cita
+     */
+    public function crearCita($usuarioId, $fecha, $hora, $motivo, $tipo = 'general', $nombreCliente = null) {
         try {
-            $sql = "INSERT INTO citas (usuario_id, fecha, hora, motivo, estado) 
-                    VALUES (:usuario_id, :fecha, :hora, :motivo, 'pendiente')";
+            // Validar que el tipo sea válido
+            if (!in_array($tipo, ['general', 'terapias'])) {
+                error_log("Tipo de cita no válido: " . $tipo);
+                return false;
+            }
+
+            $sql = "INSERT INTO citas (usuario_id, fecha, hora, motivo, tipo, nombre_cliente, estado) 
+                    VALUES (:usuario_id, :fecha, :hora, :motivo, :tipo, :nombre_cliente, 'pendiente')";
+            
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':hora', $hora);
             $stmt->bindParam(':motivo', $motivo);
-            return $stmt->execute();
+            $stmt->bindParam(':tipo', $tipo);
+            $stmt->bindParam(':nombre_cliente', $nombreCliente);
+            
+            if ($stmt->execute()) {
+                return $this->db->lastInsertId();
+            }
+            
+            return false;
         } catch (PDOException $e) {
             error_log("Error en crearCita: " . $e->getMessage());
             return false;
@@ -75,7 +91,7 @@ class CitasModelo {
     // Verificar disponibilidad de horario
     public function verificarDisponibilidad($fecha, $hora) {
         try {
-            $sql = "SELECT COUNT(*) as total FROM citas WHERE fecha = :fecha AND hora = :hora";
+            $sql = "SELECT COUNT(*) as total FROM citas WHERE fecha = :fecha AND hora = :hora AND estado != 'cancelada'";
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':hora', $hora);
@@ -102,16 +118,193 @@ class CitasModelo {
         }
     }
 
-    // Actualizar estado de cita (solo admin)
+    /**
+     * Actualiza el estado de una cita
+     */
     public function actualizarEstadoCita($citaId, $estado) {
         try {
-            $sql = "UPDATE citas SET estado = :estado WHERE id = :cita_id";
+            $sql = "UPDATE citas SET estado = :estado WHERE id = :id";
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':cita_id', $citaId, PDO::PARAM_INT);
             $stmt->bindParam(':estado', $estado);
+            $stmt->bindParam(':id', $citaId, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
             error_log("Error en actualizarEstadoCita: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Obtiene las citas para mostrar en el calendario
+     */
+    public function obtenerCitasParaCalendario($inicio = null, $fin = null, $tipo = null) {
+        try {
+            $sql = "SELECT c.*, u.nombre as nombre_usuario 
+                    FROM citas c 
+                    JOIN usuarios u ON c.usuario_id = u.id";
+            
+            $params = [];
+            $whereConditions = [];
+            
+            if ($inicio && $fin) {
+                $whereConditions[] = "c.fecha BETWEEN :inicio AND :fin";
+                $params[':inicio'] = $inicio;
+                $params[':fin'] = $fin;
+            }
+            
+            if ($tipo) {
+                $whereConditions[] = "c.tipo = :tipo";
+                $params[':tipo'] = $tipo;
+            }
+            
+            if (!empty($whereConditions)) {
+                $sql .= " WHERE " . implode(" AND ", $whereConditions);
+            }
+            
+            $sql .= " ORDER BY c.fecha ASC, c.hora ASC";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+            
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerCitasParaCalendario: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene las próximas citas de un usuario
+     */
+    public function obtenerProximasCitas($usuarioId = null, $tipo = null, $limite = 5) {
+        try {
+            $fechaActual = date('Y-m-d');
+            $horaActual = date('H:i:s');
+            
+            if ($usuarioId) {
+                // Si se proporciona un ID de usuario, obtener sus próximas citas
+                $sql = "SELECT * FROM citas 
+                        WHERE usuario_id = :usuario_id";
+                
+                $params = [
+                    ':usuario_id' => $usuarioId,
+                    ':fecha_actual' => $fechaActual,
+                    ':hora_actual' => $horaActual
+                ];
+                
+                if ($tipo) {
+                    $sql .= " AND tipo = :tipo";
+                    $params[':tipo'] = $tipo;
+                }
+                
+                $sql .= " AND (fecha > :fecha_actual 
+                         OR (fecha = :fecha_actual AND hora >= :hora_actual))
+                        ORDER BY fecha ASC, hora ASC 
+                        LIMIT :limite";
+            } else {
+                // Si no se proporciona un ID de usuario, obtener todas las próximas citas
+                $sql = "SELECT c.*, u.nombre as nombre_cliente 
+                        FROM citas c 
+                        JOIN usuarios u ON c.usuario_id = u.id 
+                        WHERE (c.fecha > :fecha_actual OR (c.fecha = :fecha_actual AND c.hora >= :hora_actual))";
+                
+                $params = [
+                    ':fecha_actual' => $fechaActual,
+                    ':hora_actual' => $horaActual
+                ];
+                
+                if ($tipo) {
+                    $sql .= " AND c.tipo = :tipo";
+                    $params[':tipo'] = $tipo;
+                }
+                
+                $sql .= " ORDER BY c.fecha ASC, c.hora ASC
+                        LIMIT :limite";
+            }
+            
+            $stmt = $this->db->prepare($sql);
+            
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+            
+            $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerProximasCitas: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene las próximas citas para el administrador
+     */
+    public function obtenerProximasCitasAdmin($tipo = null, $limite = 10) {
+        try {
+            $fechaActual = date('Y-m-d');
+            
+            $sql = "SELECT c.*, u.nombre as nombre_usuario 
+                    FROM citas c 
+                    JOIN usuarios u ON c.usuario_id = u.id 
+                    WHERE c.fecha >= :fecha_actual";
+            
+            $params = [
+                ':fecha_actual' => $fechaActual
+            ];
+            
+            if ($tipo) {
+                $sql .= " AND c.tipo = :tipo";
+                $params[':tipo'] = $tipo;
+            }
+            
+            $sql .= " ORDER BY c.fecha ASC, c.hora ASC 
+                    LIMIT :limite";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            foreach ($params as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+            
+            $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerProximasCitasAdmin: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Elimina una cita
+     */
+    public function eliminarCita($citaId, $usuarioId = null) {
+        try {
+            $sql = "DELETE FROM citas WHERE id = :id";
+            
+            // Si se proporciona un ID de usuario, verificar que la cita pertenezca a ese usuario
+            if ($usuarioId !== null) {
+                $sql .= " AND usuario_id = :usuario_id";
+            }
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id', $citaId, PDO::PARAM_INT);
+            
+            if ($usuarioId !== null) {
+                $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            }
+            
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en eliminarCita: " . $e->getMessage());
             return false;
         }
     }

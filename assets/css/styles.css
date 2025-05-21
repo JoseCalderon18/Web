@@ -68,6 +68,12 @@
     transform: translateY(0);
 }
 
+/* Estilos para los contenedores de calendario */
+.calendar-container {
+    height: 600px;
+    margin-bottom: 20px;
+}
+
 
 
 

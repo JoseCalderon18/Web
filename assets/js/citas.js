@@ -1,6 +1,81 @@
 $(document).ready(function() {
+    // Agregar estilos CSS personalizados para ajustar tamaños
+    $('<style>')
+        .prop('type', 'text/css')
+        .html(`
+            .fc .fc-toolbar-title {
+                font-size: 1rem !important; /* text-base */
+                font-weight: 400 !important;
+            }
+            .fc .fc-button {
+                font-size: 0.8125rem !important; /* entre text-xs y text-sm */
+                padding: 0.3rem 0.6rem !important;
+            }
+            .fc .fc-col-header-cell-cushion,
+            .fc .fc-daygrid-day-number {
+                font-size: 0.875rem !important; /* text-sm */
+                font-weight: 400 !important;
+            }
+            .fc .fc-timegrid-slot-label-cushion,
+            .fc .fc-event-title,
+            .fc .fc-event-time {
+                font-size: 0.8125rem !important; /* entre text-xs y text-sm */
+                font-weight: 400 !important;
+            }
+        `)
+        .appendTo('head');
+    
     // Obtener el valor de esAdmin desde PHP
     const esAdmin = $('#calendario-general').data('esAdmin') === true;
+    
+    // Verificar si el usuario está autenticado - CORREGIDO
+    function esUsuarioAutenticado() {
+        // Si es admin, definitivamente está autenticado
+        if (esAdmin) {
+            return true;
+        }
+        
+        // Verificar si hay un ID de usuario en la sesión (comprobación directa desde PHP)
+        const usuarioAutenticado = $('body').hasClass('usuario-autenticado') || 
+                                  (typeof usuarioId !== 'undefined' && usuarioId > 0);
+        
+        return usuarioAutenticado;
+    }
+    
+    /**
+     * Verifica si el usuario está logueado antes de permitir sacar una cita
+     * @returns {boolean} true si está logueado, false si no
+     */
+    function verificarLoginParaCita() {
+        console.log("Verificando login. Es admin:", esAdmin);
+        console.log("Usuario autenticado:", esUsuarioAutenticado());
+        
+        // Si el usuario ya está autenticado, permitir continuar
+        if (esUsuarioAutenticado()) {
+            return true;
+        }
+        
+        // Si no está autenticado, mostrar alerta
+        Swal.fire({
+            title: 'Inicio de sesión requerido',
+            text: 'Necesitas estar logueado para sacar una cita',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Iniciar sesión',
+            cancelButtonText: 'Registrarse'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirigir a la página de login
+                window.location.href = 'login.php';
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // Redirigir a la página de registro
+                window.location.href = 'registro.php';
+            }
+        });
+        return false;
+    }
     
     // Horario laboral
     const horarioLaboral = {
@@ -31,7 +106,7 @@ $(document).ready(function() {
         return fecha < ahora;
     }
     
-    // Configuración común para ambos calendarios
+    // Configuración del calendario
     const calendarConfig = {
         headerToolbar: {
             left: 'prev,next today',
@@ -44,19 +119,16 @@ $(document).ready(function() {
         firstDay: 1, // Lunes
         slotMinTime: '10:00:00',
         slotMaxTime: '20:00:00',
-        slotDuration: '00:30:00',
+        slotDuration: '01:00:00',
         allDaySlot: false,
-        height: 'auto',
-        expandRows: true,
-        stickyHeaderDates: true,
-        navLinks: true,
-        dayMaxEvents: true,
         selectable: true,
         selectMirror: true,
-        editable: esAdmin,
-        eventStartEditable: esAdmin,
-        eventDurationEditable: esAdmin,
-        eventOverlap: false,
+        dayMaxEvents: true,
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        },
         businessHours: [
             {
                 daysOfWeek: [1, 2, 3, 4, 5], // Lunes a viernes
@@ -69,563 +141,362 @@ $(document).ready(function() {
                 endTime: '20:00'
             }
         ],
-        nowIndicator: true,
-        eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        },
-        views: {
-            timeGrid: {
-                dayMaxEventRows: 3
-            }
-        },
-        viewDidMount: function(arg) {
-            const calendar = arg.view.calendar;
-            const container = calendar.el;
-            const parentContainer = container.closest('.bg-white');
+        selectAllow: function(selectInfo) {
+            const inicio = selectInfo.start;
+            const fin = selectInfo.end;
             
-            switch(arg.view.type) {
-                case 'dayGridMonth':
-                    container.style.height = '500px';
-                    parentContainer.style.height = 'auto';
-                    break;
-                case 'timeGridWeek':
-                    container.style.height = '700px';
-                    parentContainer.style.height = 'auto';
-                    break;
-                case 'timeGridDay':
-                    container.style.height = '800px';
-                    parentContainer.style.height = 'auto';
-                    break;
+            // Verificar si es día laborable
+            if (!esFechaLaborable(inicio)) {
+                return false;
             }
+            
+            // Verificar si está dentro del horario laboral
+            if (!esHorarioLaboral(inicio)) {
+                return false;
+            }
+            
+            // Verificar si es fecha pasada
+            if (esFechaPasada(inicio)) {
+                return false;
+            }
+            
+            return true;
         }
     };
     
-    // Inicializar calendario general
-    const calendarGeneralEl = document.getElementById('calendario-general');
-    const calendarGeneral = new FullCalendar.Calendar(calendarGeneralEl, {
-        ...calendarConfig,
-        events: {
-            url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=obtenerCitas&tipo=general',
-            method: 'GET',
-            failure: function() {
-                console.error('Error al cargar las citas generales');
+    // Inicializar calendario de citas generales
+    const calendarioGeneral = new FullCalendar.Calendar(
+        document.getElementById('calendario-general'), 
+        {
+            ...calendarConfig,
+            events: function(info, successCallback, failureCallback) {
+                obtenerEventosCalendario('general', info, successCallback, failureCallback);
+            },
+            select: function(info) {
+                manejarSeleccionCalendario(info, 'general');
             }
-        },
-        eventClassNames: function(arg) {
-            return ['fc-event-general'];
-        },
-        eventClick: function(info) {
-            manejarClickEvento(info, 'general', calendarGeneral);
-        },
-        select: function(info) {
-            manejarSeleccion(info, 'general', calendarGeneral);
-        },
-        datesSet: function() {
-            setTimeout(function() {
-                aplicarEstilosCalendario('#calendario-general');
-            }, 100);
         }
-    });
+    );
+    calendarioGeneral.render();
     
-    // Inicializar calendario de terapias
-    const calendarTerapiasEl = document.getElementById('calendario-terapias');
-    const calendarTerapias = new FullCalendar.Calendar(calendarTerapiasEl, {
-        ...calendarConfig,
-        events: {
-            url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=obtenerCitas&tipo=terapia',
-            method: 'GET',
-            failure: function() {
-                console.error('Error al cargar las citas de terapias');
-            }
-        },
-        eventClassNames: function(arg) {
-            return ['fc-event-terapia'];
-        },
-        eventClick: function(info) {
-            manejarClickEvento(info, 'terapia', calendarTerapias);
-        },
-        select: function(info) {
-            manejarSeleccion(info, 'terapia', calendarTerapias);
-        },
-        datesSet: function() {
-            setTimeout(function() {
-                aplicarEstilosCalendario('#calendario-terapias');
-            }, 100);
-        }
-    });
-    
-    // Renderizar ambos calendarios
-    calendarGeneral.render();
-    calendarTerapias.render();
-    
-    // Aplicar estilos personalizados después de renderizar
-    setTimeout(function() {
-        aplicarEstilosCalendario('#calendario-general');
-        aplicarEstilosCalendario('#calendario-terapias');
-    }, 100);
-    
-    // Función para aplicar estilos al calendario
-    function aplicarEstilosCalendario(selector) {
-        // Botones
-        $(`${selector} .fc-button`).css({
-            'background-color': '#4b5563',
-            'border-color': '#4b5563',
-            'color': 'white',
-            'font-weight': '500',
-            'font-size': '0.875rem',
-            'padding': '0.375rem 0.75rem',
-            'border-radius': '0.25rem',
-            'box-shadow': '0 1px 2px rgba(0, 0, 0, 0.05)',
-            'margin': '0 2px'
-        });
-        
-        // Botón activo
-        $(`${selector} .fc-button-active`).css({
-            'background-color': '#1f2937',
-            'border-color': '#1f2937'
-        });
-        
-        // Cabecera de días
-        $(`${selector} .fc-col-header-cell`).css({
-            'background-color': '#15803d',
-            'color': 'white'
-        });
-        
-        $(`${selector} .fc-col-header-cell-cushion`).css({
-            'color': 'white',
-            'text-decoration': 'none',
-            'font-weight': '500',
-            'font-size': '0.875rem'
-        });
-        
-        // Eventos
-        $(`${selector} .fc-event-general`).css({
-            'background-color': '#3b82f6',
-            'border-color': '#3b82f6',
-            'border-radius': '0.25rem',
-            'box-shadow': '0 1px 2px rgba(0, 0, 0, 0.05)'
-        });
-        
-        $(`${selector} .fc-event-terapia`).css({
-            'background-color': '#8b5cf6',
-            'border-color': '#8b5cf6',
-            'border-radius': '0.25rem',
-            'box-shadow': '0 1px 2px rgba(0, 0, 0, 0.05)'
-        });
-        
-        // Título
-        $(`${selector} .fc-toolbar-title`).css({
-            'font-size': '1.25rem',
-            'font-weight': '700',
-            'color': '#15803d'
-        });
-        
-        // Día actual
-        $(`${selector} .fc-day-today`).css('background-color', '#f0fdf4');
-        
-        // Texto de eventos
-        $(`${selector} .fc-event-title, ${selector} .fc-event-time`).css({
-            'color': 'white',
-            'font-size': '0.75rem'
-        });
-        
-        // Celdas de tiempo
-        $(`${selector} .fc-timegrid-slot`).css({
-            'height': '3rem',
-            'background-color': 'white'
-        });
-        
-        // Números de hora
-        $(`${selector} .fc-timegrid-axis-cushion, ${selector} .fc-timegrid-slot-label-cushion`).css({
-            'font-size': '0.75rem',
-            'color': '#4b5563'
-        });
-    }
-    
-    // Función para manejar el clic en un evento
-    function manejarClickEvento(info, tipo, calendar) {
-        if (esAdmin) {
-            // Si es admin, mostrar opciones de editar/eliminar
-            Swal.fire({
-                title: info.event.title,
-                html: `
-                    <div class="text-left">
-                        <p><strong>Fecha:</strong> ${info.event.start.toLocaleDateString()}</p>
-                        <p><strong>Hora:</strong> ${info.event.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${info.event.end.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                        <p><strong>Motivo:</strong> ${info.event.extendedProps.motivo || 'No especificado'}</p>
-                        <p><strong>Tipo:</strong> ${tipo === 'terapia' ? 'Terapia' : 'General'}</p>
-                    </div>
-                `,
-                showCancelButton: true,
-                showDenyButton: true,
-                confirmButtonText: 'Editar',
-                denyButtonText: 'Eliminar',
-                cancelButtonText: 'Cerrar',
-                confirmButtonColor: '#4A6D50',
-                denyButtonColor: '#EF4444',
-                cancelButtonColor: '#6B7280'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Editar cita
-                    editarCita(info.event, tipo);
-                } else if (result.isDenied) {
-                    // Eliminar cita
-                    eliminarCita(info.event.id, tipo);
-                }
-            });
-        } else {
-            // Si es usuario normal, solo mostrar detalles
-            Swal.fire({
-                title: info.event.title,
-                html: `
-                    <div class="text-left">
-                        <p><strong>Fecha:</strong> ${info.event.start.toLocaleDateString()}</p>
-                        <p><strong>Hora:</strong> ${info.event.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                        <p><strong>Motivo:</strong> ${info.event.extendedProps.motivo || 'No especificado'}</p>
-                    </div>
-                `,
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#4A6D50'
-            });
-        }
-    }
-    
-    // Función para manejar la selección de un horario
-    function manejarSeleccion(info, tipo, calendar) {
-        // Verificar si es un día pasado
-        if (esFechaPasada(info.start)) {
-            Swal.fire({
-                title: 'Fecha no disponible',
-                text: 'No puedes reservar citas en fechas pasadas',
-                icon: 'warning',
-                confirmButtonColor: '#4A6D50'
-            });
-            calendar.unselect();
-            return;
-        }
-        
-        // Verificar si es un día laborable
-        if (!esFechaLaborable(info.start)) {
-            Swal.fire({
-                title: 'Día no laborable',
-                text: 'Solo puedes reservar citas de lunes a viernes',
-                icon: 'warning',
-                confirmButtonColor: '#4A6D50'
-            });
-            calendar.unselect();
-            return;
-        }
-        
-        // Verificar si está dentro del horario laboral
-        if (!esHorarioLaboral(info.start)) {
-            Swal.fire({
-                title: 'Horario no disponible',
-                text: 'Solo puedes reservar citas en horario de 10:00-14:00 y 17:00-20:00',
-                icon: 'warning',
-                confirmButtonColor: '#4A6D50'
-            });
-            calendar.unselect();
-            return;
-        }
-        
-        // Mostrar formulario de reserva
-        mostrarFormularioReserva(info.start, info.end, tipo);
-        calendar.unselect();
-    }
-    
-    // Función para mostrar el formulario de reserva
-    function mostrarFormularioReserva(fechaInicio, fechaFin, tipo) {
-        // Formatear fecha para mostrar
-        const fechaFormateada = fechaInicio.toLocaleDateString();
-        const horaInicioFormateada = fechaInicio.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        const horaFinFormateada = fechaFin ? fechaFin.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
-                                  new Date(fechaInicio.getTime() + 30*60000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        // Contenido HTML del formulario
-        let formularioHTML = `
-            <form id="formulario-reserva" class="space-y-4">
-                <div class="mb-4">
-                    <p class="block mb-2 text-sm font-medium text-gray-900">Fecha: ${fechaFormateada}</p>
-                    <p class="block mb-2 text-sm font-medium text-gray-900">Hora: ${horaInicioFormateada} - ${horaFinFormateada}</p>
-                </div>
-                <div class="mb-4">
-                    <label for="motivo" class="block mb-2 text-sm font-medium text-gray-900">Motivo de la cita</label>
-                    <textarea id="motivo" rows="3" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" placeholder="Describe brevemente el motivo de tu cita" required></textarea>
-                </div>
-        `;
-        
-        // Si es admin, añadir selector de cliente
-        if (esAdmin) {
-            formularioHTML += `
-                <div class="mb-4">
-                    <label for="cliente" class="block mb-2 text-sm font-medium text-gray-900">Cliente</label>
-                    <select id="cliente" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                        <option value="" selected disabled>Selecciona un cliente</option>
-                    </select>
-                </div>
-            `;
-            
-            // Cargar lista de clientes
-            $.ajax({
-                url: '../assets/php/MVC/Controlador/usuarios-controlador.php?accion=obtenerClientes',
-                method: 'GET',
-                dataType: 'json',
-                success: function(clientes) {
-                    const selectCliente = document.getElementById('cliente');
-                    if (selectCliente && clientes && clientes.length > 0) {
-                        clientes.forEach(cliente => {
-                            const option = document.createElement('option');
-                            option.value = cliente.id;
-                            option.textContent = `${cliente.nombre} ${cliente.apellidos}`;
-                            selectCliente.appendChild(option);
-                        });
-                    }
+    // Inicializar calendario de terapias (para todos los usuarios)
+    if (document.getElementById('calendario-terapias')) {
+        const calendarioTerapias = new FullCalendar.Calendar(
+            document.getElementById('calendario-terapias'), 
+            {
+                ...calendarConfig,
+                events: function(info, successCallback, failureCallback) {
+                    obtenerEventosCalendario('terapias', info, successCallback, failureCallback);
                 },
-                error: function() {
-                    console.error('Error al cargar la lista de clientes');
+                select: function(info) {
+                    manejarSeleccionCalendario(info, 'terapias');
                 }
-            });
+            }
+        );
+        calendarioTerapias.render();
+    }
+    
+    // Cargar próximas citas
+    cargarProximasCitas('general');
+    if (document.getElementById('lista-citas-terapias')) {
+        cargarProximasCitas('terapias');
+    }
+    
+    // Función para obtener eventos del calendario
+    function obtenerEventosCalendario(tipo, info, successCallback, failureCallback) {
+        $.ajax({
+            url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=obtenerCitas',
+            method: 'GET',
+            data: {
+                tipo: tipo,
+                inicio: info.startStr,
+                fin: info.endStr
+            },
+            dataType: 'json',
+            success: function(response) {
+                try {
+                    if (response.exito) {
+                        successCallback(response.datos);
+                    } else {
+                        failureCallback(response.mensaje);
+                    }
+                } catch (e) {
+                    console.error('Error al procesar la respuesta:', e, response);
+                    failureCallback('Error al procesar la respuesta');
+                }
+            },
+            error: function() {
+                failureCallback('Error de conexión');
+            }
+        });
+    }
+    
+    // Función para cargar próximas citas
+    function cargarProximasCitas(tipo) {
+        console.log("Cargando próximas citas para:", tipo);
+        const $listaCitas = tipo === 'general' ? $('#lista-citas-general') : $('#lista-citas-terapias');
+        
+        if (!$listaCitas.length) {
+            console.log("No se encontró el contenedor para las citas de tipo:", tipo);
+            return;
         }
         
-        formularioHTML += `</form>`;
+        // Mostrar mensaje de cargando
+        $listaCitas.html('<div class="text-center py-4 text-gray-500 lista-cargando">Cargando citas...</div>');
         
-        // Mostrar SweetAlert con el formulario
+        $.ajax({
+            url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=obtenerProximasCitas',
+            method: 'GET',
+            data: { tipo: tipo },
+            dataType: 'json',
+            success: function(response) {
+                try {
+                    console.log("Respuesta de próximas citas:", response);
+                    
+                    if (response.exito) {
+                        $listaCitas.empty();
+                        
+                        if (response.datos.length === 0) {
+                            $listaCitas.html('<div class="text-center py-4 text-gray-500">No hay citas próximas</div>');
+                        } else {
+                            response.datos.forEach(cita => {
+                                // Formatear fecha
+                                const fecha = new Date(cita.fecha + 'T' + cita.hora);
+                                const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                                    weekday: 'short',
+                                    day: '2-digit',
+                                    month: 'short'
+                                });
+                                
+                                const horaFormateada = fecha.toLocaleTimeString('es-ES', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                                
+                                // Crear elemento de lista
+                                const $item = $(`
+                                    <div class="flex items-center p-3 border-b hover:bg-gray-50 transition-colors">
+                                        <div class="flex-1">
+                                            <p class="font-medium">${fechaFormateada} - ${horaFormateada}</p>
+                                            <p class="text-sm text-gray-600">${cita.motivo}</p>
+                                        </div>
+                                        <div class="ml-4">
+                                            <span class="px-2 py-1 text-xs rounded-full ${obtenerClaseEstado(cita.estado)}">${cita.estado}</span>
+                                        </div>
+                                    </div>
+                                `);
+                                
+                                $listaCitas.append($item);
+                            });
+                        }
+                    } else {
+                        console.error('Error al cargar próximas citas:', response.mensaje);
+                        $listaCitas.html('<div class="text-center py-4 text-red-500">Error al cargar citas</div>');
+                    }
+                } catch (e) {
+                    console.error('Error al procesar la respuesta:', e, response);
+                    $listaCitas.html('<div class="text-center py-4 text-red-500">Error al procesar datos</div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error de conexión al cargar próximas citas:', status, error);
+                $listaCitas.html('<div class="text-center py-4 text-red-500">Error de conexión</div>');
+            }
+        });
+    }
+    
+    // Función para obtener clase CSS según estado
+    function obtenerClaseEstado(estado) {
+        switch (estado) {
+            case 'pendiente':
+                return 'bg-yellow-500 text-white';
+            case 'confirmada':
+                return 'bg-green-500 text-white';
+            case 'cancelada':
+                return 'bg-red-500 text-white';
+            case 'completada':
+                return 'bg-blue-500 text-white';
+            default:
+                return 'bg-gray-500 text-white';
+        }
+    }
+    
+    // Función para manejar la selección en el calendario
+    function manejarSeleccionCalendario(info, tipo) {
+        const inicio = info.start;
+        const fin = info.end;
+        
+        // Verificar si el usuario está autenticado
+        if (!verificarLoginParaCita()) {
+            // Guardar datos de la cita en localStorage para recuperarlos después del login
+            localStorage.setItem('cita_pendiente', JSON.stringify({
+                fecha: inicio.toISOString().split('T')[0],
+                hora: inicio.toTimeString().split(' ')[0].substring(0, 5),
+                tipo: tipo
+            }));
+            return;
+        }
+        
+        // Si está autenticado, mostrar formulario de reserva
+        mostrarFormularioReserva(inicio, fin, tipo);
+    }
+    
+    // Función para mostrar formulario de reserva
+    function mostrarFormularioReserva(inicio, fin, tipo) {
+        // Formatear fecha y hora para el formulario
+        const fecha = inicio.toISOString().split('T')[0];
+        const hora = inicio.toTimeString().split(' ')[0].substring(0, 5);
+        
+        // Crear formulario de reserva
         Swal.fire({
             title: 'Reservar cita',
-            html: formularioHTML,
+            html: `
+                <form id="formReservaCita" class="text-left">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha y hora:</label>
+                        <div class="text-gray-800">${inicio.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} a las ${hora}</div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="nombre_cliente" class="block text-sm font-medium text-gray-700 mb-1">Nombre completo:</label>
+                        <input type="text" id="nombre_cliente" name="nombre_cliente" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="motivo" class="block text-sm font-medium text-gray-700 mb-1">Motivo de la cita:</label>
+                        <textarea id="motivo" name="motivo" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" required></textarea>
+                    </div>
+                    <input type="hidden" id="fecha" name="fecha" value="${fecha}">
+                    <input type="hidden" id="hora" name="hora" value="${hora}">
+                    <input type="hidden" id="tipo" name="tipo" value="${tipo}">
+                </form>
+            `,
             showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#6b7280',
             confirmButtonText: 'Reservar',
             cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#4A6D50',
+            showLoaderOnConfirm: true,
             preConfirm: () => {
-                const motivo = document.getElementById('motivo').value;
-                if (!motivo) {
-                    Swal.showValidationMessage('Por favor, indica el motivo de la cita');
-                    return false;
-                }
+                const formData = new FormData(document.getElementById('formReservaCita'));
                 
-                const datos = {
-                    fecha_inicio: fechaInicio.toISOString(),
-                    fecha_fin: fechaFin ? fechaFin.toISOString() : new Date(fechaInicio.getTime() + 30*60000).toISOString(),
-                    motivo: motivo,
-                    tipo: tipo
-                };
-                
-                if (esAdmin) {
-                    const clienteId = document.getElementById('cliente').value;
-                    
-                    if (!clienteId) {
-                        Swal.showValidationMessage('Por favor, selecciona un cliente');
-                        return false;
+                return $.ajax({
+                    url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=crear',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json'
+                }).then(response => {
+                    if (!response.exito) {
+                        throw new Error(response.mensaje || 'Error al crear la cita');
                     }
-                    
-                    datos.cliente_id = clienteId;
-                }
-                
-                return datos;
-            }
+                    return response;
+                }).catch(error => {
+                    Swal.showValidationMessage(`Error: ${error.message || 'Ha ocurrido un error'}`);
+                });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
         }).then((result) => {
             if (result.isConfirmed) {
-                $.ajax({
-                    url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=reservar',
-                    method: 'POST',
-                    data: result.value,
-                    success: function(response) {
-                        try {
-                            const data = JSON.parse(response);
-                            if (data.success) {
-                                calendarGeneral.refetchEvents();
-                                calendarTerapias.refetchEvents();
-                                
-                                Swal.fire({
-                                    title: '¡Reservada!',
-                                    text: 'Tu cita ha sido reservada correctamente',
-                                    icon: 'success',
-                                    confirmButtonColor: '#4A6D50'
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: data.message || 'No se pudo reservar la cita',
-                                    icon: 'error',
-                                    confirmButtonColor: '#4A6D50'
-                                });
-                            }
-                        } catch (e) {
-                            console.error('Error al procesar la respuesta:', e, response);
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Ocurrió un error al procesar la respuesta',
-                                icon: 'error',
-                                confirmButtonColor: '#4A6D50'
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'No se pudo conectar con el servidor',
-                            icon: 'error',
-                            confirmButtonColor: '#4A6D50'
-                        });
+                Swal.fire({
+                    title: '¡Cita reservada!',
+                    text: 'Tu cita ha sido reservada correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#10b981'
+                }).then(() => {
+                    // Recargar calendarios
+                    calendarioGeneral.refetchEvents();
+                    if (typeof calendarioTerapias !== 'undefined' && calendarioTerapias) {
+                        calendarioTerapias.refetchEvents();
                     }
+                    
+                    // Recargar listas de próximas citas
+                    cargarProximasCitas('general');
+                    if (document.getElementById('lista-citas-terapias')) {
+                        cargarProximasCitas('terapias');
+                    }
+                    
+                    // Agregar la nueva cita a la lista inmediatamente
+                    agregarNuevaCitaALista({
+                        fecha: fecha,
+                        hora: hora,
+                        motivo: document.getElementById('motivo').value,
+                        estado: 'pendiente',
+                        tipo: tipo
+                    });
                 });
             }
         });
     }
     
-    // Función para editar una cita (solo admin)
-    function editarCita(evento, tipo) {
-        const fechaInicio = evento.start;
-        const fechaFin = evento.end;
+    // Función para agregar una nueva cita a la lista inmediatamente
+    function agregarNuevaCitaALista(cita) {
+        const $listaCitas = cita.tipo === 'general' ? $('#lista-citas-general') : $('#lista-citas-terapias');
         
-        // Formatear fechas para el formulario
-        const fechaInicioISO = fechaInicio.toISOString().slice(0, 16);
-        const fechaFinISO = fechaFin.toISOString().slice(0, 16);
+        if (!$listaCitas.length) {
+            console.log("No se encontró el contenedor para las citas de tipo:", cita.tipo);
+            return;
+        }
         
-        // Contenido HTML del formulario
-        const contenidoFormulario = `
-            <form id="formulario-editar" class="space-y-4">
-                <input type="hidden" id="id-editar" value="${evento.id}">
-                <div class="mb-4">
-                    <label for="fecha_inicio-editar" class="block mb-2 text-sm font-medium text-gray-900">Fecha y hora de inicio</label>
-                    <input type="datetime-local" id="fecha_inicio-editar" value="${fechaInicioISO}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                </div>
-                <div class="mb-4">
-                    <label for="fecha_fin-editar" class="block mb-2 text-sm font-medium text-gray-900">Fecha y hora de fin</label>
-                    <input type="datetime-local" id="fecha_fin-editar" value="${fechaFinISO}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>
-                </div>
-                <div class="mb-4">
-                    <label for="motivo-editar" class="block mb-2 text-sm font-medium text-gray-900">Motivo de la cita</label>
-                    <textarea id="motivo-editar" rows="3" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" required>${evento.extendedProps.motivo || ''}</textarea>
-                </div>
-            </form>
-        `;
+        // Eliminar mensaje de "No hay citas próximas" si existe
+        const $noCitas = $listaCitas.find('.text-center.py-4.text-gray-500');
+        if ($noCitas.length) {
+            $noCitas.remove();
+        }
         
-        // Mostrar formulario con SweetAlert2
-        Swal.fire({
-            title: 'Editar cita',
-            html: contenidoFormulario,
-            showCancelButton: true,
-            confirmButtonText: 'Guardar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#4A6D50',
-            cancelButtonColor: '#6B7280',
-            preConfirm: () => {
-                const fechaInicio = document.getElementById('fecha_inicio-editar').value;
-                const fechaFin = document.getElementById('fecha_fin-editar').value;
-                const motivo = document.getElementById('motivo-editar').value;
-                
-                if (!fechaInicio || !fechaFin || !motivo) {
-                    Swal.showValidationMessage('Por favor, completa todos los campos');
-                    return false;
-                }
-                
-                return {
-                    id: document.getElementById('id-editar').value,
-                    fecha_inicio: fechaInicio,
-                    fecha_fin: fechaFin,
-                    motivo: motivo,
-                    tipo: tipo
-                };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Enviar datos al servidor
-                $.ajax({
-                    url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=actualizar',
-                    method: 'POST',
-                    data: result.value,
-                    success: function(response) {
-                        try {
-                            const data = JSON.parse(response);
-                            if (data.success) {
-                                // Recargar eventos
-                                calendarGeneral.refetchEvents();
-                                calendarTerapias.refetchEvents();
-                                
-                                Swal.fire({
-                                    title: 'Actualizada',
-                                    text: 'La cita ha sido actualizada correctamente',
-                                    icon: 'success',
-                                    confirmButtonColor: '#4A6D50'
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: data.message || 'No se pudo actualizar la cita',
-                                    icon: 'error',
-                                    confirmButtonColor: '#4A6D50'
-                                });
-                            }
-                        } catch (e) {
-                            console.error('Error al procesar la respuesta:', e, response);
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Ocurrió un error al procesar la respuesta',
-                                icon: 'error',
-                                confirmButtonColor: '#4A6D50'
-                            });
-                        }
-                    }
-                });
-            }
+        // Formatear fecha
+        const fecha = new Date(cita.fecha + 'T' + cita.hora);
+        const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short'
         });
+        
+        const horaFormateada = fecha.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Crear elemento de lista
+        const $item = $(`
+            <div class="flex items-center p-3 border-b hover:bg-gray-50 transition-colors nueva-cita">
+                <div class="flex-1">
+                    <p class="font-medium">${fechaFormateada} - ${horaFormateada}</p>
+                    <p class="text-sm text-gray-600">${cita.motivo}</p>
+                </div>
+                <div class="ml-4">
+                    <span class="px-2 py-1 text-xs rounded-full ${obtenerClaseEstado(cita.estado)}">${cita.estado}</span>
+                </div>
+            </div>
+        `);
+        
+        // Agregar al principio de la lista
+        $listaCitas.prepend($item);
+        
+        // Aplicar efecto de resaltado
+        $item.addClass('bg-green-50');
+        setTimeout(() => {
+            $item.removeClass('bg-green-50');
+        }, 3000);
     }
     
-    // Función para eliminar una cita
-    function eliminarCita(id, tipo) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: 'Esta acción no se puede deshacer',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#EF4444',
-            cancelButtonColor: '#6B7280'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=eliminar',
-                    method: 'POST',
-                    data: { id: id, tipo: tipo },
-                    success: function(response) {
-                        try {
-                            const data = JSON.parse(response);
-                            if (data.success) {
-                                // Recargar eventos
-                                calendarGeneral.refetchEvents();
-                                calendarTerapias.refetchEvents();
-                                
-                                Swal.fire({
-                                    title: 'Eliminada',
-                                    text: 'La cita ha sido eliminada correctamente',
-                                    icon: 'success',
-                                    confirmButtonColor: '#4A6D50'
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: data.message || 'No se pudo eliminar la cita',
-                                    icon: 'error',
-                                    confirmButtonColor: '#4A6D50'
-                                });
-                            }
-                        } catch (e) {
-                            console.error('Error al procesar la respuesta:', e, response);
-                            Swal.fire({
-                                title: 'Error',
-                                text: 'Ocurrió un error al procesar la respuesta',
-                                icon: 'error',
-                                confirmButtonColor: '#4A6D50'
-                            });
-                        }
-                    }
-                });
+    // Verificar si hay una cita pendiente en localStorage después de login
+    if (esUsuarioAutenticado()) {
+        const citaPendiente = localStorage.getItem('cita_pendiente');
+        if (citaPendiente) {
+            try {
+                const datos = JSON.parse(citaPendiente);
+                const inicio = new Date(datos.fecha + 'T' + datos.hora);
+                const fin = new Date(inicio.getTime() + 60 * 60 * 1000); // 1 hora después
+                
+                // Mostrar formulario de reserva
+                setTimeout(() => {
+                    mostrarFormularioReserva(inicio, fin, datos.tipo || 'general');
+                    localStorage.removeItem('cita_pendiente');
+                }, 1000);
+            } catch (e) {
+                console.error('Error al procesar cita pendiente:', e);
+                localStorage.removeItem('cita_pendiente');
             }
-        });
+        }
     }
 });

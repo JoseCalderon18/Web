@@ -8,6 +8,84 @@ class UsuariosModelo {
         $this->db = Conexion::conectar();
     }
 
+    // Verificar credenciales de usuario
+    public function verificarCredenciales($email, $password) {
+        try {
+            $sql = "SELECT * FROM usuarios WHERE email = :email LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($usuario) {
+                // Verificar contraseña
+                if (password_verify($password, $usuario['password_hash'])) {
+                    return $usuario;
+                }
+                
+                // Para la contraseña de prueba (password)
+                if ($password === 'password' && $usuario['password_hash'] === '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi') {
+                    return $usuario;
+                }
+            }
+            
+            return false;
+        } catch (PDOException $e) {
+            error_log("Error en verificarCredenciales: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Obtener usuario por ID
+    public function obtenerUsuarioPorId($id) {
+        try {
+            $sql = "SELECT * FROM usuarios WHERE id = :id LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerUsuarioPorId: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Registrar nuevo usuario
+    public function registrarUsuario($nombre, $email, $password) {
+        try {
+            // Verificar si el email ya existe
+            $sql = "SELECT COUNT(*) FROM usuarios WHERE email = :email";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+            
+            if ($stmt->fetchColumn() > 0) {
+                return ['exito' => false, 'mensaje' => 'El email ya está registrado'];
+            }
+            
+            // Crear hash de la contraseña
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insertar nuevo usuario
+            $sql = "INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES (:nombre, :email, :password_hash, 'usuario')";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':nombre', $nombre);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':password_hash', $passwordHash);
+            
+            if ($stmt->execute()) {
+                return ['exito' => true, 'id' => $this->db->lastInsertId()];
+            } else {
+                return ['exito' => false, 'mensaje' => 'Error al registrar el usuario'];
+            }
+        } catch (PDOException $e) {
+            error_log("Error en registrarUsuario: " . $e->getMessage());
+            return ['exito' => false, 'mensaje' => 'Error en la base de datos'];
+        }
+    }
+
     // Verificar usuario para login
     public function verificarUsuario($email, $password) {
         try {
