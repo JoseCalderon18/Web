@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 // Si ya hay una sesión activa, redirigir a blog.php
 if (isset($_SESSION['usuario_id'])) {
-    header("Location: blog.php");
+    header("Location: noticias.php");
     exit;
 }
 ?>
