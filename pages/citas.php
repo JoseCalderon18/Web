@@ -28,6 +28,7 @@ $controlador = new CitasControlador();
 
     <?php include "../includes/header.php"; ?>
 
+    <?php if (isset($_SESSION['usuario_id'])): ?>
     <!-- Header con datos del usuario -->
     <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
         <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
@@ -53,6 +54,7 @@ $controlador = new CitasControlador();
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <main>
         <div class="bg-beige my-10 py-5">
