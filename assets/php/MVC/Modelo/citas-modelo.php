@@ -8,131 +8,111 @@ class CitasModelo {
         $this->db = Conexion::conectar();
     }
 
-    public function obtenerCitas() {
+    // Obtener todas las citas
+    public function obtenerTodasLasCitas() {
         try {
-            $sql = "SELECT c.*, u.nombre as nombre_usuario 
+            $sql = "SELECT c.*, u.nombre as nombre_cliente 
                     FROM citas c 
                     JOIN usuarios u ON c.usuario_id = u.id 
-                    WHERE c.tipo = 'general'";
+                    ORDER BY c.fecha ASC, c.hora ASC";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error al obtener las citas: " . $e->getMessage());
+            error_log("Error en obtenerTodasLasCitas: " . $e->getMessage());
+            return [];
         }
     }
-    
-    public function obtenerCitasTerapias() {
+
+    // Obtener citas por fecha
+    public function obtenerCitasPorFecha($fecha) {
         try {
-            $sql = "SELECT c.*, u.nombre as nombre_usuario 
+            $sql = "SELECT c.*, u.nombre as nombre_cliente 
                     FROM citas c 
                     JOIN usuarios u ON c.usuario_id = u.id 
-                    WHERE c.tipo = 'terapia'";
-            $stmt = $this->db->query($sql);
+                    WHERE c.fecha = :fecha 
+                    ORDER BY c.hora ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':fecha', $fecha);
+            $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error al obtener las citas de terapias: " . $e->getMessage());
+            error_log("Error en obtenerCitasPorFecha: " . $e->getMessage());
+            return [];
         }
     }
 
-    public function crearCita($usuario_id, $fecha_inicio, $fecha_fin, $motivo, $tipo = 'general') {
+    // Obtener citas de un usuario
+    public function obtenerCitasUsuario($usuarioId) {
         try {
-            $sql = "INSERT INTO citas (usuario_id, fecha_inicio, fecha_fin, motivo, tipo) 
-                    VALUES (:usuario_id, :fecha_inicio, :fecha_fin, :motivo, :tipo)";
-            
+            $sql = "SELECT * FROM citas WHERE usuario_id = :usuario_id ORDER BY fecha ASC, hora ASC";
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
-                ':usuario_id' => $usuario_id,
-                ':fecha_inicio' => $fecha_inicio,
-                ':fecha_fin' => $fecha_fin,
-                ':motivo' => $motivo,
-                ':tipo' => $tipo
-            ]);
+            $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            throw new Exception("Error al crear la cita: " . $e->getMessage());
-        }
-    }
-    
-    public function actualizarCita($id, $motivo, $fecha_inicio = null, $fecha_fin = null) {
-        try {
-            // Si se proporcionan fechas, actualizarlas también
-            if ($fecha_inicio && $fecha_fin) {
-                $sql = "UPDATE citas 
-                        SET motivo = :motivo, 
-                            fecha_inicio = :fecha_inicio, 
-                            fecha_fin = :fecha_fin 
-                        WHERE id = :id";
-                
-                $stmt = $this->db->prepare($sql);
-                return $stmt->execute([
-                    ':id' => $id,
-                    ':motivo' => $motivo,
-                    ':fecha_inicio' => $fecha_inicio,
-                    ':fecha_fin' => $fecha_fin
-                ]);
-            } else {
-                // Si no hay fechas, solo actualizar el motivo
-                $sql = "UPDATE citas SET motivo = :motivo WHERE id = :id";
-                
-                $stmt = $this->db->prepare($sql);
-                return $stmt->execute([
-                    ':id' => $id,
-                    ':motivo' => $motivo
-                ]);
-            }
-        } catch (PDOException $e) {
-            throw new Exception("Error al actualizar la cita: " . $e->getMessage());
-        }
-    }
-    
-    public function eliminarCita($id) {
-        try {
-            $sql = "DELETE FROM citas WHERE id = :id";
-            
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([':id' => $id]);
-        } catch (PDOException $e) {
-            throw new Exception("Error al eliminar la cita: " . $e->getMessage());
+            error_log("Error en obtenerCitasUsuario: " . $e->getMessage());
+            return [];
         }
     }
 
-    public function verificarDisponibilidad($fecha_inicio, $fecha_fin) {
+    // Crear nueva cita
+    public function crearCita($usuarioId, $fecha, $hora, $motivo) {
         try {
-            $sql = "SELECT COUNT(*) FROM citas 
-                    WHERE (fecha_inicio BETWEEN :inicio AND :fin 
-                    OR fecha_fin BETWEEN :inicio AND :fin)
-                    OR (:inicio BETWEEN fecha_inicio AND fecha_fin)";
-            
+            $sql = "INSERT INTO citas (usuario_id, fecha, hora, motivo, estado) 
+                    VALUES (:usuario_id, :fecha, :hora, :motivo, 'pendiente')";
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':inicio' => $fecha_inicio,
-                ':fin' => $fecha_fin
-            ]);
-
-            return $stmt->fetchColumn() === 0;
+            $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            $stmt->bindParam(':fecha', $fecha);
+            $stmt->bindParam(':hora', $hora);
+            $stmt->bindParam(':motivo', $motivo);
+            return $stmt->execute();
         } catch (PDOException $e) {
-            throw new Exception("Error al verificar disponibilidad: " . $e->getMessage());
+            error_log("Error en crearCita: " . $e->getMessage());
+            return false;
         }
     }
-    
-    public function verificarDisponibilidadExcluyendo($fecha_inicio, $fecha_fin, $id_excluir) {
-        try {
-            $sql = "SELECT COUNT(*) FROM citas 
-                    WHERE id != :id_excluir AND (
-                        (fecha_inicio BETWEEN :inicio AND :fin 
-                        OR fecha_fin BETWEEN :inicio AND :fin)
-                        OR (:inicio BETWEEN fecha_inicio AND fecha_fin)
-                    )";
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':id_excluir' => $id_excluir,
-                ':inicio' => $fecha_inicio,
-                ':fin' => $fecha_fin
-            ]);
 
-            return $stmt->fetchColumn() === 0;
+    // Verificar disponibilidad de horario
+    public function verificarDisponibilidad($fecha, $hora) {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM citas WHERE fecha = :fecha AND hora = :hora";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':fecha', $fecha);
+            $stmt->bindParam(':hora', $hora);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$resultado['total'] === 0; // Retorna true si no hay citas en ese horario
         } catch (PDOException $e) {
-            throw new Exception("Error al verificar disponibilidad: " . $e->getMessage());
+            error_log("Error en verificarDisponibilidad: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Cancelar cita
+    public function cancelarCita($citaId, $usuarioId) {
+        try {
+            $sql = "UPDATE citas SET estado = 'cancelada' WHERE id = :cita_id AND usuario_id = :usuario_id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':cita_id', $citaId, PDO::PARAM_INT);
+            $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en cancelarCita: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Actualizar estado de cita (solo admin)
+    public function actualizarEstadoCita($citaId, $estado) {
+        try {
+            $sql = "UPDATE citas SET estado = :estado WHERE id = :cita_id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':cita_id', $citaId, PDO::PARAM_INT);
+            $stmt->bindParam(':estado', $estado);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en actualizarEstadoCita: " . $e->getMessage());
+            return false;
         }
     }
 } 

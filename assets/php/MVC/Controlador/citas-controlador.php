@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../Modelo/citas-modelo.php';
 
 class CitasControlador {
@@ -8,232 +12,239 @@ class CitasControlador {
         $this->modelo = new CitasModelo();
     }
 
-    public function obtenerCitas() {
+    // Obtener todas las citas (solo admin)
+    public function obtenerTodasLasCitas() {
         try {
-            $citas = $this->modelo->obtenerCitas();
-            
-            // Formatear citas para FullCalendar
-            $eventos = [];
-            foreach ($citas as $cita) {
-                $eventos[] = [
-                    'id' => $cita['id'],
-                    'title' => $cita['motivo'],
-                    'start' => $cita['fecha_inicio'],
-                    'end' => $cita['fecha_fin'],
-                    'nombre_usuario' => $cita['nombre_usuario'],
-                    'motivo' => $cita['motivo'],
-                    'className' => 'fc-event-ocupado'
-                ];
+            // Verificar si el usuario es administrador
+            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
+                throw new Exception("No tienes permisos para ver esta información");
             }
-            
-            header('Content-Type: application/json');
-            echo json_encode($eventos);
+
+            return $this->modelo->obtenerTodasLasCitas();
         } catch (Exception $e) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al obtener las citas: ' . $e->getMessage()
-            ]);
-        }
-    }
-    
-    public function obtenerCitasTerapias() {
-        try {
-            $citas = $this->modelo->obtenerCitasTerapias();
-            
-            // Formatear citas para FullCalendar
-            $eventos = [];
-            foreach ($citas as $cita) {
-                $eventos[] = [
-                    'id' => $cita['id'],
-                    'title' => $cita['motivo'],
-                    'start' => $cita['fecha_inicio'],
-                    'end' => $cita['fecha_fin'],
-                    'nombre_usuario' => $cita['nombre_usuario'],
-                    'motivo' => $cita['motivo'],
-                    'className' => 'fc-event-ocupado'
-                ];
-            }
-            
-            header('Content-Type: application/json');
-            echo json_encode($eventos);
-        } catch (Exception $e) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al obtener las citas de terapias: ' . $e->getMessage()
-            ]);
+            error_log("Error en obtenerTodasLasCitas: " . $e->getMessage());
+            return [];
         }
     }
 
+    // Obtener citas por fecha (solo admin)
+    public function obtenerCitasPorFecha($fecha) {
+        try {
+            // Verificar si el usuario es administrador
+            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
+                throw new Exception("No tienes permisos para ver esta información");
+            }
+
+            return $this->modelo->obtenerCitasPorFecha($fecha);
+        } catch (Exception $e) {
+            error_log("Error en obtenerCitasPorFecha: " . $e->getMessage());
+            echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    // Obtener citas del usuario actual
+    public function obtenerMisCitas() {
+        try {
+            // Verificar si el usuario está autenticado
+            if (!isset($_SESSION['usuario_id'])) {
+                throw new Exception("Debes iniciar sesión para ver tus citas");
+            }
+
+            $usuarioId = $_SESSION['usuario_id'];
+            return $this->modelo->obtenerCitasPorUsuario($usuarioId);
+        } catch (Exception $e) {
+            error_log("Error en obtenerMisCitas: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // Crear una nueva cita
     public function crearCita() {
         try {
-            // Verificar si hay un usuario logueado o si es admin creando cita para otro usuario
-            $usuario_id = null;
-            
-            if (isset($_POST['usuario_id']) && isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
-                // Admin creando cita para otro usuario
-                $usuario_id = $_POST['usuario_id'];
-            } elseif (isset($_SESSION['usuario_id'])) {
-                // Usuario normal creando su propia cita
-                $usuario_id = $_SESSION['usuario_id'];
-            } else {
-                throw new Exception('Debes iniciar sesión para reservar una cita');
+            // Verificar si el usuario está autenticado
+            if (!isset($_SESSION['usuario_id'])) {
+                throw new Exception("Debes iniciar sesión para crear una cita");
             }
 
-            if (empty($_POST['fecha_inicio']) || empty($_POST['fecha_fin']) || empty($_POST['motivo'])) {
-                throw new Exception('Todos los campos son obligatorios');
+            // Validar datos
+            if (!isset($_POST['fecha']) || !isset($_POST['hora']) || !isset($_POST['motivo'])) {
+                throw new Exception("Faltan datos obligatorios");
             }
 
-            $fecha_inicio = $_POST['fecha_inicio'];
-            $fecha_fin = $_POST['fecha_fin'];
+            $fecha = $_POST['fecha'];
+            $hora = $_POST['hora'];
             $motivo = $_POST['motivo'];
-            $tipo = isset($_POST['tipo']) ? $_POST['tipo'] : 'general';
+            $usuarioId = $_SESSION['usuario_id'];
 
-            // Validar horario laboral y días
-            $this->validarHorario($fecha_inicio, $fecha_fin);
-
-            // Verificar disponibilidad
-            if (!$this->modelo->verificarDisponibilidad($fecha_inicio, $fecha_fin)) {
-                throw new Exception('El horario seleccionado no está disponible');
+            // Validar disponibilidad
+            if (!$this->modelo->verificarDisponibilidad($fecha, $hora)) {
+                throw new Exception("La hora seleccionada no está disponible");
             }
 
-            if ($this->modelo->crearCita($usuario_id, $fecha_inicio, $fecha_fin, $motivo, $tipo)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Cita creada correctamente'
-                ]);
+            // Crear la cita
+            $resultado = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo);
+            
+            if ($resultado) {
+                echo json_encode(['exito' => true, 'mensaje' => 'Cita creada correctamente']);
             } else {
-                throw new Exception('Error al crear la cita');
+                throw new Exception("Error al crear la cita");
             }
-
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            echo json_encode(['exito' => false, 'mensaje' => $e->getMessage()]);
         }
     }
-    
-    public function actualizarCita() {
+
+    // Cancelar una cita
+    public function cancelarCita() {
         try {
-            // Verificar si es admin
+            // Verificar si el usuario está autenticado
+            if (!isset($_SESSION['usuario_id'])) {
+                throw new Exception("Debes iniciar sesión para cancelar una cita");
+            }
+
+            // Validar datos
+            if (!isset($_POST['cita_id'])) {
+                throw new Exception("ID de cita no proporcionado");
+            }
+
+            $citaId = $_POST['cita_id'];
+            $usuarioId = $_SESSION['usuario_id'];
+
+            // Cancelar la cita
+            $resultado = $this->modelo->cancelarCita($citaId, $usuarioId);
+            
+            if ($resultado) {
+                echo json_encode(['exito' => true, 'mensaje' => 'Cita cancelada correctamente']);
+            } else {
+                throw new Exception("Error al cancelar la cita");
+            }
+        } catch (Exception $e) {
+            echo json_encode(['exito' => false, 'mensaje' => $e->getMessage()]);
+        }
+    }
+
+    // Actualizar estado de cita (solo admin)
+    public function actualizarEstadoCita() {
+        try {
+            // Verificar si el usuario es administrador
             if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
-                throw new Exception('No tienes permisos para actualizar citas');
+                throw new Exception("No tienes permisos para actualizar el estado de las citas");
             }
-            
-            if (empty($_POST['id']) || empty($_POST['motivo'])) {
-                throw new Exception('Faltan datos obligatorios');
+
+            // Validar datos
+            if (!isset($_POST['cita_id']) || !isset($_POST['estado'])) {
+                throw new Exception("Faltan datos obligatorios");
             }
+
+            $citaId = $_POST['cita_id'];
+            $estado = $_POST['estado'];
+
+            // Validar estado
+            $estadosValidos = ['pendiente', 'confirmada', 'cancelada', 'completada'];
+            if (!in_array($estado, $estadosValidos)) {
+                throw new Exception("Estado no válido");
+            }
+
+            // Actualizar estado
+            $resultado = $this->modelo->actualizarEstadoCita($citaId, $estado);
             
-            $id = $_POST['id'];
-            $motivo = $_POST['motivo'];
+            if ($resultado) {
+                echo json_encode(['exito' => true, 'mensaje' => 'Estado de cita actualizado correctamente']);
+            } else {
+                throw new Exception("Error al actualizar el estado de la cita");
+            }
+        } catch (Exception $e) {
+            echo json_encode(['exito' => false, 'mensaje' => $e->getMessage()]);
+        }
+    }
+
+    // Obtener citas para el calendario
+    public function obtenerCitasCalendario() {
+        try {
+            $eventos = [];
             
-            // Opcionalmente actualizar fechas si se proporcionan
-            $fecha_inicio = isset($_POST['fecha_inicio']) ? $_POST['fecha_inicio'] : null;
-            $fecha_fin = isset($_POST['fecha_fin']) ? $_POST['fecha_fin'] : null;
-            
-            if ($fecha_inicio && $fecha_fin) {
-                // Validar horario laboral y días
-                $this->validarHorario($fecha_inicio, $fecha_fin);
+            // Si es admin, obtener todas las citas
+            if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
+                $citas = $this->modelo->obtenerTodasLasCitas();
                 
-                // Verificar disponibilidad (excluyendo la cita actual)
-                if (!$this->modelo->verificarDisponibilidadExcluyendo($fecha_inicio, $fecha_fin, $id)) {
-                    throw new Exception('El horario seleccionado no está disponible');
+                foreach ($citas as $cita) {
+                    $eventos[] = [
+                        'id' => $cita['id'],
+                        'title' => $cita['nombre_cliente'],
+                        'start' => $cita['fecha'] . 'T' . $cita['hora'],
+                        'end' => $cita['fecha'] . 'T' . date('H:i:s', strtotime($cita['hora'] . ' +1 hour')),
+                        'backgroundColor' => $this->obtenerColorPorEstado($cita['estado']),
+                        'borderColor' => $this->obtenerColorPorEstado($cita['estado']),
+                        'extendedProps' => [
+                            'motivo' => $cita['motivo'],
+                            'estado' => $cita['estado']
+                        ]
+                    ];
+                }
+            } 
+            // Si es usuario normal, obtener solo sus citas
+            else if (isset($_SESSION['usuario_id'])) {
+                $citas = $this->modelo->obtenerCitasPorUsuario($_SESSION['usuario_id']);
+                
+                foreach ($citas as $cita) {
+                    $eventos[] = [
+                        'id' => $cita['id'],
+                        'title' => 'Mi cita',
+                        'start' => $cita['fecha'] . 'T' . $cita['hora'],
+                        'end' => $cita['fecha'] . 'T' . date('H:i:s', strtotime($cita['hora'] . ' +1 hour')),
+                        'backgroundColor' => $this->obtenerColorPorEstado($cita['estado']),
+                        'borderColor' => $this->obtenerColorPorEstado($cita['estado']),
+                        'extendedProps' => [
+                            'motivo' => $cita['motivo'],
+                            'estado' => $cita['estado']
+                        ]
+                    ];
                 }
             }
             
-            if ($this->modelo->actualizarCita($id, $motivo, $fecha_inicio, $fecha_fin)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Cita actualizada correctamente'
-                ]);
-            } else {
-                throw new Exception('Error al actualizar la cita');
-            }
-            
+            echo json_encode(['exito' => true, 'datos' => $eventos]);
         } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
+            error_log("Error en obtenerCitasCalendario: " . $e->getMessage());
+            echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
     }
     
-    public function eliminarCita() {
-        try {
-            // Verificar si es admin
-            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
-                throw new Exception('No tienes permisos para eliminar citas');
-            }
-            
-            if (empty($_POST['id'])) {
-                throw new Exception('ID de cita no proporcionado');
-            }
-            
-            $id = $_POST['id'];
-            
-            if ($this->modelo->eliminarCita($id)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Cita eliminada correctamente'
-                ]);
-            } else {
-                throw new Exception('Error al eliminar la cita');
-            }
-            
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    private function validarHorario($fecha_inicio, $fecha_fin) {
-        $inicio = new DateTime($fecha_inicio);
-        $fin = new DateTime($fecha_fin);
-        
-        // Validar día de la semana (1 = Lunes, 7 = Domingo)
-        $dia = (int)$inicio->format('N');
-        if ($dia > 5) {
-            throw new Exception('Solo se pueden crear citas de lunes a viernes');
-        }
-
-        $hora = (int)$inicio->format('H');
-        if (($hora < 10 || $hora >= 14) && ($hora < 17 || $hora >= 20)) {
-            throw new Exception('Las citas solo pueden ser de 10:00-14:00 o 17:00-20:00');
-        }
-        
-        // Verificar que la duración sea de al menos 1 hora
-        $duracion = $inicio->diff($fin);
-        $minutos = $duracion->h * 60 + $duracion->i;
-        
-        if ($minutos < 60) {
-            throw new Exception('La duración mínima de una cita es de 1 hora');
+    // Obtener color según el estado de la cita
+    private function obtenerColorPorEstado($estado) {
+        switch ($estado) {
+            case 'pendiente':
+                return '#FFA500'; // Naranja
+            case 'confirmada':
+                return '#28a745'; // Verde
+            case 'cancelada':
+                return '#dc3545'; // Rojo
+            case 'completada':
+                return '#17a2b8'; // Azul
+            default:
+                return '#6c757d'; // Gris
         }
     }
 }
 
-// Manejo de acciones
+// Manejo de acciones (fuera de la clase)
 if (isset($_GET['accion'])) {
     $controlador = new CitasControlador();
     
     switch ($_GET['accion']) {
-        case 'obtenerCitas':
-            $controlador->obtenerCitas();
-            break;
-        case 'obtenerCitasTerapias':
-            $controlador->obtenerCitasTerapias();
-            break;
         case 'crear':
             $controlador->crearCita();
             break;
-        case 'actualizar':
-            $controlador->actualizarCita();
+        case 'cancelar':
+            $controlador->cancelarCita();
             break;
-        case 'eliminar':
-            $controlador->eliminarCita();
+        case 'actualizar_estado':
+            $controlador->actualizarEstadoCita();
+            break;
+        case 'obtener_calendario':
+            $controlador->obtenerCitasCalendario();
+            break;
+        default:
+            echo json_encode(['exito' => false, 'mensaje' => 'Acción no válida']);
             break;
     }
 } 

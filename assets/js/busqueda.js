@@ -1,54 +1,50 @@
-$(document).ready(function() {
-    const $barraBusqueda = $('#barraBusqueda');
-    if (!$barraBusqueda.length) return;
+document.addEventListener('DOMContentLoaded', function() {
+    const barraBusqueda = document.getElementById('barraBusqueda');
+    if (!barraBusqueda) return;
 
     function realizarBusqueda() {
-        const searchTerm = $barraBusqueda.val().toLowerCase().trim();
-        const $filas = $('tbody tr');
-        const $mensajeNoResultados = $('#mensajeNoResultados');
-
-        // Si no hay caracteres, mostrar todas las filas y ocultar mensaje
-        if (searchTerm.length < 1) {
-            $filas.show();
-            $mensajeNoResultados.hide();
-            return;
-        }
-
+        const searchTerm = barraBusqueda.value.toLowerCase().trim();
+        const filas = document.querySelectorAll('tbody tr');
         let encontrado = false;
 
-        $filas.each(function() {
-            const $fila = $(this);
+        filas.forEach(fila => {
             let texto = '';
-            
             // Obtener texto de todas las celdas excepto la última (acciones)
-            $fila.find('td:not(:last-child)').each(function() {
-                texto += $(this).text().toLowerCase() + ' ';
+            const celdas = fila.querySelectorAll('td:not(:last-child)');
+            celdas.forEach(celda => {
+                texto += celda.textContent.toLowerCase() + ' ';
             });
 
             if (texto.includes(searchTerm)) {
-                $fila.show();
+                fila.style.display = '';
                 encontrado = true;
             } else {
-                $fila.hide();
+                fila.style.display = 'none';
             }
         });
 
         // Mostrar mensaje si no hay resultados
-        if (searchTerm && !encontrado) {
-            $mensajeNoResultados.show();
-        } else {
-            $mensajeNoResultados.hide();
+        const mensajeNoResultados = document.getElementById('mensajeNoResultados');
+        if (mensajeNoResultados) {
+            if (searchTerm && !encontrado) {
+                mensajeNoResultados.style.display = '';
+            } else {
+                mensajeNoResultados.style.display = 'none';
+            }
         }
     }
 
     // Eventos para la búsqueda
-    $barraBusqueda.on('input', realizarBusqueda);
-    $barraBusqueda.on('keypress', function(e) {
+    barraBusqueda.addEventListener('input', realizarBusqueda);
+    barraBusqueda.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             realizarBusqueda();
         }
     });
 
     // Evento para el botón de búsqueda
-    $barraBusqueda.next('button').on('click', realizarBusqueda);
+    const botonBusqueda = barraBusqueda.nextElementSibling;
+    if (botonBusqueda) {
+        botonBusqueda.addEventListener('click', realizarBusqueda);
+    }
 }); 

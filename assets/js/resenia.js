@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 $(document).ready(function () {
     // Sistema de calificación con estrellas
     let selectedRating = 0;
@@ -251,3 +252,5 @@ $(document).ready(function () {
         return new Date(fecha).toLocaleDateString('es-ES', options);
     }
 });
+=======
+>>>>>>> Stashed changes
