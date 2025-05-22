@@ -14,7 +14,7 @@ $controlador = new CitasControlador();
 if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
     $citas = $controlador->obtenerTodasLasCitas();
 } else {
-    $citas = $controlador->obtenerMisCitas();
+    $citas = $controlador->obtenerCitasUsuario($_SESSION['usuario_id']);
 }
 ?>
 
