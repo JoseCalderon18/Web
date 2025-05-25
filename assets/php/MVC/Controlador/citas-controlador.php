@@ -137,8 +137,34 @@ class CitasControlador {
     /**
      * Verifica la disponibilidad de un horario
      */
-    public function verificarDisponibilidad($fecha, $hora) {
-        return $this->modelo->verificarDisponibilidad($fecha, $hora);
+    public function verificarDisponibilidad($fecha, $hora, $tipo = 'general') {
+        try {
+            // Verificar si es horario laboral
+            $horaObj = new DateTime($hora);
+            $horaDecimal = (int)$horaObj->format('H') + ((int)$horaObj->format('i') / 60);
+            
+            // Verificar si es día laborable (lunes a viernes)
+            $diaObj = new DateTime($fecha);
+            $diaSemana = $diaObj->format('N'); // 1 (lunes) a 7 (domingo)
+            
+            if ($diaSemana > 5) {
+                return false; // No disponible en fin de semana
+            }
+
+            // Verificar horario laboral (10:00-14:00 y 17:00-20:00)
+            $esHorarioLaboral = ($horaDecimal >= 10 && $horaDecimal < 14) || 
+                               ($horaDecimal >= 17 && $horaDecimal < 20);
+            
+            if (!$esHorarioLaboral) {
+                return false;
+            }
+
+            // Verificar si ya existe una cita en ese horario y tipo
+            return $this->modelo->verificarDisponibilidad($fecha, $hora, $tipo);
+        } catch (Exception $e) {
+            error_log("Error en verificarDisponibilidad: " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -282,7 +308,7 @@ class CitasControlador {
             }
             
             // Verificar disponibilidad
-            if (!$this->modelo->verificarDisponibilidad($fecha, $hora)) {
+            if (!$this->verificarDisponibilidad($fecha, $hora, $tipo)) {
                 throw new Exception("El horario seleccionado ya no está disponible");
             }
             

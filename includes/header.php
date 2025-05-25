@@ -44,9 +44,12 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="w-full sm:w-auto"><a href="../pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Productos">Productos</a></li>
             <?php endif; ?>
 
-            <!-- Enlace de login con imagen de usuario -->
+            <!-- Enlace de login con icono de usuario -->
             <a href="../pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
-                <img src="../assets/img/logoUsuario.png" alt="Icono de usuario" class="w-8 h-8">
+                <svg class="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-label="Icono de usuario">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4a4 4 0 100 8 4 4 0 000-8z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                </svg>
             </a>
         </ul>
 

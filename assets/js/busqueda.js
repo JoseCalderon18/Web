@@ -3,41 +3,32 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!barraBusqueda) return;
 
     function realizarBusqueda() {
-        const searchTerm = barraBusqueda.value.toLowerCase().trim();
-        const filas = document.querySelectorAll('tbody tr');
-        let encontrado = false;
-
-        filas.forEach(fila => {
-            let texto = '';
-            // Obtener texto de todas las celdas excepto la última (acciones)
-            const celdas = fila.querySelectorAll('td:not(:last-child)');
-            celdas.forEach(celda => {
-                texto += celda.textContent.toLowerCase() + ' ';
-            });
-
-            if (texto.includes(searchTerm)) {
-                fila.style.display = '';
-                encontrado = true;
-            } else {
-                fila.style.display = 'none';
-            }
-        });
-
-        // Mostrar mensaje si no hay resultados
-        const mensajeNoResultados = document.getElementById('mensajeNoResultados');
-        if (mensajeNoResultados) {
-            if (searchTerm && !encontrado) {
-                mensajeNoResultados.style.display = '';
-            } else {
-                mensajeNoResultados.style.display = 'none';
-            }
+        const searchTerm = barraBusqueda.value.trim();
+        
+        // Obtener la URL actual y actualizar el parámetro de búsqueda
+        let url = new URL(window.location.href);
+        if (searchTerm) {
+            url.searchParams.set('buscar', searchTerm);
+            // Resetear la página a 1 cuando se hace una nueva búsqueda
+            url.searchParams.set('pagina', '1');
+        } else {
+            url.searchParams.delete('buscar');
         }
+        
+        // Redirigir a la nueva URL
+        window.location.href = url.toString();
     }
 
     // Eventos para la búsqueda
-    barraBusqueda.addEventListener('input', realizarBusqueda);
+    let timeoutId;
+    barraBusqueda.addEventListener('input', function() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(realizarBusqueda, 500); // Debounce de 500ms
+    });
+
     barraBusqueda.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
+            clearTimeout(timeoutId);
             realizarBusqueda();
         }
     });
@@ -45,6 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Evento para el botón de búsqueda
     const botonBusqueda = barraBusqueda.nextElementSibling;
     if (botonBusqueda) {
-        botonBusqueda.addEventListener('click', realizarBusqueda);
+        botonBusqueda.addEventListener('click', function(e) {
+            e.preventDefault();
+            realizarBusqueda();
+        });
+    }
+
+    // Mantener el término de búsqueda en el input
+    const urlParams = new URLSearchParams(window.location.search);
+    const terminoBusqueda = urlParams.get('buscar');
+    if (terminoBusqueda) {
+        barraBusqueda.value = terminoBusqueda;
     }
 }); 

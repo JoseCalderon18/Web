@@ -129,6 +129,32 @@ $(document).ready(function() {
             minute: '2-digit',
             hour12: false
         },
+        selectConstraint: 'businessHours',
+        eventDidMount: function(info) {
+            // Asegurarse de que los eventos se muestren correctamente
+            if (info.event.extendedProps.estado === 'ocupada') {
+                info.el.style.backgroundColor = '#DC3545';
+                info.el.style.borderColor = '#DC3545';
+            }
+        },
+        select: function(info) {
+            // Validar que la selección esté dentro del horario permitido
+            const hora = info.start.getHours();
+            const minutos = info.start.getMinutes();
+            const horaDecimal = hora + (minutos / 60);
+            
+            if (!esHorarioLaboral(info.start)) {
+                calendar.unselect();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Horario no disponible',
+                    text: 'Por favor selecciona un horario dentro del horario laboral (10:00-14:00 o 17:00-20:00)'
+                });
+                return;
+            }
+
+            manejarSeleccionCalendario(info);
+        },
         businessHours: [
             {
                 daysOfWeek: [1, 2, 3, 4, 5], // Lunes a viernes
@@ -141,26 +167,31 @@ $(document).ready(function() {
                 endTime: '20:00'
             }
         ],
-        selectAllow: function(selectInfo) {
-            const inicio = selectInfo.start;
-            const fin = selectInfo.end;
-            
-            // Verificar si es día laborable
-            if (!esFechaLaborable(inicio)) {
-                return false;
+        themeSystem: 'standard',
+        dayHeaderClassNames: 'text-green-800 font-semibold',
+        viewDidMount: function(arg) {
+            // Aplicar estilos a las cabeceras de los días
+            const headers = arg.el.getElementsByClassName('fc-col-header-cell');
+            for (let header of headers) {
+                header.style.backgroundColor = '#4A6D50'; // Verde oscuro
+                header.style.color = 'white';
             }
             
-            // Verificar si está dentro del horario laboral
-            if (!esHorarioLaboral(inicio)) {
-                return false;
-            }
+            // Ajustar altura según la vista
+            const calendar = arg.view.calendar;
+            const container = calendar.el;
             
-            // Verificar si es fecha pasada
-            if (esFechaPasada(inicio)) {
-                return false;
+            switch(arg.view.type) {
+                case 'dayGridMonth':
+                    container.style.height = '500px';
+                    break;
+                case 'timeGridWeek':
+                    container.style.height = '700px';
+                    break;
+                case 'timeGridDay':
+                    container.style.height = '800px';
+                    break;
             }
-            
-            return true;
         }
     };
     

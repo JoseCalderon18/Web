@@ -89,15 +89,17 @@ class CitasModelo {
     }
 
     // Verificar disponibilidad de horario
-    public function verificarDisponibilidad($fecha, $hora) {
+    public function verificarDisponibilidad($fecha, $hora, $tipo = 'general') {
         try {
-            $sql = "SELECT COUNT(*) as total FROM citas WHERE fecha = :fecha AND hora = :hora AND estado != 'cancelada'";
+            $sql = "SELECT COUNT(*) as total FROM citas 
+                    WHERE fecha = ? AND hora = ? AND tipo = ? 
+                    AND estado NOT IN ('cancelada')";
+            
             $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':fecha', $fecha);
-            $stmt->bindParam(':hora', $hora);
-            $stmt->execute();
+            $stmt->execute([$fecha, $hora, $tipo]);
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-            return (int)$resultado['total'] === 0; // Retorna true si no hay citas en ese horario
+            
+            return $resultado['total'] == 0;
         } catch (PDOException $e) {
             error_log("Error en verificarDisponibilidad: " . $e->getMessage());
             return false;

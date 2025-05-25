@@ -46,5 +46,6 @@ $total_paginas = ceil($total_noticias / 10);
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/noticias.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
+
 </body>
 </html>

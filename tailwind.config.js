@@ -1,4 +1,9 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: [
+    "./pages/**/*.{html,js,php}",
+    "./assets/**/*.{html,js,php}",
+  ],
   theme: {
     extend: {
       keyframes: {
@@ -29,6 +34,9 @@ module.exports = {
       }
     }
   },
+  plugins: [
+    require('flowbite/plugin')
+  ],
   variants: {
     extend: {
       animation: ['motion-safe', 'motion-reduce']

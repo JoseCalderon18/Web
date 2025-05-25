@@ -7,14 +7,27 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
+// Incluir el controlador
 require_once '../assets/php/MVC/Controlador/citas-controlador.php';
+
+// Crear una instancia del controlador
 $controlador = new CitasControlador();
 
 // Obtener las citas según el rol del usuario
-if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
-    $citas = $controlador->obtenerTodasLasCitas();
-} else {
-    $citas = $controlador->obtenerMisCitas();
+try {
+    // Verificar si el controlador se ha inicializado correctamente
+    if (!$controlador) {
+        throw new Exception("Error al inicializar el controlador de citas");
+    }
+    
+    if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
+        $citas = $controlador->obtenerTodasLasCitas();
+    } else {
+        $citas = $controlador->obtenerCitasUsuario($_SESSION['usuario_id']); // Cambiado el nombre del método
+    }
+} catch (Exception $e) {
+    $error = "Error al cargar las citas: " . $e->getMessage();
+    $citas = [];
 }
 ?>
 
@@ -29,11 +42,19 @@ if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css' rel='stylesheet' />
 </head>
-<body class="bg-beige h-min-screen">
+<body class="bg-beige h-min-screen <?php echo isset($_SESSION['usuario_id']) ? 'usuario-autenticado' : ''; ?>">
     <?php include "../includes/header.php"; ?>
 
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-green-800 mb-6">Reserva de Citas</h1>
+        <!-- Título y descripción -->
+        <div class="mx-auto px-4 my-8 py-6">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-verde font-display-CormorantGaramond mb-4 py-4">
+                Gestión de Citas
+            </h1>
+            <p class="text-gray-700 text-center">
+                Reserva tus citas para consultas generales o terapias específicas. Selecciona la fecha y hora que mejor se adapte a tus necesidades.
+            </p>
+        </div>
         
         <?php require_once '../assets/php/MVC/Vista/citas-vista.php'; ?>
     </div>
@@ -44,37 +65,12 @@ if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales-all.min.js'></script>
+    <script>
+        // Pasar variables de PHP a JavaScript
+        const usuarioId = <?php echo isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : 'null'; ?>;
+    </script>
     <script src="../assets/js/citas.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verificar si el usuario está autenticado y hay una cita pendiente
-        if (document.body.classList.contains('usuario-autenticado')) {
-            const citaPendiente = localStorage.getItem('cita_pendiente');
-            if (citaPendiente) {
-                try {
-                    const datos = JSON.parse(citaPendiente);
-                    
-                    // Esperar a que el calendario esté completamente cargado
-                    setTimeout(function() {
-                        // Crear objetos de fecha para la cita pendiente
-                        const inicio = new Date(datos.fecha + 'T' + datos.hora);
-                        const fin = new Date(inicio.getTime() + 60 * 60 * 1000); // 1 hora después
-                        
-                        // Mostrar formulario de reserva
-                        mostrarFormularioReserva(inicio, fin, datos.tipo || 'general');
-                        
-                        // Limpiar la cita pendiente del localStorage
-                        localStorage.removeItem('cita_pendiente');
-                    }, 1000);
-                } catch (e) {
-                    console.error('Error al procesar cita pendiente:', e);
-                    localStorage.removeItem('cita_pendiente');
-                }
-            }
-        }
-    });
-    </script>
 </body>
 </html>

@@ -28,6 +28,7 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
         <?php endif; ?>
 
         <!-- Grid de calendarios -->
+        
         <div class="grid grid-cols-1 <?php echo $esAdmin ? 'md:grid-cols-2' : ''; ?> gap-8">
             <!-- Calendario de citas generales (siempre visible) -->
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border p-6 transition-all duration-300">
@@ -46,7 +47,6 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
                 </div>
                 <?php endif; ?>
             </div>
-            
             <!-- Calendario de terapias (solo para admin) -->
             <?php if ($esAdmin): ?>
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border p-6 transition-all duration-300">

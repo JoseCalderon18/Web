@@ -38,7 +38,7 @@ if (!is_array($productos)) {
 
     <?php require_once '../assets/php/MVC/Vista/productos-vista.php'; ?>
 
-    <?php require_once '../includes/footer.php'; ?>
+    <?php include "../includes/footer.php"; ?>
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

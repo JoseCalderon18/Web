@@ -43,12 +43,11 @@
     --breakpoint-md2: 769px;
 }
 
-/* Estilos para las animaciones */
+/* Animaciones básicas */
 .aparecer {
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1.5s ease, transform 1.5s ease;
-    will-change: opacity, transform;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
 }
 
 .aparecer.activo {
@@ -58,14 +57,23 @@
 
 .aparecer-secuencial {
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-    will-change: opacity, transform;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
 }
 
 .aparecer-secuencial.activo {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Animación para imágenes */
+.imagen-aparecer {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.imagen-aparecer.cargada {
+    opacity: 1;
 }
 
 /* Estilos para los contenedores de calendario */

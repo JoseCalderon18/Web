@@ -73,4 +73,33 @@ $(document).ready(function() {
             $(this).addClass("cargada");
         }
     });
+
+    const observerTarde = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Esperar más tiempo antes de mostrar
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                    
+                    // Para elementos secuenciales tardíos
+                    if (entry.target.classList.contains('aparecer-tarde')) {
+                        const secuencialesTarde = entry.target.querySelectorAll('.aparecer-secuencial-tarde');
+                        secuencialesTarde.forEach((elemento, index) => {
+                            setTimeout(() => {
+                                elemento.classList.add('visible');
+                            }, 200 * (index + 1));
+                        });
+                    }
+                }, 500); // Medio segundo de retraso adicional
+            }
+        });
+    }, {
+        threshold: 0.2, // Activar cuando el 20% del elemento sea visible
+        rootMargin: '-100px' // Activar más tarde en el scroll
+    });
+
+    // Observar elementos con aparecer-tarde
+    document.querySelectorAll('.aparecer-tarde').forEach(element => {
+        observerTarde.observe(element);
+    });
 });

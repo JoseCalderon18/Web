@@ -6,6 +6,7 @@
     <title>Nosotras - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
+    <link href="../assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
     <?php include "../includes/header.php"; ?>
@@ -14,15 +15,15 @@
         <div class="bg-beige pt-8 px-8 py-10 w-full">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto w-3/4">
                 <!-- Columna de texto -->
-                <div class="flex flex-col justify-center">
+                <div class="flex flex-col justify-center aparecer">
                     <h1 class="text-3xl font-display-CormorantGaramond font-bold text-verde mb-4">"Porque el bienestar es un viaje, y aquí tienes un lugar donde te acompañamos"</h1>
-                    <p class="text-xs md:text-sm text-verde mb-4">Hola, somos <strong>Tessa y Beatriz</strong>.</p>
-                    <p class="text-xs md:text-sm text-verde mb-4">Os presentamos <strong>Bioespacio Bienestar</strong>, un herbolario diferente que comenzó hace unos años para Tessa como un refugio, un espacio de calma y equilibrio en un momento clave de su vida. Con el tiempo, su camino se cruzó con el de Beatriz, y juntas dieron forma a lo que hoy es mucho más que un herbolario: un espacio dedicado al cuidado personal físico y mental.</p>
-                    <p class="text-xs md:text-sm text-verde mb-4">Buscamos y ponemos a vuestra disposición las mejores terapias naturales, terapeutas y suplementos que podemos encontrar. Con trayectorias complementarias y una visión común, <strong>acompañamos a quienes buscan mejorar su calidad de vida a través de las terapias naturales y el poder de las plantas</strong>.</p>
+                    <p class="text-xs md:text-sm text-verde mb-4 aparecer-secuencial">Hola, somos <strong>Tessa y Beatriz</strong>.</p>
+                    <p class="text-xs md:text-sm text-verde mb-4 aparecer-secuencial">Os presentamos <strong>Bioespacio Bienestar</strong>, un herbolario diferente que comenzó hace unos años para Tessa como un refugio, un espacio de calma y equilibrio en un momento clave de su vida. Con el tiempo, su camino se cruzó con el de Beatriz, y juntas dieron forma a lo que hoy es mucho más que un herbolario: un espacio dedicado al cuidado personal físico y mental.</p>
+                    <p class="text-xs md:text-sm text-verde mb-4 aparecer-secuencial">Buscamos y ponemos a vuestra disposición las mejores terapias naturales, terapeutas y suplementos que podemos encontrar. Con trayectorias complementarias y una visión común, <strong>acompañamos a quienes buscan mejorar su calidad de vida a través de las terapias naturales y el poder de las plantas</strong>.</p>
                 </div>
                 
                 <!-- Columna del carrusel -->
-                <div class="bg-white rounded-lg shadow-md h-80 w-full md:w-2/3 mb-8">
+                <div class="bg-white rounded-lg shadow-md h-80 w-full md:w-2/3 mb-8 aparecer">
                     <div id="default-carousel" class="relative w-full h-full" data-carousel="slide">
                         <div class="relative h-full overflow-hidden rounded-lg">
                             <!-- Item 1 -->
@@ -63,14 +64,14 @@
         </div>
 
         <!-- Sección de Misión y Valores -->
-        <div class="bg-white py-8 flex flex-col items-center justify-center">
+        <div class="bg-white py-8 flex flex-col items-center justify-center aparecer-bounce">
             <h1 class="text-5xl font-display-CormorantGaramond font-bold text-gray-800 mb-4">Misión y Valores</h1>
         </div>
 
-        <!-- Sección de imágenes debajo de Misión y Valores -->
+        <!-- Sección de imágenes -->
         <div class="bg-white py-8 flex flex-col sm:flex-row items-center justify-center gap-8">
-            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-32 sm:w-60 h-auto rounded-lg shadow-lg hover:scale-105 duration-300" data-modal-target="modal1" data-modal-toggle="modal1" type="button">
-            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-32 sm:w-60 h-auto rounded-lg shadow-lg hover:scale-105 duration-300" data-modal-target="modal2" data-modal-toggle="modal2" type="button">
+            <img src="../assets/img/mision.png" alt="Imagen 1" class="w-32 sm:w-60 h-auto rounded-lg shadow-lg aparecer-flip">
+            <img src="../assets/img/valores.png" alt="Imagen 2" class="w-32 sm:w-60 h-auto rounded-lg shadow-lg aparecer-flip-delay">
         </div>
 
         <!-- Modal 1 -->
@@ -125,5 +126,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/animaciones.js"></script>
 </body>
 </html>

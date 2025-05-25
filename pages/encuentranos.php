@@ -6,19 +6,18 @@
     <title>Encuentranos - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="../assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
     <?php include "../includes/header.php"; ?>
 
     <main class="bg-beige pt-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-2/3 mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-2/3 mx-auto aparecer">
             <!-- Columna izquierda: Horario y Carrusel -->
             <div class="grid grid-rows-2 gap-4">
                 <!-- Horario -->
-                <div class="bg-white p-6 rounded-lg shadow-md h-65 flex flex-col w-full md:w-2/3">
+                <div class="bg-white p-6 rounded-lg shadow-md h-65 flex flex-col w-full md:w-2/3 aparecer-secuencial">
                     <h1 class="text-2xl font-display-CormorantGaramond font-bold text-verde mb-4">Horario de Atención</h1>
                     <div class="space-y-4 flex-grow">
                         <!-- Dirección -->
@@ -46,7 +45,7 @@
                 </div>
 
                 <!-- Carrusel -->
-                <div class="bg-white rounded-lg shadow-md h-80 w-full md:w-2/3">
+                <div class="bg-white rounded-lg shadow-md h-80 w-full md:w-2/3 aparecer-secuencial">
                     <div id="default-carousel" class="relative w-full h-full" data-carousel="slide">
                         <div class="relative h-full overflow-hidden rounded-lg ">
                             <!-- Item 1 -->
@@ -86,7 +85,7 @@
             </div>
 
             <!-- Columna derecha: Formulario -->
-            <div class="bg-white p-5 rounded-lg shadow-md h-90">
+            <div class="bg-white p-5 rounded-lg shadow-md h-90 aparecer-secuencial">
                 <h2 class="text-2xl font-display-CormorantGaramond font-bold text-verde mb-3">Contáctanos</h2>
                 <form class="space-y-3 text-center" id="formularioContacto">
                     <input type="text" id="nombre" name="nombre" placeholder="Introduce tu nombre" 
@@ -114,7 +113,7 @@
         </div>
 
         <!--Reseñas-->
-        <div class="mt-8">
+        <div class="mt-8 aparecer">
             <h2 class="text-4xl font-display-CormorantGaramond font-bold text-verde mb-3 text-center">Reseñas de nuestros clientes</h2> 
             <!-- Elfsight Google Reviews | Untitled Google Reviews -->
             <script src="https://static.elfsight.com/platform/platform.js" async></script>
@@ -122,7 +121,7 @@
         </div>
 
         <!-- Mapa -->
-        <div class="mt-8">
+        <div class="mt-8 aparecer">
             <div class="w-full h-96">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3031.537791266752!2d-3.6602848000000003!3d40.5517997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd422dd4b4e4d15b%3A0x375649d95b7c987d!2sHerbolario%20Bioespacio%20Bienestar!5e0!3m2!1ses!2ses!4v1746532595845!5m2!1ses!2ses" 
                     width="100%" 
@@ -144,5 +143,8 @@
 <!-- Scripts -->
 <script src="../assets/js/script.js"></script>
 <script src="../assets/js/formulario.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
+<script src="../assets/js/animaciones.js"></script>
 </html>
