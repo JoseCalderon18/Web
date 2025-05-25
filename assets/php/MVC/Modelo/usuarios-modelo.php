@@ -233,4 +233,23 @@ class UsuariosModelo {
             throw new Exception("Error al obtener los clientes: " . $e->getMessage());
         }
     }
+
+    // Añadir este nuevo método al UsuariosModelo
+    public function buscarUsuarios($termino) {
+        try {
+            $sql = "SELECT id, nombre, email, rol 
+                    FROM usuarios 
+                    WHERE LOWER(nombre) LIKE LOWER(:termino)";
+            
+            $termino = "%$termino%";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':termino', $termino, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en buscarUsuarios: " . $e->getMessage());
+            return [];
+        }
+    }
 }

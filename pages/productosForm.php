@@ -65,15 +65,29 @@ if ($esEdicion) {
                            required>
                 </div>
                 
-                <!-- Stock -->
+                <!-- Stock con botones + y - -->
                 <div class="mb-4">
                     <label for="stock" class="block mb-2 text-sm font-medium text-gray-900">Stock</label>
-                    <input type="number" 
-                           id="stock" 
-                           name="stock" 
-                           value="<?= $esEdicion ? htmlspecialchars($producto['stock']) : '' ?>" 
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
-                           required>
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                onclick="modificarStock('restar')" 
+                                class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        
+                        <input type="number" 
+                               id="stock" 
+                               name="stock" 
+                               value="<?= $esEdicion ? htmlspecialchars($producto['stock']) : '0' ?>" 
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                               required>
+                        
+                        <button type="button" 
+                                onclick="modificarStock('sumar')" 
+                                class="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Precio -->
@@ -94,7 +108,7 @@ if ($esEdicion) {
                     <input type="text" 
                            id="laboratorio" 
                            name="laboratorio" 
-                           value="<?= $esEdicion ? htmlspecialchars($producto['laboratorio'] ?? '') : '' ?>" 
+                           value="<?= $esEdicion && isset($producto['laboratorio']) && $producto['laboratorio'] !== '' ? htmlspecialchars($producto['laboratorio']) : 'N/D' ?>" 
                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                 </div>
                 

@@ -47,10 +47,12 @@ class ProductosModelo {
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            $producto = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $producto ? $producto : null;
         } catch (PDOException $e) {
             error_log("Error en obtenerPorId: " . $e->getMessage());
-            return false;
+            return null;
         }
     }
 
@@ -136,15 +138,15 @@ class ProductosModelo {
         }
     }
 
-    // Restar una unidad del stock
-    public function restarUnidad($id) {
+    public function actualizarStock($id, $nuevoStock) {
         try {
-            $query = "UPDATE productos SET stock = stock - 1 WHERE id = :id AND stock > 0";
-            $stmt = $this->db->prepare($query);
+            $sql = "UPDATE productos SET stock = :stock WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':stock', $nuevoStock, PDO::PARAM_INT);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log("Error en restarUnidad: " . $e->getMessage());
+            error_log("Error en actualizarStock: " . $e->getMessage());
             return false;
         }
     }
@@ -162,44 +164,16 @@ class ProductosModelo {
         }
     }
 
-    public function contarRegistros($sql, $params = []) {
+    // Restar una unidad del stock
+    public function restarUnidad($id) {
         try {
-            // Modificar SQL para contar
-            $sqlCount = preg_replace('/SELECT \*/', 'SELECT COUNT(*)', $sql);
-            // Remover LIMIT y OFFSET si existen
-            $sqlCount = preg_replace('/LIMIT\s+:limit\s+OFFSET\s+:offset/', '', $sqlCount);
-            
-            $stmt = $this->db->prepare($sqlCount);
-            foreach ($params as $param => $value) {
-                if ($param !== ':limit' && $param !== ':offset') {
-                    $stmt->bindValue($param, $value);
-                }
-            }
-            $stmt->execute();
-            return $stmt->fetchColumn();
+            $query = "UPDATE productos SET stock = stock - 1 WHERE id = :id AND stock > 0";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            return $stmt->execute();
         } catch (PDOException $e) {
-            // Manejar el error
-            return 0;
-        }
-    }
-
-    public function obtenerProductos($sql, $params = [], $limit = null, $offset = null) {
-        try {
-            if ($limit !== null && $offset !== null) {
-                $sql .= " LIMIT :limit OFFSET :offset";
-                $params[':limit'] = $limit;
-                $params[':offset'] = $offset;
-            }
-            
-            $stmt = $this->db->prepare($sql);
-            foreach ($params as $param => $value) {
-                $stmt->bindValue($param, $value);
-            }
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error en obtenerProductos: " . $e->getMessage());
-            return [];
+            error_log("Error en restarUnidad: " . $e->getMessage());
+            return false;
         }
     }
 }

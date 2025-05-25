@@ -46,7 +46,8 @@
                            placeholder="Buscar usuario..." 
                            class="w-full pl-4 pr-12 py-3 text-gray-700 bg-white rounded-lg border-3 border-black outline-none"
                            autocomplete="off">
-                    <button class="absolute right-0 h-full px-4 text-white bg-green-800 rounded-r-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                    <button id="botonBuscar" 
+                            class="absolute right-0 h-full px-4 text-white bg-green-800 rounded-r-lg hover:bg-green-700 transition-colors flex items-center justify-center">
                         <i class="fas fa-search text-lg"></i>
                     </button>
                 </div>
@@ -68,7 +69,7 @@
         <!-- Tabla de usuarios -->
         <div class="mx-auto px-2 mb-12 py-4">
             <div class="bg-white rounded-xl shadow-lg overflow-hidden border">
-                <table class="w-full">
+                <table class="w-full" id="tablaUsuarios">
                     <thead class="bg-black text-white">
                         <tr>
                             <th class="px-3 md:px-8 py-3 md:py-4 text-left text-xs md:text-base font-semibold">NOMBRE</th>
@@ -185,4 +186,3 @@
         <?php endif; ?>
     </div>
 </div>
-<script src="../assets/js/busqueda.js"></script>

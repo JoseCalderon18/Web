@@ -311,6 +311,34 @@ class UsuariosControlador {
             ]);
         }
     }
+
+    public function buscarUsuarios() {
+        try {
+            // Verificar si es una petición AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                
+                $termino = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
+                
+                if (empty($termino)) {
+                    throw new Exception("Término de búsqueda vacío");
+                }
+
+                $resultados = $this->modelo->buscarUsuarios($termino);
+                
+                echo json_encode([
+                    'success' => true,
+                    'data' => $resultados,
+                    'total' => count($resultados)
+                ]);
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
 
 // Solo procesar acciones AJAX
@@ -346,6 +374,9 @@ if (isset($_GET['accion'])) {
             break;
         case 'obtenerClientes':
             $controlador->obtenerClientes();
+            break;
+        case 'buscar':
+            $controlador->buscarUsuarios();
             break;
     }
 }
