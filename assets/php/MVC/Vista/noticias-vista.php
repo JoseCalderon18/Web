@@ -48,7 +48,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <div class="flex justify-between items-center mb-8 px-4">
         <!-- Botón de añadir noticia (izquierda) -->
         <div>
-            <?php if (isset($_SESSION['usuario_id'])): ?>
+            <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
                 <a href="noticiasForm.php" 
                    class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
                     <i class="fas fa-plus-circle mr-2"></i>
@@ -88,7 +88,7 @@ if (session_status() === PHP_SESSION_NONE) {
                                 Leer más <i class="fas fa-arrow-right ml-1"></i>
                             </button>
                             
-                            <?php if (isset($_SESSION['usuario_id'])): ?>
+                            <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
                                 <div class="flex space-x-2">
                                     <a href="noticiasForm.php?id=<?= $noticia['id'] ?>" class="text-blue-600 hover:text-blue-800">
                                         <i class="fas fa-edit"></i>

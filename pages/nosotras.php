@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nosotras - BioEspacio</title>
-    <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
-    <link href="../assets/css/src/output.css" rel="stylesheet">
+    <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet" alt="Estilos de Flowbite">
+    <link href="../assets/css/src/output.css" rel="stylesheet" alt="Estilos personalizados">
+    <link href="../assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
     <?php include "../includes/header.php"; ?>
 
     <main>
-        <div class="bg-white pt-8 px-8 py-10 w-full">
+        <div class="bg-white pt-8 px-8 py-10 w-full aparecer">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto w-3/4">
                 <!-- Columna de texto -->
-                <div class="flex flex-col justify-center">
+                <div class="flex flex-col justify-center aparecer-secuencial">
                     <h1 class="text-3xl font-display-CormorantGaramond font-bold text-verde mb-4">"Porque el bienestar es un viaje, y aquí tienes un lugar donde te acompañamos"</h1>
                     <p class="text-xs md:text-sm text-verde mb-4">Hola, somos <strong>Tessa y Beatriz</strong>.</p>
                     <p class="text-xs md:text-sm text-verde mb-4">Os presentamos <strong>Bioespacio Bienestar</strong>, un herbolario diferente que comenzó hace unos años para Tessa como un refugio, un espacio de calma y equilibrio en un momento clave de su vida. Con el tiempo, su camino se cruzó con el de Beatriz, y juntas dieron forma a lo que hoy es mucho más que un herbolario: un espacio dedicado al cuidado personal físico y mental.</p>
@@ -63,12 +64,12 @@
         </div>
 
         <!-- Sección de Misión y Valores -->
-        <section class="bg-beige py-12 px-6 md:px-20 text-center">
+        <section class="bg-beige py-12 px-6 md:px-20 text-center aparecer">
             <h2 class="text-4xl font-display-CormorantGaramond font-bold text-verde mb-10">Misión y Valores</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <!-- Misión -->
-                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition text-left">
+                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition text-left aparecer-secuencial">
                     <div class="flex items-center justify-between gap-4 mb-4">
                         <div class="flex items-center gap-4">
                             <img src="../assets/img/mision.png" alt="Misión" class="w-16 h-16 rounded-full shadow">
@@ -88,7 +89,7 @@
                 </div>
 
                 <!-- Valores -->
-                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition text-left">
+                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition text-left aparecer-secuencial">
                     <div class="flex items-center justify-between gap-4 mb-4">
                         <div class="flex items-center gap-4">
                             <img src="../assets/img/valores.png" alt="Valores" class="w-16 h-16 rounded-full shadow">
@@ -116,5 +117,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/animaciones.js"></script>
 </body>
 </html>
