@@ -1,4 +1,5 @@
 <div class="bg-beige">
+<?php if (isset($_SESSION['usuario_id'])): ?>
     <!-- Header con datos del usuario -->
     <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
         <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
@@ -16,6 +17,14 @@
                        class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
                         <i class="fas fa-shopping-basket mr-2"></i>Productos
                     </a>
+                    <a href="usuarios.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-users mr-2"></i>Usuarios
+                    </a>
+                    <a href="citas.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-check mr-2"></i>Citas
+                    </a>
                 <?php endif; ?>
                 <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
                    class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
@@ -24,6 +33,7 @@
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <!-- Título y descripción -->
     <div class=" mx-auto px-4 my-8 py-6">

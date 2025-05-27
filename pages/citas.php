@@ -45,6 +45,42 @@ try {
 <body class="bg-beige h-min-screen <?php echo isset($_SESSION['usuario_id']) ? 'usuario-autenticado' : ''; ?>">
     <?php include "../includes/header.php"; ?>
 
+    <?php if (isset($_SESSION['usuario_id'])): ?>
+    <!-- Header con datos del usuario -->
+    <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
+        <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-user mr-2"></i>
+                Usuario: <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+            </span>
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-clock mr-2"></i>
+                Última conexión: <?= date('d/m/Y H:i:s') ?>
+            </span>
+            <div class="flex gap-4">
+                <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                    <a href="productos.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-2"></i>Productos
+                    </a>
+                    <a href="usuarios.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-users mr-2"></i>Usuarios
+                    </a>
+                    <a href="citas.php" 
+                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-check mr-2"></i>Citas
+                    </a>
+                <?php endif; ?>
+                <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
+                   class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <div class="container mx-auto px-4 py-8">
         <!-- Título y descripción -->
         <div class="mx-auto px-4 my-8 py-6">
