@@ -310,4 +310,11 @@ class CitasModelo {
             return false;
         }
     }
+
+    public function obtenerTodosLosUsuarios() {
+        $sql = "SELECT id, nombre, apellidos, email FROM usuarios WHERE rol != 'admin' ORDER BY nombre, apellidos";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 } 

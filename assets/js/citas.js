@@ -1,533 +1,424 @@
-$(document).ready(function() {
-    // Agregar estilos CSS personalizados para ajustar tamaños
-    $('<style>')
-        .prop('type', 'text/css')
-        .html(`
-            .fc .fc-toolbar-title {
-                font-size: 1rem !important; /* text-base */
-                font-weight: 400 !important;
-            }
-            .fc .fc-button {
-                font-size: 0.8125rem !important; /* entre text-xs y text-sm */
-                padding: 0.3rem 0.6rem !important;
-            }
-            .fc .fc-col-header-cell-cushion,
-            .fc .fc-daygrid-day-number {
-                font-size: 0.875rem !important; /* text-sm */
-                font-weight: 400 !important;
-            }
-            .fc .fc-timegrid-slot-label-cushion,
-            .fc .fc-event-title,
-            .fc .fc-event-time {
-                font-size: 0.8125rem !important; /* entre text-xs y text-sm */
-                font-weight: 400 !important;
-            }
-        `)
-        .appendTo('head');
-    
-    // Obtener el valor de esAdmin desde PHP
-    const esAdmin = $('#calendario-general').data('esAdmin') === true;
-    
-    // Verificar si el usuario está autenticado - CORREGIDO
-    function esUsuarioAutenticado() {
-        // Si es admin, definitivamente está autenticado
-        if (esAdmin) {
-            return true;
-        }
-        
-        // Verificar si hay un ID de usuario en la sesión (comprobación directa desde PHP)
-        const usuarioAutenticado = $('body').hasClass('usuario-autenticado') || 
-                                  (typeof usuarioId !== 'undefined' && usuarioId > 0);
-        
-        return usuarioAutenticado;
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Inicializando calendario...');
+
+    const calendarEl = document.getElementById('calendario-citas');
+    if (!calendarEl) {
+        console.error('No se encontró el elemento del calendario');
+        return;
     }
-    
-    /**
-     * Verifica si el usuario está logueado antes de permitir sacar una cita
-     * @returns {boolean} true si está logueado, false si no
-     */
-    function verificarLoginParaCita() {
-        console.log("Verificando login. Es admin:", esAdmin);
-        console.log("Usuario autenticado:", esUsuarioAutenticado());
-        
-        // Si el usuario ya está autenticado, permitir continuar
-        if (esUsuarioAutenticado()) {
-            return true;
-        }
-        
-        // Si no está autenticado, mostrar alerta
-        Swal.fire({
-            title: 'Inicio de sesión requerido',
-            text: 'Necesitas estar logueado para sacar una cita',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Iniciar sesión',
-            cancelButtonText: 'Registrarse'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Redirigir a la página de login
-                window.location.href = 'login.php';
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Redirigir a la página de registro
-                window.location.href = 'registro.php';
-            }
-        });
-        return false;
-    }
-    
-    // Horario laboral
-    const horarioLaboral = {
-        inicio: '10:00',
-        pausaInicio: '14:00',
-        pausaFin: '17:00',
-        fin: '20:00'
-    };
-    
-    // Función para verificar si una fecha es laborable
-    function esFechaLaborable(fecha) {
-        const dia = fecha.getDay();
-        return dia >= 1 && dia <= 5; // 1 = Lunes, 5 = Viernes
-    }
-    
-    // Función para verificar si un horario está dentro del horario laboral
-    function esHorarioLaboral(fecha) {
-        const hora = fecha.getHours();
-        const minutos = fecha.getMinutes();
-        const horaDecimal = hora + (minutos / 60);
-        
-        return (horaDecimal >= 10 && horaDecimal < 14) || (horaDecimal >= 17 && horaDecimal < 20);
-    }
-    
-    // Función para verificar si una fecha es pasada
-    function esFechaPasada(fecha) {
-        const ahora = new Date();
-        return fecha < ahora;
-    }
-    
-    // Configuración del calendario
-    const calendarConfig = {
+
+    // Obtener el valor de esAdmin
+    const esAdmin = calendarEl.dataset.esAdmin === 'true';
+    console.log('Es admin:', esAdmin);
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        locale: 'es',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        initialView: 'timeGridWeek',
-        locale: 'es',
-        timeZone: 'local',
-        firstDay: 1, // Lunes
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día'
+        },
+        height: 'auto',
         slotMinTime: '10:00:00',
         slotMaxTime: '20:00:00',
         slotDuration: '01:00:00',
         allDaySlot: false,
+        weekends: false,
         selectable: true,
         selectMirror: true,
-        dayMaxEvents: true,
-        eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        },
-        selectConstraint: 'businessHours',
-        eventDidMount: function(info) {
-            // Asegurarse de que los eventos se muestren correctamente
-            if (info.event.extendedProps.estado === 'ocupada') {
-                info.el.style.backgroundColor = '#DC3545';
-                info.el.style.borderColor = '#DC3545';
+        businessHours: [
+            {
+                daysOfWeek: [1, 2, 3, 4, 5],
+                startTime: '10:00',
+                endTime: '14:00',
+            },
+            {
+                daysOfWeek: [1, 2, 3, 4, 5],
+                startTime: '17:00',
+                endTime: '20:00',
+            }
+        ],
+        selectConstraint: "businessHours",
+        dateClick: function(info) {
+            console.log('Click en fecha:', info.dateStr);
+            const fecha = info.dateStr.split('T')[0];
+            const hora = info.dateStr.includes('T') ? 
+                info.dateStr.split('T')[1].substring(0, 5) : '10:00';
+            
+            if (esAdmin) {
+                mostrarFormularioCitaAdmin(fecha, hora);
+            } else {
+                mostrarFormularioCita(fecha, hora);
             }
         },
         select: function(info) {
-            // Validar que la selección esté dentro del horario permitido
-            const hora = info.start.getHours();
-            const minutos = info.start.getMinutes();
-            const horaDecimal = hora + (minutos / 60);
+            console.log('Selección:', info);
+            const fecha = info.startStr.split('T')[0];
+            const hora = info.startStr.split('T')[1].substring(0, 5);
             
-            if (!esHorarioLaboral(info.start)) {
-                calendar.unselect();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Horario no disponible',
-                    text: 'Por favor selecciona un horario dentro del horario laboral (10:00-14:00 o 17:00-20:00)'
-                });
-                return;
+            if (esAdmin) {
+                mostrarFormularioCitaAdmin(fecha, hora);
+            } else {
+                mostrarFormularioCita(fecha, hora);
             }
-
-            manejarSeleccionCalendario(info);
+            calendar.unselect();
         },
-        businessHours: [
-            {
-                daysOfWeek: [1, 2, 3, 4, 5], // Lunes a viernes
-                startTime: '10:00',
-                endTime: '14:00'
-            },
-            {
-                daysOfWeek: [1, 2, 3, 4, 5], // Lunes a viernes
-                startTime: '17:00',
-                endTime: '20:00'
-            }
-        ],
-        themeSystem: 'standard',
-        dayHeaderClassNames: 'text-green-800 font-semibold',
-        viewDidMount: function(arg) {
-            // Aplicar estilos a las cabeceras de los días
-            const headers = arg.el.getElementsByClassName('fc-col-header-cell');
-            for (let header of headers) {
-                header.style.backgroundColor = '#4A6D50'; // Verde oscuro
-                header.style.color = 'white';
-            }
+        events: function(info, successCallback, failureCallback) {
+            console.log('Cargando eventos...');
             
-            // Ajustar altura según la vista
-            const calendar = arg.view.calendar;
-            const container = calendar.el;
-            
-            switch(arg.view.type) {
-                case 'dayGridMonth':
-                    container.style.height = '500px';
-                    break;
-                case 'timeGridWeek':
-                    container.style.height = '700px';
-                    break;
-                case 'timeGridDay':
-                    container.style.height = '800px';
-                    break;
-            }
-        }
-    };
-    
-    // Inicializar calendario de citas generales
-    const calendarioGeneral = new FullCalendar.Calendar(
-        document.getElementById('calendario-general'), 
-        {
-            ...calendarConfig,
-            events: function(info, successCallback, failureCallback) {
-                obtenerEventosCalendario('general', info, successCallback, failureCallback);
-            },
-            select: function(info) {
-                manejarSeleccionCalendario(info, 'general');
-            }
-        }
-    );
-    calendarioGeneral.render();
-    
-    // Inicializar calendario de terapias (para todos los usuarios)
-    if (document.getElementById('calendario-terapias')) {
-        const calendarioTerapias = new FullCalendar.Calendar(
-            document.getElementById('calendario-terapias'), 
-            {
-                ...calendarConfig,
-                events: function(info, successCallback, failureCallback) {
-                    obtenerEventosCalendario('terapias', info, successCallback, failureCallback);
-                },
-                select: function(info) {
-                    manejarSeleccionCalendario(info, 'terapias');
-                }
-            }
-        );
-        calendarioTerapias.render();
-    }
-    
-    // Cargar próximas citas
-    cargarProximasCitas('general');
-    if (document.getElementById('lista-citas-terapias')) {
-        cargarProximasCitas('terapias');
-    }
-    
-    // Función para obtener eventos del calendario
-    function obtenerEventosCalendario(tipo, info, successCallback, failureCallback) {
-        $.ajax({
-            url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=obtenerCitas',
-            method: 'GET',
-            data: {
-                tipo: tipo,
-                inicio: info.startStr,
-                fin: info.endStr
-            },
-            dataType: 'json',
-            success: function(response) {
+            const formData = new FormData();
+            formData.append('accion', 'obtenerCitas');
+
+            fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(text => {
+                console.log('Response text:', text);
                 try {
-                    if (response.exito) {
-                        successCallback(response.datos);
+                    const data = JSON.parse(text);
+                    if (data.exito) {
+                        const eventos = data.datos.map(cita => ({
+                            id: cita.id,
+                            title: esAdmin ? `${cita.nombre_cliente} - ${cita.motivo}` : cita.motivo,
+                            start: `${cita.fecha}T${cita.hora}`,
+                            backgroundColor: getColorByStatus(cita.estado),
+                            borderColor: getColorByStatus(cita.estado),
+                            extendedProps: {
+                                estado: cita.estado,
+                                motivo: cita.motivo,
+                                nombre_cliente: cita.nombre_cliente || 'Usuario'
+                            }
+                        }));
+                        successCallback(eventos);
                     } else {
-                        failureCallback(response.mensaje);
+                        throw new Error(data.mensaje || 'Error al cargar las citas');
                     }
                 } catch (e) {
-                    console.error('Error al procesar la respuesta:', e, response);
-                    failureCallback('Error al procesar la respuesta');
+                    console.error('Error al parsear JSON:', e);
+                    throw new Error('Error al parsear la respuesta del servidor');
                 }
-            },
-            error: function() {
-                failureCallback('Error de conexión');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                failureCallback(error);
+            });
+        },
+        eventClick: function(info) {
+            if (esAdmin) {
+                mostrarDetallesCitaAdmin(info.event);
+            } else {
+                mostrarDetallesCitaUsuario(info.event);
             }
-        });
-    }
-    
-    // Función para cargar próximas citas
-    function cargarProximasCitas(tipo) {
-        console.log("Cargando próximas citas para:", tipo);
-        const $listaCitas = tipo === 'general' ? $('#lista-citas-general') : $('#lista-citas-terapias');
-        
-        if (!$listaCitas.length) {
-            console.log("No se encontró el contenedor para las citas de tipo:", tipo);
-            return;
         }
-        
-        // Mostrar mensaje de cargando
-        $listaCitas.html('<div class="text-center py-4 text-gray-500 lista-cargando">Cargando citas...</div>');
-        
-        $.ajax({
-            url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=obtenerProximasCitas',
-            method: 'GET',
-            data: { tipo: tipo },
-            dataType: 'json',
-            success: function(response) {
-                try {
-                    console.log("Respuesta de próximas citas:", response);
-                    
-                    if (response.exito) {
-                        $listaCitas.empty();
-                        
-                        if (response.datos.length === 0) {
-                            $listaCitas.html('<div class="text-center py-4 text-gray-500">No hay citas próximas</div>');
-                        } else {
-                            response.datos.forEach(cita => {
-                                // Formatear fecha
-                                const fecha = new Date(cita.fecha + 'T' + cita.hora);
-                                const fechaFormateada = fecha.toLocaleDateString('es-ES', {
-                                    weekday: 'short',
-                                    day: '2-digit',
-                                    month: 'short'
-                                });
-                                
-                                const horaFormateada = fecha.toLocaleTimeString('es-ES', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                });
-                                
-                                // Crear elemento de lista
-                                const $item = $(`
-                                    <div class="flex items-center p-3 border-b hover:bg-gray-50 transition-colors">
-                                        <div class="flex-1">
-                                            <p class="font-medium">${fechaFormateada} - ${horaFormateada}</p>
-                                            <p class="text-sm text-gray-600">${cita.motivo}</p>
-                                        </div>
-                                        <div class="ml-4">
-                                            <span class="px-2 py-1 text-xs rounded-full ${obtenerClaseEstado(cita.estado)}">${cita.estado}</span>
-                                        </div>
-                                    </div>
-                                `);
-                                
-                                $listaCitas.append($item);
-                            });
-                        }
-                    } else {
-                        console.error('Error al cargar próximas citas:', response.mensaje);
-                        $listaCitas.html('<div class="text-center py-4 text-red-500">Error al cargar citas</div>');
-                    }
-                } catch (e) {
-                    console.error('Error al procesar la respuesta:', e, response);
-                    $listaCitas.html('<div class="text-center py-4 text-red-500">Error al procesar datos</div>');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error de conexión al cargar próximas citas:', status, error);
-                $listaCitas.html('<div class="text-center py-4 text-red-500">Error de conexión</div>');
-            }
-        });
-    }
-    
-    // Función para obtener clase CSS según estado
-    function obtenerClaseEstado(estado) {
+    });
+
+    calendar.render();
+    console.log('Calendario renderizado');
+
+    // Función para obtener color según el estado
+    function getColorByStatus(estado) {
         switch (estado) {
-            case 'pendiente':
-                return 'bg-yellow-500 text-white';
-            case 'confirmada':
-                return 'bg-green-500 text-white';
-            case 'cancelada':
-                return 'bg-red-500 text-white';
-            case 'completada':
-                return 'bg-blue-500 text-white';
-            default:
-                return 'bg-gray-500 text-white';
+            case 'pendiente': return '#F59E0B';
+            case 'confirmada': return '#10B981';
+            case 'cancelada': return '#EF4444';
+            case 'completada': return '#3B82F6';
+            default: return '#6B7280';
         }
     }
-    
-    // Función para manejar la selección en el calendario
-    function manejarSeleccionCalendario(info, tipo) {
-        const inicio = info.start;
-        const fin = info.end;
+
+    // Función para mostrar formulario de nueva cita (usuarios)
+    function mostrarFormularioCita(fecha, hora = '') {
+        console.log('Mostrando formulario para usuario:', fecha, hora);
         
-        // Verificar si el usuario está autenticado
-        if (!verificarLoginParaCita()) {
-            // Guardar datos de la cita en localStorage para recuperarlos después del login
-            localStorage.setItem('cita_pendiente', JSON.stringify({
-                fecha: inicio.toISOString().split('T')[0],
-                hora: inicio.toTimeString().split(' ')[0].substring(0, 5),
-                tipo: tipo
-            }));
-            return;
-        }
-        
-        // Si está autenticado, mostrar formulario de reserva
-        mostrarFormularioReserva(inicio, fin, tipo);
-    }
-    
-    // Función para mostrar formulario de reserva
-    function mostrarFormularioReserva(inicio, fin, tipo) {
-        // Formatear fecha y hora para el formulario
-        const fecha = inicio.toISOString().split('T')[0];
-        const hora = inicio.toTimeString().split(' ')[0].substring(0, 5);
-        
-        // Crear formulario de reserva
         Swal.fire({
-            title: 'Reservar cita',
+            title: 'Reservar Nueva Cita',
             html: `
-                <form id="formReservaCita" class="text-left">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha y hora:</label>
-                        <div class="text-gray-800">${inicio.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} a las ${hora}</div>
+                <div class="text-left space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha:</label>
+                        <input type="date" id="fecha-cita" class="w-full p-2 border border-gray-300 rounded-md" value="${fecha}" min="${new Date().toISOString().split('T')[0]}">
                     </div>
-                    <div class="mb-4">
-                        <label for="nombre_cliente" class="block text-sm font-medium text-gray-700 mb-1">Nombre completo:</label>
-                        <input type="text" id="nombre_cliente" name="nombre_cliente" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" required>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Hora:</label>
+                        <select id="hora-cita" class="w-full p-2 border border-gray-300 rounded-md">
+                            <option value="">Selecciona una hora</option>
+                            <option value="10:00" ${hora === '10:00' ? 'selected' : ''}>10:00</option>
+                            <option value="11:00" ${hora === '11:00' ? 'selected' : ''}>11:00</option>
+                            <option value="12:00" ${hora === '12:00' ? 'selected' : ''}>12:00</option>
+                            <option value="13:00" ${hora === '13:00' ? 'selected' : ''}>13:00</option>
+                            <option value="17:00" ${hora === '17:00' ? 'selected' : ''}>17:00</option>
+                            <option value="18:00" ${hora === '18:00' ? 'selected' : ''}>18:00</option>
+                            <option value="19:00" ${hora === '19:00' ? 'selected' : ''}>19:00</option>
+                        </select>
                     </div>
-                    <div class="mb-4">
-                        <label for="motivo" class="block text-sm font-medium text-gray-700 mb-1">Motivo de la cita:</label>
-                        <textarea id="motivo" name="motivo" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" required></textarea>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la consulta:</label>
+                        <textarea id="motivo-cita" class="w-full p-2 border border-gray-300 rounded-md" rows="3" placeholder="Describe brevemente el motivo de tu consulta..."></textarea>
                     </div>
-                    <input type="hidden" id="fecha" name="fecha" value="${fecha}">
-                    <input type="hidden" id="hora" name="hora" value="${hora}">
-                    <input type="hidden" id="tipo" name="tipo" value="${tipo}">
-                </form>
+                </div>
             `,
             showCancelButton: true,
-            confirmButtonColor: '#10b981',
-            cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Reservar',
+            confirmButtonText: 'Reservar Cita',
             cancelButtonText: 'Cancelar',
-            showLoaderOnConfirm: true,
+            confirmButtonColor: '#2C5530',
+            cancelButtonColor: '#6B7280',
             preConfirm: () => {
-                const formData = new FormData(document.getElementById('formReservaCita'));
-                
-                return $.ajax({
-                    url: '../assets/php/MVC/Controlador/citas-controlador.php?accion=crear',
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json'
-                }).then(response => {
-                    if (!response.exito) {
-                        throw new Error(response.mensaje || 'Error al crear la cita');
-                    }
-                    return response;
-                }).catch(error => {
-                    Swal.showValidationMessage(`Error: ${error.message || 'Ha ocurrido un error'}`);
-                });
-            },
-            allowOutsideClick: () => !Swal.isLoading()
+                const fecha = document.getElementById('fecha-cita').value;
+                const hora = document.getElementById('hora-cita').value;
+                const motivo = document.getElementById('motivo-cita').value;
+
+                if (!fecha || !hora || !motivo.trim()) {
+                    Swal.showValidationMessage('Por favor, completa todos los campos');
+                    return false;
+                }
+
+                return { fecha, hora, motivo };
+            }
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: '¡Cita reservada!',
-                    text: 'Tu cita ha sido reservada correctamente.',
-                    icon: 'success',
-                    confirmButtonColor: '#10b981'
-                }).then(() => {
-                    // Recargar calendarios
-                    calendarioGeneral.refetchEvents();
-                    if (typeof calendarioTerapias !== 'undefined' && calendarioTerapias) {
-                        calendarioTerapias.refetchEvents();
-                    }
-                    
-                    // Recargar listas de próximas citas
-                    cargarProximasCitas('general');
-                    if (document.getElementById('lista-citas-terapias')) {
-                        cargarProximasCitas('terapias');
-                    }
-                    
-                    // Agregar la nueva cita a la lista inmediatamente
-                    agregarNuevaCitaALista({
-                        fecha: fecha,
-                        hora: hora,
-                        motivo: document.getElementById('motivo').value,
-                        estado: 'pendiente',
-                        tipo: tipo
-                    });
-                });
+                crearCita(result.value.fecha, result.value.hora, result.value.motivo);
             }
         });
     }
-    
-    // Función para agregar una nueva cita a la lista inmediatamente
-    function agregarNuevaCitaALista(cita) {
-        const $listaCitas = cita.tipo === 'general' ? $('#lista-citas-general') : $('#lista-citas-terapias');
+
+    // Función para mostrar formulario de nueva cita (admin)
+    function mostrarFormularioCitaAdmin(fecha, hora = '') {
+        console.log('Mostrando formulario para admin:', fecha, hora);
         
-        if (!$listaCitas.length) {
-            console.log("No se encontró el contenedor para las citas de tipo:", cita.tipo);
-            return;
-        }
-        
-        // Eliminar mensaje de "No hay citas próximas" si existe
-        const $noCitas = $listaCitas.find('.text-center.py-4.text-gray-500');
-        if ($noCitas.length) {
-            $noCitas.remove();
-        }
-        
-        // Formatear fecha
-        const fecha = new Date(cita.fecha + 'T' + cita.hora);
-        const fechaFormateada = fecha.toLocaleDateString('es-ES', {
-            weekday: 'short',
-            day: '2-digit',
-            month: 'short'
+        // Primero obtenemos la lista de usuarios
+        obtenerUsuarios().then(usuarios => {
+            Swal.fire({
+                title: 'Crear Nueva Cita (Admin)',
+                html: `
+                    <div class="text-left space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Usuario:</label>
+                            <select id="usuario-cita" class="w-full p-2 border border-gray-300 rounded-md">
+                                <option value="">Selecciona un usuario</option>
+                                ${usuarios.map(usuario => 
+                                    `<option value="${usuario.id}">${usuario.nombre} ${usuario.apellidos} (${usuario.email})</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Fecha:</label>
+                            <input type="date" id="fecha-cita" class="w-full p-2 border border-gray-300 rounded-md" value="${fecha}" min="${new Date().toISOString().split('T')[0]}">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Hora:</label>
+                            <select id="hora-cita" class="w-full p-2 border border-gray-300 rounded-md">
+                                <option value="">Selecciona una hora</option>
+                                <option value="10:00" ${hora === '10:00' ? 'selected' : ''}>10:00</option>
+                                <option value="11:00" ${hora === '11:00' ? 'selected' : ''}>11:00</option>
+                                <option value="12:00" ${hora === '12:00' ? 'selected' : ''}>12:00</option>
+                                <option value="13:00" ${hora === '13:00' ? 'selected' : ''}>13:00</option>
+                                <option value="17:00" ${hora === '17:00' ? 'selected' : ''}>17:00</option>
+                                <option value="18:00" ${hora === '18:00' ? 'selected' : ''}>18:00</option>
+                                <option value="19:00" ${hora === '19:00' ? 'selected' : ''}>19:00</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la consulta:</label>
+                            <textarea id="motivo-cita" class="w-full p-2 border border-gray-300 rounded-md" rows="3" placeholder="Describe brevemente el motivo de la consulta..."></textarea>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm text-blue-700"><strong>Nota:</strong> Como administrador, puedes crear citas para cualquier usuario.</p>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Crear Cita',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#2C5530',
+                cancelButtonColor: '#6B7280',
+                preConfirm: () => {
+                    const usuarioId = document.getElementById('usuario-cita').value;
+                    const fecha = document.getElementById('fecha-cita').value;
+                    const hora = document.getElementById('hora-cita').value;
+                    const motivo = document.getElementById('motivo-cita').value;
+
+                    if (!usuarioId || !fecha || !hora || !motivo.trim()) {
+                        Swal.showValidationMessage('Por favor, completa todos los campos');
+                        return false;
+                    }
+
+                    return { usuarioId, fecha, hora, motivo };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    crearCitaAdmin(result.value.usuarioId, result.value.fecha, result.value.hora, result.value.motivo);
+                }
+            });
+        }).catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron cargar los usuarios',
+                confirmButtonColor: '#DC3545'
+            });
         });
-        
-        const horaFormateada = fecha.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        // Crear elemento de lista
-        const $item = $(`
-            <div class="flex items-center p-3 border-b hover:bg-gray-50 transition-colors nueva-cita">
-                <div class="flex-1">
-                    <p class="font-medium">${fechaFormateada} - ${horaFormateada}</p>
-                    <p class="text-sm text-gray-600">${cita.motivo}</p>
-                </div>
-                <div class="ml-4">
-                    <span class="px-2 py-1 text-xs rounded-full ${obtenerClaseEstado(cita.estado)}">${cita.estado}</span>
-                </div>
-            </div>
-        `);
-        
-        // Agregar al principio de la lista
-        $listaCitas.prepend($item);
-        
-        // Aplicar efecto de resaltado
-        $item.addClass('bg-green-50');
-        setTimeout(() => {
-            $item.removeClass('bg-green-50');
-        }, 3000);
     }
-    
-    // Verificar si hay una cita pendiente en localStorage después de login
-    if (esUsuarioAutenticado()) {
-        const citaPendiente = localStorage.getItem('cita_pendiente');
-        if (citaPendiente) {
+
+    // Función para obtener usuarios
+    function obtenerUsuarios() {
+        return new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append('accion', 'obtenerUsuarios');
+
+            fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exito) {
+                    resolve(data.datos);
+                } else {
+                    reject(new Error(data.mensaje));
+                }
+            })
+            .catch(error => {
+                reject(error);
+            });
+        });
+    }
+
+    // Función para crear cita como admin (para otro usuario)
+    function crearCitaAdmin(usuarioId, fecha, hora, motivo) {
+        console.log('Creando cita admin para usuario:', usuarioId, { fecha, hora, motivo });
+        
+        const formData = new FormData();
+        formData.append('accion', 'crearCitaAdmin');
+        formData.append('usuario_id', usuarioId);
+        formData.append('fecha', fecha);
+        formData.append('hora', hora);
+        formData.append('motivo', motivo);
+
+        fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(text => {
+            console.log('Respuesta:', text);
             try {
-                const datos = JSON.parse(citaPendiente);
-                const inicio = new Date(datos.fecha + 'T' + datos.hora);
-                const fin = new Date(inicio.getTime() + 60 * 60 * 1000); // 1 hora después
-                
-                // Mostrar formulario de reserva
-                setTimeout(() => {
-                    mostrarFormularioReserva(inicio, fin, datos.tipo || 'general');
-                    localStorage.removeItem('cita_pendiente');
-                }, 1000);
+                const data = JSON.parse(text);
+                if (data.exito) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cita creada!',
+                        text: 'La cita ha sido creada correctamente.',
+                        confirmButtonColor: '#2C5530'
+                    });
+                    calendar.refetchEvents();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.mensaje || 'Error al crear la cita');
+                }
             } catch (e) {
-                console.error('Error al procesar cita pendiente:', e);
-                localStorage.removeItem('cita_pendiente');
+                console.error('Error al parsear JSON:', e);
+                throw new Error('Error al procesar la respuesta del servidor');
             }
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Error al crear la cita',
+                confirmButtonColor: '#DC3545'
+            });
+        });
+    }
+
+    // Función para mostrar detalles de cita (usuario)
+    function mostrarDetallesCitaUsuario(evento) {
+        Swal.fire({
+            title: 'Detalles de tu Cita',
+            html: `
+                <div class="text-left">
+                    <p><strong>Fecha:</strong> ${evento.start.toLocaleDateString()}</p>
+                    <p><strong>Hora:</strong> ${evento.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                    <p><strong>Motivo:</strong> ${evento.extendedProps.motivo}</p>
+                    <p><strong>Estado:</strong> ${evento.extendedProps.estado}</p>
+                </div>
+            `,
+            confirmButtonText: 'Cerrar',
+            confirmButtonColor: '#2C5530'
+        });
+    }
+
+    // Función para mostrar detalles de cita (admin)
+    function mostrarDetallesCitaAdmin(evento) {
+        Swal.fire({
+            title: 'Gestionar Cita',
+            html: `
+                <div class="text-left">
+                    <p><strong>Cliente:</strong> ${evento.extendedProps.nombre_cliente}</p>
+                    <p><strong>Fecha:</strong> ${evento.start.toLocaleDateString()}</p>
+                    <p><strong>Hora:</strong> ${evento.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                    <p><strong>Motivo:</strong> ${evento.extendedProps.motivo}</p>
+                    <p><strong>Estado actual:</strong> ${evento.extendedProps.estado}</p>
+                </div>
+            `,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            denyButtonText: 'Cancelar Cita',
+            cancelButtonText: 'Cerrar',
+            confirmButtonColor: '#10B981',
+            denyButtonColor: '#EF4444'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                actualizarEstadoCita(evento.id, 'confirmada');
+            } else if (result.isDenied) {
+                actualizarEstadoCita(evento.id, 'cancelada');
+            }
+        });
+    }
+
+    // Función para actualizar estado de cita
+    window.actualizarEstadoCita = function(citaId, nuevoEstado) {
+        const formData = new FormData();
+        formData.append('accion', 'actualizarEstado');
+        formData.append('id', citaId);
+        formData.append('estado', nuevoEstado);
+
+        fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Estado actualizado correctamente',
+                    confirmButtonColor: '#2C5530'
+                });
+                calendar.refetchEvents();
+                location.reload();
+            } else {
+                throw new Error(data.mensaje || 'Error al actualizar el estado');
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Error al actualizar el estado',
+                confirmButtonColor: '#DC3545'
+            });
+        });
     }
 });
