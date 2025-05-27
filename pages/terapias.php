@@ -72,118 +72,172 @@
                 </div>
             </div>
         </div>
+
+        <!--Terapias-->
         <div class="bg-gray-800 py-24 w-full">
-            <h1 class="text-5xl font-display-CormorantGaramond font-bold text-white mb-10 text-center">Nuestras Terapias</h1>
+            <div class="flex justify-center mb-10 aparecer-secuencial">
+                <h1 class="text-5xl font-display-CormorantGaramond font-bold text-white text-center">Nuestras Terapias</h1>
+            </div>
             <div class="flex justify-center py-10">
                 <div class="flex flex-col sm:flex-row items-center gap-8">
                     <!-- Miembro 1 -->
-                    <div class="flex flex-col items-center" data-modal-target="modal1" data-modal-toggle="modal1" type="button">
-                        <img src="../assets/img/persona1.jpg" alt="Persona 1"
+                    <div class="flex flex-col items-center aparecer-secuencial" data-modal-target="Osteopatía" data-modal-toggle="Osteopatía" type="button">
+                        <img src="../assets/img/Osteopatía.png" alt="Osteopatía"
                             class="w-56 h-56 object-cover rounded-full border-[8px] border-white hover:scale-105 duration-300">
-                        <h2 class="mt-4 text-xl font-semibold text-white">Terapia 1</h2>
+                        <h2 class="mt-4 text-xl font-semibold text-white">Osteopatía</h2>
                     </div>
                     <!-- Miembro 2 -->
-                    <div class="flex flex-col items-center" data-modal-target="modal2" data-modal-toggle="modal2" type="button">
-                        <img src="../assets/img/persona2.jpg" alt="Persona 2"
+                    <div class="flex flex-col items-center aparecer-secuencial" data-modal-target="Astrología" data-modal-toggle="Astrología" type="button">
+                        <img src="../assets/img/Astrología.png" alt="Astrología"
                             class="w-56 h-56 object-cover rounded-full border-[8px] border-white hover:scale-105 duration-300">
-                        <h2 class="mt-4 text-xl font-semibold text-white">Terapia 2</h2>
+                        <h2 class="mt-4 text-xl font-semibold text-white">Astrología</h2>
                     </div>
                     <!-- Miembro 3 -->
-                    <div class="flex flex-col items-center" data-modal-target="modal3" data-modal-toggle="modal3" type="button">
-                        <img src="../assets/img/persona3.jpg" alt="Persona 3"
+                    <div class="flex flex-col items-center aparecer-secuencial" data-modal-target="Coaching" data-modal-toggle="Coaching" type="button">
+                        <img src="../assets/img/Coaching.png" alt="Coaching"
                             class="w-56 h-56 object-cover rounded-full border-[8px] border-white hover:scale-105 duration-300">
-                        <h2 class="mt-4 text-xl font-semibold text-white">Terapia 3</h2>
+                        <h2 class="mt-4 text-xl font-semibold text-white">Coaching</h2>
                     </div>
                     <!-- Miembro 4 -->
-                    <div class="flex flex-col items-center" data-modal-target="modal4" data-modal-toggle="modal4" type="button">
-                        <img src="../assets/img/persona4.jpg" alt="Persona 4"
+                    <div class="flex flex-col items-center aparecer-secuencial" data-modal-target="MasajesNaturales" data-modal-toggle="MasajesNaturales" type="button">
+                        <img src="../assets/img/Masajes Naturales.png" alt="Masajes Naturales"
                             class="w-56 h-56 object-cover rounded-full border-[8px] border-white hover:scale-105 duration-300">
-                        <h2 class="mt-4 text-xl font-semibold text-white">Terapia 4</h2>
+                        <h2 class="mt-4 text-xl font-semibold text-white">Masajes Naturales</h2>
+                    </div>
+                    <!-- Miembro 5 -->
+                    <div class="flex flex-col items-center aparecer-secuencial" data-modal-target="Reiki" data-modal-toggle="Reiki" type="button">
+                        <img src="../assets/img/Reiki.png" alt="Reiki"
+                            class="w-56 h-56 object-cover rounded-full border-[8px] border-white hover:scale-105 duration-300">
+                        <h2 class="mt-4 text-xl font-semibold text-white">Reiki</h2>
+                    </div>
+                    <!-- Miembro 6 -->
+                    <div class="flex flex-col items-center aparecer-secuencial" data-modal-target="TerapiaCraneosacral" data-modal-toggle="TerapiaCraneosacral" type="button">
+                        <img src="../assets/img/Terapia Craneosacral.png" alt="Terapia Craneosacral"
+                            class="w-56 h-56 object-cover rounded-full border-[8px] border-white hover:scale-105 duration-300">
+                        <h2 class="mt-4 text-xl font-semibold text-white">Terapia Craneosacral</h2>
                     </div>
 
                     <!-- Modal 1 -->
-                    <div id="modal1" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div id="Osteopatía" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                         <div class="relative p-4 w-full max-w-2xl max-h-full">
                             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Terapia 1
+                                        Osteopatía
                                     </h3>
                                 </div>
                                 <div class="p-4 md:p-5 space-y-4">
-                                    <img src="../assets/img/persona1.jpg" alt="Persona 1" class="w-full h-auto rounded-lg">
                                     <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                        Informacion de la terapia 1.
+                                        Terapia manual que trata disfunciones del cuerpo mediante manipulaciones suaves para mejorar la movilidad, aliviar el dolor y restaurar el equilibrio natural del organismo.
                                     </p>
                                 </div>
                                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                    <button data-modal-hide="modal1" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
+                                    <button data-modal-hide="Osteopatía" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Modal 2 -->
-                    <div id="modal2" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div id="Astrología" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                         <div class="relative p-4 w-full max-w-2xl max-h-full">
                             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Terapia 2
+                                        Astrología
                                     </h3>
                                 </div>
                                 <div class="p-4 md:p-5 space-y-4">
-                                    <img src="../assets/img/persona2.jpg" alt="Persona 2" class="w-full h-auto rounded-lg">
                                     <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                        Informacion de la terapia 2.
+                                        Herramienta de autoconocimiento basada en la interpretación de los astros y la carta natal, que ayuda a comprender la personalidad, los ciclos vitales y tomar decisiones conscientes.
                                     </p>
                                 </div>
                                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                    <button data-modal-hide="modal2" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
+                                    <button data-modal-hide="Astrología" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Modal 3 -->
-                    <div id="modal3" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div id="Coaching" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                         <div class="relative p-4 w-full max-w-2xl max-h-full">
                             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Terapia 3
+                                        Coaching
                                     </h3>
                                 </div>
                                 <div class="p-4 md:p-5 space-y-4">
-                                    <img src="../assets/img/persona3.jpg" alt="Persona 3" class="w-full h-auto rounded-lg">
                                     <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                        Informacion de la terapia 3.
+                                        Proceso de acompañamiento personalizado que impulsa el desarrollo personal y profesional, ayudando a alcanzar metas, superar bloqueos y potenciar habilidades.
                                     </p>
                                 </div>
                                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                    <button data-modal-hide="modal3" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
+                                    <button data-modal-hide="Coaching" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Modal 4 -->
-                    <div id="modal4" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div id="MasajesNaturales" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                         <div class="relative p-4 w-full max-w-2xl max-h-full">
                             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Terapia 4
+                                        Masajes Naturales
                                     </h3>
                                 </div>
                                 <div class="p-4 md:p-5 space-y-4">
-                                    <img src="../assets/img/persona4.jpg" alt="Persona 4" class="w-full h-auto rounded-lg">
                                     <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                                        Informacion de la terapia 4.
+                                        Técnica terapéutica que utiliza maniobras manuales sobre el cuerpo para relajar los músculos, mejorar la circulación y proporcionar bienestar físico y emocional.
                                     </p>
                                 </div>
                                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                                    <button data-modal-hide="modal4" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
+                                    <button data-modal-hide="MasajesNaturales" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal 5 -->
+                    <div id="Reiki" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                        <div class="relative p-4 w-full max-w-2xl max-h-full">
+                            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                        Reiki
+                                    </h3>
+                                </div>
+                                <div class="p-4 md:p-5 space-y-4">
+                                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                        Terapia energética japonesa que canaliza energía a través de las manos para armonizar cuerpo, mente y espíritu, favoreciendo la relajación y la sanación interior.
+                                    </p>
+                                </div>
+                                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                    <button data-modal-hide="Reiki" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal 6 -->
+                    <div id="TerapiaCraneosacral" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                        <div class="relative p-4 w-full max-w-2xl max-h-full">
+                            <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                        Terapia Craneosacral
+                                    </h3>
+                                </div>
+                                <div class="p-4 md:p-5 space-y-4">
+                                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                        Terapia suave que trabaja el sistema nervioso central mediante toques sutiles en el cráneo, columna y sacro, ayudando a liberar tensiones profundas y mejorar el equilibrio corporal.
+                                    </p>
+                                </div>
+                                <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                    <button data-modal-hide="TerapiaCraneosacral" type="button" class="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Cerrar</button>
                                 </div>
                             </div>
                         </div>
