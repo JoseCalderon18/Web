@@ -47,6 +47,7 @@ if (!is_array($usuarios)) {
     <script src="../assets/js/busqueda-usuarios.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/animaciones.js"></script>
 </body>
 </html>
 

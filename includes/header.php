@@ -51,7 +51,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <div class="bg-beige h-32"></div>
     <?php if (isset($_SESSION['usuario_id'])): ?>
     <!-- Header con datos del usuario -->
-    <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
+    <div class="bg-gray-800 w-full p-4 mt-2">
         <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
             <span class="py-2 text-sm md:text-base">
                 <i class="fas fa-user mr-2"></i>

@@ -12,13 +12,11 @@ $(document).ready(function() {
 
     // Función para animar elementos
     function animarElementos() {
-        console.log("Buscando elementos para animar");
         
         // Animar elementos con clase aparecer
         $(".aparecer").each(function() {
             var $elemento = $(this);
             if (estaEnViewport($elemento) && !$elemento.hasClass("activo")) {
-                console.log("Animando elemento aparecer");
                 $elemento.addClass("activo");
             }
         });
@@ -27,7 +25,6 @@ $(document).ready(function() {
         $(".aparecer-secuencial").each(function(indice) {
             var $elemento = $(this);
             if (estaEnViewport($elemento) && !$elemento.hasClass("activo")) {
-                console.log("Animando elemento secuencial " + indice);
                 setTimeout(function() {
                     $elemento.addClass("activo");
                 }, indice * 200);
