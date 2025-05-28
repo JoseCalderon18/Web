@@ -35,10 +35,12 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="w-full sm:w-auto"><a href="pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Noticias">Noticias</a></li>         
                 
-                <!-- Enlace de login con imagen de usuario -->
-                <a href="pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
-                    <img src="assets/img/logoUsuario.png" alt="Icono de usuario" class="w-8 h-8">
-                </a>
+                <a href="../pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-label="Icono de usuario">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4a4 4 0 100 8 4 4 0 000-8z"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                </svg>
+            </a>
             </ul>
         </nav> 
         <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
