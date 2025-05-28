@@ -90,7 +90,7 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
     <?php endif; ?>
     
     <!-- Modal de login para usuarios no autenticados -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-semibold text-green-800">Iniciar sesión</h3>

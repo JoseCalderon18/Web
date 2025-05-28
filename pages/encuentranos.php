@@ -7,6 +7,7 @@
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
     <link href="../assets/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
@@ -24,24 +25,24 @@
                 <i class="fas fa-clock mr-2"></i>
                 Última conexión: <?= date('d/m/Y H:i:s') ?>
             </span>
-            <div class="flex gap-4">
+            <div class="flex gap-2 sm:gap-4">
                 <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
                     <a href="productos.php" 
-                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
-                        <i class="fas fa-shopping-basket mr-2"></i>Productos
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-1 sm:mr-2"></i>Productos
                     </a>
                     <a href="usuarios.php" 
-                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
-                        <i class="fas fa-users mr-2"></i>Usuarios
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-users mr-1 sm:mr-2"></i>Usuarios
                     </a>
                     <a href="citas.php" 
-                       class="px-4 py-2 bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
-                        <i class="fas fa-calendar-check mr-2"></i>Citas
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-check mr-1 sm:mr-2"></i>Citas
                     </a>
                 <?php endif; ?>
                 <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
-                   class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
-                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar sesión
+                   class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Cerrar sesión
                 </a>
             </div>
         </div>
