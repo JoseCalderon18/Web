@@ -179,6 +179,36 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
         </p>
     </div>
     <?php endif; ?>
+    
+    <!-- Modal de login para usuarios no autenticados -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-green-800">Iniciar sesión</h3>
+                <button id="closeLoginModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="mb-4 text-gray-600">Debes iniciar sesión para reservar una cita.</p>
+            <div class="space-y-4">
+                <div>
+                    <label for="loginEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="loginEmail" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                </div>
+                <div>
+                    <label for="loginPassword" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <input type="password" id="loginPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                </div>
+                <div id="loginError" class="text-red-500 text-sm hidden"></div>
+                <div class="flex justify-between items-center">
+                    <button id="submitLogin" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md">
+                        Iniciar sesión
+                    </button>
+                    <a href="registro.php" class="text-green-600 hover:text-green-800 text-sm">¿No tienes cuenta? Regístrate</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

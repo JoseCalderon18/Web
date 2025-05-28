@@ -7,10 +7,47 @@
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
     <link href="../assets/css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
     <?php include "../includes/header.php"; ?>
+
+    <?php if (isset($_SESSION['usuario_id'])): ?>
+    <!-- Header con datos del usuario -->
+    <div class="bg-gray-800 w-full p-4 mb-4 md:mb-8 my-2">
+        <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-user mr-2"></i>
+                Usuario: <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+            </span>
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-clock mr-2"></i>
+                Última conexión: <?= date('d/m/Y H:i:s') ?>
+            </span>
+            <div class="flex gap-2 sm:gap-4">
+                <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                    <a href="productos.php" 
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-1 sm:mr-2"></i>Productos
+                    </a>
+                    <a href="usuarios.php" 
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-users mr-1 sm:mr-2"></i>Usuarios
+                    </a>
+                    <a href="citas.php" 
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-check mr-1 sm:mr-2"></i>Citas
+                    </a>
+                <?php endif; ?>
+                <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
+                   class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <main class="bg-beige pt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-2/3 mx-auto aparecer">
