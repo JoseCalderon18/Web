@@ -76,7 +76,6 @@ class ProductosControlador {
             $stock = $_POST['stock'];
             $precio = $_POST['precio'];
             $comentarios = isset($_POST['comentarios']) ? $_POST['comentarios'] : '';
-            $laboratorio = isset($_POST['laboratorio']) ? $_POST['laboratorio'] : '';
             $fecha_registro = date('Y-m-d');
             
             // Procesar la foto
@@ -117,7 +116,7 @@ class ProductosControlador {
             }
             
             // Crear el producto
-            $resultado = $this->modelo->crear($nombre, $stock, $rutaFoto, $precio, $fecha_registro, $comentarios, $laboratorio);
+            $resultado = $this->modelo->crear($nombre, $stock, $rutaFoto, $precio, $fecha_registro, $comentarios);
             
             if ($resultado) {
                 echo json_encode(['success' => true, 'message' => 'Producto creado correctamente']);
@@ -172,13 +171,10 @@ class ProductosControlador {
     // Obtener producto por ID
     public function obtenerProductoPorId($id) {
         try {
-            $producto = $this->modelo->obtenerPorId($id);
-            if (!$producto) {
-                throw new Exception("Producto no encontrado");
-            }
-            return $producto;
+            return $this->modelo->obtenerPorId($id);
         } catch (Exception $e) {
             error_log("Error en obtenerProductoPorId: " . $e->getMessage());
+            $_SESSION['error'] = $e->getMessage();
             return null;
         }
     }
@@ -197,7 +193,6 @@ class ProductosControlador {
             $stock = $_POST['stock'];
             $precio = $_POST['precio'];
             $comentarios = isset($_POST['comentarios']) ? $_POST['comentarios'] : '';
-            $laboratorio = isset($_POST['laboratorio']) ? $_POST['laboratorio'] : '';
             
             // Obtener el producto actual para verificar si hay una foto existente
             $productoActual = $this->modelo->obtenerPorId($id);
@@ -254,7 +249,7 @@ class ProductosControlador {
             }
             
             // Actualizar el producto
-            $resultado = $this->modelo->actualizar($id, $nombre, $stock, $rutaFoto, $precio, $comentarios, $laboratorio);
+            $resultado = $this->modelo->actualizar($id, $nombre, $stock, $rutaFoto, $precio, $comentarios);
             
             if ($resultado) {
                 echo json_encode(['success' => true, 'message' => 'Producto actualizado correctamente']);
@@ -263,126 +258,6 @@ class ProductosControlador {
             }
         } catch (Exception $e) {
             echo "<script>console.log('Error: " . addslashes($e->getMessage()) . "');</script>";
-            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
-        }
-    }
-
-    public function actualizarStock() {
-        try {
-            if (!isset($_POST['id']) || !isset($_POST['operacion'])) {
-                throw new Exception('Datos incompletos');
-            }
-
-            $id = (int)$_POST['id'];
-            $operacion = $_POST['operacion'];
-
-            // Obtener el producto actual
-            $producto = $this->modelo->obtenerPorId($id);
-            if (!$producto) {
-                throw new Exception('Producto no encontrado');
-            }
-
-            // Calcular nuevo stock
-            $nuevoStock = (int)$producto['stock'];
-            if ($operacion === 'sumar') {
-                $nuevoStock++;
-            } elseif ($operacion === 'restar') {
-                if ($nuevoStock <= 0) {
-                    throw new Exception('No hay stock suficiente');
-                }
-                $nuevoStock--;
-            } else {
-                throw new Exception('Operación no válida');
-            }
-
-            // Actualizar el stock
-            if ($this->modelo->actualizarStock($id, $nuevoStock)) {
-                echo json_encode([
-                    'success' => true,
-                    'message' => 'Stock actualizado correctamente',
-                    'nuevoStock' => $nuevoStock
-                ]);
-            } else {
-                throw new Exception('Error al actualizar el stock');
-            }
-
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
-    // Sumar una unidad al stock
-    public function sumarUnidad() {
-        try {
-            if (!isset($_POST['id'])) {
-                echo json_encode(['success' => false, 'message' => 'ID de producto no proporcionado']);
-                return;
-            }
-
-            $id = $_POST['id'];
-            
-            // Verificar que el producto existe
-            $producto = $this->modelo->obtenerPorId($id);
-            if (!$producto) {
-                echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
-                return;
-            }
-            
-            // Sumar una unidad
-            $resultado = $this->modelo->sumarUnidad($id);
-            
-            if ($resultado) {
-                echo json_encode([
-                    'success' => true, 
-                    'message' => 'Stock actualizado correctamente',
-                    'nuevoStock' => $producto['stock'] + 1
-                ]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Error al actualizar el stock']);
-            }
-        } catch (Exception $e) {
-            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
-        }
-    }
-
-    // Restar una unidad del stock
-    public function restarUnidad() {
-        try {
-            if (!isset($_POST['id'])) {
-                echo json_encode(['success' => false, 'message' => 'ID de producto no proporcionado']);
-                return;
-            }
-
-            $id = $_POST['id'];
-            
-            // Verificar que el stock sea mayor que 0
-            $producto = $this->modelo->obtenerPorId($id);
-            if (!$producto) {
-                echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
-                return;
-            }
-            
-            if ($producto['stock'] <= 0) {
-                echo json_encode(['success' => false, 'message' => 'No hay stock disponible para restar']);
-                return;
-            }
-            
-            // Restar una unidad
-            $resultado = $this->modelo->restarUnidad($id);
-            
-            if ($resultado) {
-                echo json_encode([
-                    'success' => true, 
-                    'message' => 'Stock actualizado correctamente',
-                    'nuevoStock' => $producto['stock'] - 1
-                ]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Error al actualizar el stock']);
-            }
-        } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
@@ -402,15 +277,6 @@ if (isset($_GET['accion'])) {
         case 'eliminar':
             $controlador->eliminarProducto();
             break;
-        case 'restarUnidad':
-            $controlador->restarUnidad();
-            break;
-        case 'sumarUnidad':
-            $controlador->sumarUnidad();
-            break;
-        case 'actualizarStock':
-            $controlador->actualizarStock();
-            break;
         case 'obtener':
             echo json_encode($controlador->obtenerTodosLosProductos());
             break;
@@ -418,6 +284,5 @@ if (isset($_GET['accion'])) {
             echo json_encode(['success' => false, 'message' => 'Acción no válida']);
             break;
     }
-    exit; // Aseguramos que el script termine después de manejar la acción
 }
 ?>
