@@ -33,14 +33,23 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="w-full sm:w-auto"><a href="pages/el_herbolario.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección El Herbolario">El Herbolario</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/terapias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Terapias">Terapias</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
-                <li class="w-full sm:w-auto"><a href="pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Noticias">Noticias</a></li>         
+                <li class="w-full sm:w-auto"><a href="pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Noticias">Noticias</a></li>
                 
-                <a href="../pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
-                <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-label="Icono de usuario">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4a4 4 0 100 8 4 4 0 000-8z"/>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-                </svg>
-            </a>
+                <?php if (isset($_SESSION['usuario_id'])): ?>
+                    <li class="w-full sm:w-auto"><a href="pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección citas">Citas</a></li>
+                    <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                        <li class="w-full sm:w-auto"><a href="pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección productos">Productos</a></li>
+                        <li class="w-full sm:w-auto"><a href="pages/usuarios.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección usuarios">Usuarios</a></li>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <!-- Enlace de login con icono de usuario -->
+                <a href="pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-label="Icono de usuario">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4a4 4 0 100 8 4 4 0 000-8z"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                    </svg>
+                </a>
             </ul>
         </nav> 
         <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
