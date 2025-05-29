@@ -143,155 +143,120 @@ function setupProductosLista() {
 }
 
 function setupProductosForm() {
-    // Verificar si estamos en la página del formulario
-    const productoForm = $('#productoForm');
-    if (productoForm.length === 0) {
-        console.log('No estamos en la página del formulario de productos');
-        return; // No estamos en la página del formulario
-    }
-    
-    console.log('Formulario de productos encontrado');
-    
-    // Previsualización de imagen
-    function mostrarVistaPrevia(input) {
-        const previewContainer = $('#preview-container');
-        const previewImg = $('#preview-image');
+    if ($('#productoForm').length > 0) {
+        console.log('Formulario de productos encontrado');
         
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.attr('src', e.target.result);
-                previewContainer.removeClass('hidden');
-            };
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            // Si no hay archivo seleccionado y no estamos en edición, ocultar la previsualización
-            if ($('input[name="foto_actual"]').length === 0) {
-                previewContainer.addClass('hidden');
+        // Vista previa de imagen
+        $('#foto').on('change', function() {
+            const file = this.files[0];
+            let preview = $('#preview');
+            
+            // Si no existe el elemento preview, crearlo
+            if (preview.length === 0) {
+                // Buscar donde insertar la vista previa
+                const fotoContainer = $('#foto').closest('.space-y-1, .mb-4, .form-group');
+                if (fotoContainer.length > 0) {
+                    fotoContainer.append(`
+                        <div class="mt-2">
+                            <img id="preview" class="hidden w-32 h-32 object-cover rounded-lg border-2 border-gray-300" alt="Vista previa">
+                        </div>
+                    `);
+                    preview = $('#preview');
+                }
             }
-        }
-    }
-    
-    // Crear contenedor de previsualización si no existe
-    if ($('#preview-container').length === 0) {
-        const previewContainer = $('<div id="preview-container" class="mt-4 hidden"></div>');
-        previewContainer.append('<h4 class="text-sm font-medium text-gray-900 mb-2">Vista previa de la nueva imagen:</h4>');
-        
-        const imageContainer = $('<div class="relative inline-block"></div>');
-        imageContainer.append('<img id="preview-image" class="w-32 h-32 object-cover rounded-lg">');
-        imageContainer.append('<button type="button" id="remove-preview" class="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 m-1 hover:bg-red-600"><i class="fas fa-times"></i></button>');
-        
-        previewContainer.append(imageContainer);
-        previewContainer.insertAfter('#foto');
-    }
-    
-    // Eliminar previsualización
-    $(document).on('click', '#remove-preview', function() {
-        $('#preview-container').addClass('hidden');
-        $('#foto').val('');
-    });
-    
-    // Manejar cambio en el input de foto
-    $('#foto').on('change', function() {
-        mostrarVistaPrevia(this);
-    });
-    
-    // Manejar envío del formulario
-    productoForm.on('submit', function(e) {
-        e.preventDefault();
-        console.log('Formulario enviado');
-        
-        // Validación básica
-        const nombre = $('#nombre').val().trim();
-        const stock = $('#stock').val().trim();
-        const precio = $('#precio').val().trim();
-        
-        if (!nombre || !stock || !precio) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Por favor completa todos los campos obligatorios'
-            });
-            return;
-        }
-        
-        // Crear FormData
-        const formData = new FormData(this);
-        
-        // Determinar acción (crear o editar)
-        const isEditing = $('input[name="id"]').length > 0 && $('input[name="id"]').val() !== '';
-        const action = isEditing ? 'editar' : 'crear';
-        
-        console.log('Acción:', action);
-        
-        // Mostrar loading
-        Swal.fire({
-            title: 'Procesando...',
-            text: 'Por favor espera',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
+            
+            if (file) {
+                // Validar que sea una imagen
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.attr('src', e.target.result).removeClass('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Por favor selecciona un archivo de imagen válido');
+                    $(this).val('');
+                    preview.addClass('hidden').attr('src', '');
+                }
+            } else {
+                preview.addClass('hidden').attr('src', '');
             }
         });
         
-        // Enviar formulario
-        $.ajax({
-            url: '../assets/php/MVC/Controlador/productos-controlador.php?accion=' + action,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                console.log('Respuesta del servidor:', response);
-                try {
-                    // Intentar extraer solo la parte JSON de la respuesta
-                    const jsonStartPos = response.indexOf('{');
-                    const jsonEndPos = response.lastIndexOf('}') + 1;
+        // Envío del formulario
+        $('#productoForm').on('submit', function(e) {
+            e.preventDefault();
+            console.log('Formulario enviado');
+            
+            // Crear FormData para enviar archivos
+            const formData = new FormData(this);
+            
+            // Verificar si es edición o creación
+            const isEditing = formData.has('id') && formData.get('id') !== '';
+            console.log('Es edición:', isEditing);
+            
+            // Determinar la acción
+            const accion = isEditing ? 'editar' : 'crear';
+            console.log('Acción:', accion);
+            
+            // URL de la acción
+            const url = '../assets/php/MVC/Controlador/productos-controlador.php?accion=' + accion;
+            
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: 'Espera mientras procesamos tu solicitud',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Enviar formulario
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Respuesta del servidor:', response);
                     
-                    if (jsonStartPos >= 0 && jsonEndPos > jsonStartPos) {
-                        const jsonStr = response.substring(jsonStartPos, jsonEndPos);
-                        const result = JSON.parse(jsonStr);
-                        
-                        if (result.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Éxito!',
-                                text: result.message
-                            }).then(() => {
-                                window.location.href = 'productos.php';
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: result.message || 'Ocurrió un error al procesar la solicitud'
-                            });
-                        }
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: response.message,
+                            confirmButtonColor: '#4A6D50'
+                        }).then(() => {
+                            window.location.href = 'productos.php';
+                        });
                     } else {
-                        throw new Error('No se encontró JSON válido en la respuesta');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonColor: '#4A6D50'
+                        });
                     }
-                } catch (e) {
-                    console.error('Error al procesar la respuesta:', e);
-                    console.error('Respuesta cruda:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en AJAX:', error);
+                    console.error('Respuesta completa:', xhr.responseText);
+                    
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Ocurrió un error al procesar la respuesta del servidor'
+                        text: 'Error en la comunicación con el servidor',
+                        confirmButtonColor: '#4A6D50'
                     });
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error AJAX:', error);
-                console.error('Estado:', status);
-                console.error('Respuesta XHR:', xhr.responseText);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al enviar los datos'
-                });
-            }
+            });
         });
-    });
+    } else {
+        console.log('No estamos en la página del formulario de productos');
+    }
 }
 
 // Función para mostrar galería de fotos
@@ -349,42 +314,64 @@ function restarUnidad(productoId, stockActual) {
 
 // Definir la función globalmente
 function actualizarStock(productoId, operacion) {
+    // Determinar la acción correcta según la operación
+    const accion = operacion === 'sumar' ? 'sumarUnidad' : 'restarUnidad';
+    
     $.ajax({
-        url: '../assets/php/MVC/Controlador/productos-controlador.php',
+        url: '../assets/php/MVC/Controlador/productos-controlador.php?accion=' + accion,
         method: 'POST',
         data: {
-            accion: 'actualizarStock',
-            id: productoId,
-            operacion: operacion
+            id: productoId
         },
+        dataType: 'json',
         success: function(response) {
-            try {
-                const data = JSON.parse(response);
-                if (data.success) {
-                    const stockElement = document.querySelector(`#stock-${productoId}`);
-                    const currentStock = parseInt(stockElement.textContent);
-                    stockElement.textContent = operacion === 'sumar' ? currentStock + 1 : currentStock - 1;
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Stock actualizado',
-                        showConfirmButton: false,
-                        timer: 1000
-                    });
-                } else {
-                    throw new Error(data.message || 'Error al actualizar el stock');
+            console.log('Respuesta del servidor:', response);
+            
+            if (response.success) {
+                // Buscar el botón que contiene el productoId para encontrar la fila
+                const botonSumar = document.querySelector(`button[onclick="sumarUnidad(${productoId})"]`);
+                if (botonSumar) {
+                    // Encontrar el span del stock en la misma fila
+                    const stockElement = botonSumar.parentElement.querySelector('span.font-medium');
+                    if (stockElement) {
+                        const currentStock = parseInt(stockElement.textContent);
+                        const newStock = operacion === 'sumar' ? currentStock + 1 : currentStock - 1;
+                        stockElement.textContent = newStock;
+                        
+                        // Actualizar el estado del botón de restar
+                        const botonRestar = botonSumar.parentElement.querySelector(`button[onclick*="restarUnidad(${productoId}"]`);
+                        if (botonRestar) {
+                            if (newStock <= 0) {
+                                botonRestar.disabled = true;
+                            } else {
+                                botonRestar.disabled = false;
+                            }
+                            // Actualizar el onclick del botón restar con el nuevo stock
+                            botonRestar.setAttribute('onclick', `restarUnidad(${productoId}, ${newStock})`);
+                        }
+                    }
                 }
-            } catch (error) {
-                console.error('Error:', error);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Stock actualizado',
+                    showConfirmButton: false,
+                    timer: 1000
+                });
+            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: error.message
+                    text: response.message || 'Error al actualizar el stock'
                 });
             }
         },
         error: function(xhr, status, error) {
             console.error('Error AJAX:', error);
+            console.error('Estado:', status);
+            console.error('Respuesta XHR completa:', xhr.responseText);
+            console.error('Status code:', xhr.status);
+            
             Swal.fire({
                 icon: 'error',
                 title: 'Error',

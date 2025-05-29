@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 ?>
 
-<main class="mx-auto py-8 w-3/4">
+<main class="mx-auto py-8 w-3/4 mb-10">
     <!-- Cabecera con título y botones -->
     <div class="flex justify-between items-center mb-8">
         <!-- Título -->

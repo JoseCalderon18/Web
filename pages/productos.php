@@ -40,10 +40,10 @@ if (!is_array($productos)) {
 
     <?php include "../includes/footer.php"; ?>
     
+    <script src="../assets/js/busqueda-productos.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/productos-lista.js"></script>
-    <script src="../assets/js/busqueda-productos.js"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/productos.js"></script>

@@ -66,11 +66,15 @@ function mostrarGaleria(foto, nombreProducto) {
         title: nombreProducto,
         imageUrl: '../' + foto,
         imageAlt: 'Foto de ' + nombreProducto,
-        width: '60%',
-        imageWidth: 'auto',
-        imageHeight: '50vh',
+        width: '80%',
+        imageHeight: '70vh',
         confirmButtonText: 'Cerrar',
-        confirmButtonColor: '#166534'
+        confirmButtonColor: '#166534',
+        showCloseButton: true,
+        customClass: {
+            popup: 'swal-large-image',
+            image: 'swal-image-fit'
+        }
     });
 }
 

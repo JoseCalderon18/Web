@@ -57,21 +57,26 @@ class ProductosModelo {
     }
 
     // Crear nuevo producto
-    public function crear($nombre, $stock, $foto, $precio, $fecha_registro, $comentarios, $laboratorio = '') {
+    public function crear($datos) {
         try {
-            $query = "INSERT INTO productos (nombre, stock, foto, precio, fecha_registro, comentarios, laboratorio) 
-                      VALUES (:nombre, :stock, :foto, :precio, :fecha_registro, :comentarios, :laboratorio)";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
-            $stmt->bindParam(':stock', $stock, PDO::PARAM_INT);
-            $stmt->bindParam(':foto', $foto, PDO::PARAM_STR);
-            $stmt->bindParam(':precio', $precio, PDO::PARAM_STR);
-            $stmt->bindParam(':fecha_registro', $fecha_registro, PDO::PARAM_STR);
-            $stmt->bindParam(':comentarios', $comentarios, PDO::PARAM_STR);
-            $stmt->bindParam(':laboratorio', $laboratorio, PDO::PARAM_STR);
-            return $stmt->execute();
+            $sql = "INSERT INTO productos (nombre, stock, precio, laboratorio, comentarios, foto) 
+                    VALUES (:nombre, :stock, :precio, :laboratorio, :comentarios, :foto)";
+            
+            $stmt = $this->db->prepare($sql);
+            
+            $resultado = $stmt->execute([
+                ':nombre' => $datos['nombre'],
+                ':stock' => $datos['stock'],
+                ':precio' => $datos['precio'],
+                ':laboratorio' => $datos['laboratorio'],
+                ':comentarios' => $datos['comentarios'],
+                ':foto' => $datos['foto']
+            ]);
+            
+            return $resultado;
+            
         } catch (PDOException $e) {
-            error_log("Error en crear: " . $e->getMessage());
+            error_log("Error en crear producto: " . $e->getMessage());
             return false;
         }
     }
@@ -174,6 +179,25 @@ class ProductosModelo {
         } catch (PDOException $e) {
             error_log("Error en restarUnidad: " . $e->getMessage());
             return false;
+        }
+    }
+
+    public function buscarProductos($termino) {
+        try {
+            $sql = "SELECT * FROM productos 
+                    WHERE LOWER(nombre) LIKE LOWER(:termino) 
+                    OR LOWER(laboratorio) LIKE LOWER(:termino)
+                    OR LOWER(comentarios) LIKE LOWER(:termino)";
+            
+            $termino = "%$termino%";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':termino', $termino, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en buscarProductos: " . $e->getMessage());
+            return [];
         }
     }
 }

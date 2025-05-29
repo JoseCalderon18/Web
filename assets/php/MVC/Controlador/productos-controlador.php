@@ -66,106 +66,119 @@ class ProductosControlador {
     // Crear producto
     public function crearProducto() {
         try {
-            // Validar datos
-            if (!isset($_POST['nombre']) || !isset($_POST['stock']) || !isset($_POST['precio'])) {
-                echo json_encode(['success' => false, 'message' => 'Faltan datos obligatorios']);
-                return;
+            header('Content-Type: application/json');
+            
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception("Método no permitido");
             }
 
-            $nombre = $_POST['nombre'];
-            $stock = $_POST['stock'];
-            $precio = $_POST['precio'];
-            $comentarios = isset($_POST['comentarios']) ? $_POST['comentarios'] : '';
-            $fecha_registro = date('Y-m-d');
-            
-            // Procesar la foto
-            $rutaFoto = '';
-            if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0 && $_FILES['foto']['size'] > 0) {
-                $foto = $_FILES['foto'];
-                $nombreArchivo = uniqid() . '_' . basename($foto['name']);
+            // Validar datos requeridos
+            if (empty($_POST['nombre']) || empty($_POST['stock']) || empty($_POST['precio'])) {
+                throw new Exception("Todos los campos son obligatorios");
+            }
+
+            // Procesar laboratorio: si está vacío, asignar "N/D"
+            $laboratorio = !empty($_POST['laboratorio']) ? trim($_POST['laboratorio']) : 'N/D';
+
+            // Procesar comentarios
+            $comentarios = !empty($_POST['comentarios']) ? trim($_POST['comentarios']) : null;
+
+            // Datos del producto
+            $datosProducto = [
+                'nombre' => trim($_POST['nombre']),
+                'stock' => (int)$_POST['stock'],
+                'precio' => (float)$_POST['precio'],
+                'laboratorio' => $laboratorio,
+                'comentarios' => $comentarios
+            ];
+
+            // Manejo de archivo de imagen
+            $rutaImagen = null;
+            if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+                // Validar tipo de archivo
+                $tiposPermitidos = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!in_array($_FILES['foto']['type'], $tiposPermitidos)) {
+                    throw new Exception("Tipo de archivo no válido. Solo se permiten JPG, PNG y GIF");
+                }
+
+                // Generar nombre único
+                $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+                $nombreArchivo = 'producto_' . time() . '_' . uniqid() . '.' . $extension;
                 
-                // IMPORTANTE: Determinar la ruta base del proyecto
-                $rutaBase = realpath(__DIR__ . '/../../../..');
-                
-                // Ruta relativa para guardar en la base de datos
-                $rutaRelativa = 'assets/img/productos/' . $nombreArchivo;
-                
-                // Ruta absoluta para guardar el archivo
-                $rutaAbsoluta = $rutaBase . '/' . $rutaRelativa;
-                
-                // Asegurarse de que el directorio existe
-                $directorioDestino = dirname($rutaAbsoluta);
-                if (!is_dir($directorioDestino)) {
+                // Crear directorio si no existe
+                $directorioDestino = __DIR__ . '/../../../../assets/img/productos/';
+                if (!file_exists($directorioDestino)) {
                     mkdir($directorioDestino, 0755, true);
                 }
                 
-                // Información de depuración
-                echo "<script>console.log('Información de depuración:');</script>";
-                echo "<script>console.log('Ruta base del proyecto: " . addslashes($rutaBase) . "');</script>";
-                echo "<script>console.log('Ruta relativa: " . addslashes($rutaRelativa) . "');</script>";
-                echo "<script>console.log('Ruta absoluta: " . addslashes($rutaAbsoluta) . "');</script>";
+                $rutaCompleta = $directorioDestino . $nombreArchivo;
                 
-                if (move_uploaded_file($foto['tmp_name'], $rutaAbsoluta)) {
-                    $rutaFoto = $rutaRelativa;
-                    echo "<script>console.log('Imagen subida correctamente a: " . addslashes($rutaFoto) . "');</script>";
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $rutaCompleta)) {
+                    $rutaImagen = 'assets/img/productos/' . $nombreArchivo;
                 } else {
-                    echo "<script>console.log('Error al subir la imagen: " . addslashes(error_get_last()['message']) . "');</script>";
-                    echo json_encode(['success' => false, 'message' => 'Error al subir la imagen: ' . error_get_last()['message']]);
-                    return;
+                    throw new Exception("Error al subir la imagen");
                 }
             }
-            
-            // Crear el producto
-            $resultado = $this->modelo->crear($nombre, $stock, $rutaFoto, $precio, $fecha_registro, $comentarios);
+
+            $datosProducto['foto'] = $rutaImagen;
+
+            // Llamar al modelo para crear el producto
+            $resultado = $this->modelo->crear($datosProducto);
             
             if ($resultado) {
-                echo json_encode(['success' => true, 'message' => 'Producto creado correctamente']);
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Producto creado exitosamente'
+                ]);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Error al crear el producto']);
+                throw new Exception('Error al crear el producto');
             }
+            
         } catch (Exception $e) {
-            echo "<script>console.log('Error: " . addslashes($e->getMessage()) . "');</script>";
-            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
     // Eliminar producto
     public function eliminarProducto() {
         try {
+            header('Content-Type: application/json');
+            
             if (!isset($_POST['id'])) {
                 throw new Exception("ID de producto no proporcionado");
             }
-
-            $id = $_POST['id'];
             
-            // Obtener el producto para eliminar la foto si existe
+            $id = (int)$_POST['id'];
+            
+            // Obtener datos del producto antes de eliminarlo (para eliminar imagen si existe)
             $producto = $this->modelo->obtenerPorId($id);
             
-            if (!$producto) {
-                throw new Exception("Producto no encontrado");
-            }
-            
             if ($this->modelo->eliminar($id)) {
-                // Si el producto tenía una foto, eliminarla
-                if (!empty($producto['foto'])) {
-                    $rutaCompleta = '../../../' . $producto['foto'];
-                    if (file_exists($rutaCompleta)) {
-                        unlink($rutaCompleta);
+                // Eliminar imagen si existe
+                if ($producto && !empty($producto['foto'])) {
+                    $rutaImagen = __DIR__ . '/../../../../' . $producto['foto'];
+                    if (file_exists($rutaImagen)) {
+                        unlink($rutaImagen);
                     }
                 }
                 
-                $_SESSION['mensaje'] = "Producto eliminado correctamente";
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'Producto eliminado correctamente'
+                ]);
             } else {
-                throw new Exception("No se pudo eliminar el producto");
+                throw new Exception('Error al eliminar el producto');
             }
-
+            
         } catch (Exception $e) {
-            error_log("Error en eliminarProducto: " . $e->getMessage());
-            $_SESSION['error'] = $e->getMessage();
+            echo json_encode([
+                'success' => false, 
+                'message' => $e->getMessage()
+            ]);
         }
-        
-        header('Location: ../../../../pages/productos.php');
-        exit;
     }
 
     // Obtener producto por ID
@@ -261,6 +274,90 @@ class ProductosControlador {
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
         }
     }
+
+    public function buscarProductos() {
+        try {
+            $termino = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
+            
+            if (empty($termino)) {
+                throw new Exception("Término de búsqueda vacío");
+            }
+
+            $resultados = $this->modelo->buscarProductos($termino);
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $resultados,
+                'total' => count($resultados)
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    // Método para restar unidad
+    public function restarUnidadStock() {
+        try {
+            header('Content-Type: application/json');
+            
+            if (!isset($_POST['id'])) {
+                echo json_encode(['success' => false, 'message' => 'ID de producto no proporcionado']);
+                return;
+            }
+
+            $id = $_POST['id'];
+            
+            // Verificar stock actual
+            $producto = $this->modelo->obtenerPorId($id);
+            if (!$producto) {
+                echo json_encode(['success' => false, 'message' => 'Producto no encontrado']);
+                return;
+            }
+            
+            if ($producto['stock'] <= 0) {
+                echo json_encode(['success' => false, 'message' => 'No hay stock disponible para restar']);
+                return;
+            }
+            
+            $resultado = $this->modelo->restarUnidad($id);
+            
+            if ($resultado) {
+                echo json_encode(['success' => true, 'message' => 'Stock reducido en 1 unidad']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al reducir el stock']);
+            }
+            
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+    
+    // Método para sumar unidad  
+    public function sumarUnidadStock() {
+        try {
+            header('Content-Type: application/json');
+            
+            if (!isset($_POST['id'])) {
+                echo json_encode(['success' => false, 'message' => 'ID de producto no proporcionado']);
+                return;
+            }
+
+            $id = $_POST['id'];
+            $resultado = $this->modelo->sumarUnidad($id);
+            
+            if ($resultado) {
+                echo json_encode(['success' => true, 'message' => 'Stock aumentado en 1 unidad']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al aumentar el stock']);
+            }
+            
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
 }
 
 // Manejo de acciones
@@ -279,6 +376,15 @@ if (isset($_GET['accion'])) {
             break;
         case 'obtener':
             echo json_encode($controlador->obtenerTodosLosProductos());
+            break;
+        case 'buscar':
+            $controlador->buscarProductos();
+            break;
+        case 'restarUnidad':
+            $controlador->restarUnidadStock();
+            break;
+        case 'sumarUnidad':
+            $controlador->sumarUnidadStock();
             break;
         default:
             echo json_encode(['success' => false, 'message' => 'Acción no válida']);
