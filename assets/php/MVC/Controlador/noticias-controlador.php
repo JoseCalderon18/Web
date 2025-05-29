@@ -176,7 +176,7 @@ class NoticiasControlador {
     // Procesar imagen
     private function procesarImagen($archivo) {
         try {
-            $directorio_destino = 'uploads/noticias/';
+            $directorio_destino = 'assets/img/noticias/';
             $ruta_completa = $_SERVER['DOCUMENT_ROOT'] . '/' . $directorio_destino;
             
             // Crear directorio si no existe
