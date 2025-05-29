@@ -74,24 +74,11 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
                                 </span>
                             </div>
                         </div>
-                    <?php 
-                            endif;
-                        endforeach;
-                        if ($citasMostradas === 0):
-                    ?>
-                        <div class="text-center py-4 text-gray-500">
-                            No hay próximas citas programadas
-                        </div>
-                    <?php 
-                        endif;
-                    endif; 
-                    ?>
+                    </div>
                 </div>
             </div>
             <?php endif; ?>
         </div>
-
-    </div>
 
     <!-- Mensaje cuando no hay resultados -->
     <div id="mensajeNoResultados" class="text-center py-4 text-gray-500" style="display: none;">
