@@ -115,7 +115,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     
                     <!--Texto de la productos especializados-->
                     <h1 class="text-xs font-semibold text-center md:text-sm lg:text-base w-full font-display-CormorantGaramond">Productos Especializados</h1>
-                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Ofrecemos una cuidada selección de productos naturales y orgánicos para tu bienestar físico y mental.</p>
                                     
                     <!-- Bordes con animacion-->
                     <div class="absolute top-0 left-0 w-10 h-10 border-t-1 border-l-1 border-transparent group-hover:border-gray-500 transition-all duration-300 origin-top-left scale-0 group-hover:scale-200 opacity-0 group-hover:opacity-100"></div>
@@ -130,7 +130,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     
                     <!--Texto de la Atencion Personalizada-->
                     <h1 class="text-xs font-semibold text-center md:text-sm lg:text-base w-full font-display-CormorantGaramond">Atencion Personalizada</h1>
-                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Te brindamos atención individualizada para encontrar las mejores soluciones naturales para tus necesidades.</p>
                                     
                     <!-- Bordes con animacion-->
                     <div class="absolute top-0 left-0 w-10 h-10 border-t-1 border-l-1 border-transparent group-hover:border-gray-500 transition-all duration-300 origin-top-left scale-0 group-hover:scale-200 opacity-0 group-hover:opacity-100"></div>
@@ -159,7 +159,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     
                     <!--Texto de experiencia y profesionalidad-->
                     <h1 class="text-xs font-semibold text-center md:text-sm lg:text-base w-full font-display-CormorantGaramond">Experiencia y profesionalidad</h1>
-                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Nuestro equipo cuenta con años de experiencia y formación continua en terapias naturales.</p>
                                     
                     <!-- Bordes con animacion-->
                     <div class="absolute top-0 left-0 w-10 h-10 border-t-1 border-l-1 border-transparent group-hover:border-gray-500 transition-all duration-300 origin-top-left scale-0 group-hover:scale-200 opacity-0 group-hover:opacity-100"></div>
@@ -174,7 +174,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     
                     <!--Texto del ambiente-->
                     <h1 class="text-xs font-semibold text-center md:text-sm lg:text-base w-full font-display-CormorantGaramond">Ambiente Relajante</h1>
-                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Disfruta de un espacio tranquilo y acogedor diseñado para tu relajación y bienestar.</p>
                                     
                     <!-- Bordes con animacion-->
                     <div class="absolute top-0 left-0 w-10 h-10 border-t-1 border-l-1 border-transparent group-hover:border-gray-500 transition-all duration-300 origin-top-left scale-0 group-hover:scale-200 opacity-0 group-hover:opacity-100"></div>
@@ -189,7 +189,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     
                     <!--Texto de la pago-->
                     <h1 class="text-xs font-semibold text-center md:text-sm lg:text-base w-full font-display-CormorantGaramond">Comodidad de pago</h1>
-                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</p>
+                    <p class="text-[10px] text-center md:text-xs lg:text-sm w-full">Aceptamos múltiples métodos de pago para tu comodidad, incluyendo tarjetas y efectivo.</p>
                                     
                     <!-- Bordes con animacion-->
                     <div class="absolute top-0 left-0 w-10 h-10 border-t-1 border-l-1 border-transparent group-hover:border-gray-500 transition-all duration-300 origin-top-left scale-0 group-hover:scale-200 opacity-0 group-hover:opacity-100"></div>
