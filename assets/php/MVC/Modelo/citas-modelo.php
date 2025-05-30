@@ -8,15 +8,46 @@ class CitasModelo {
         $this->db = Conexion::conectar();
     }
 
-    // Obtener todas las citas
+    /**
+     * Obtiene todas las citas con información del usuario
+     */
     public function obtenerTodasLasCitas() {
         try {
-            $sql = "SELECT c.*, u.nombre as nombre_cliente 
+            // CONSULTA CORREGIDA: Especificar bien los alias para evitar conflictos
+            $sql = "SELECT 
+                        c.id,
+                        c.usuario_id,
+                        c.fecha,
+                        c.hora,
+                        c.motivo,
+                        c.estado,
+                        c.nombre_cliente,
+                        u.nombre as nombre_usuario,
+                        u.email as email_usuario
                     FROM citas c 
-                    JOIN usuarios u ON c.usuario_id = u.id 
-                    ORDER BY c.fecha ASC, c.hora ASC";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                    ORDER BY c.fecha DESC, c.hora DESC";
+            
+            error_log("=== CONSULTA SQL CITAS ===");
+            error_log("SQL: " . $sql);
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("=== RESULTADOS DE CONSULTA ===");
+            error_log("Total citas encontradas: " . count($resultados));
+            
+            foreach ($resultados as $i => $cita) {
+                error_log("Cita $i:");
+                error_log("  - ID: " . $cita['id']);
+                error_log("  - motivo: " . $cita['motivo']);
+                error_log("  - nombre_cliente: " . ($cita['nombre_cliente'] ?? 'NULL'));
+                error_log("  - nombre_usuario: " . ($cita['nombre_usuario'] ?? 'NULL'));
+            }
+            
+            return $resultados;
+            
         } catch (PDOException $e) {
             error_log("Error en obtenerTodasLasCitas: " . $e->getMessage());
             return [];
@@ -41,14 +72,49 @@ class CitasModelo {
         }
     }
 
-    // Obtener citas de un usuario
+    /**
+     * Obtiene las citas de un usuario específico
+     */
     public function obtenerCitasPorUsuario($usuarioId) {
         try {
-            $sql = "SELECT * FROM citas WHERE usuario_id = :usuario_id ORDER BY fecha ASC, hora ASC";
+            // CONSULTA CORREGIDA
+            $sql = "SELECT 
+                        c.id,
+                        c.usuario_id,
+                        c.fecha,
+                        c.hora,
+                        c.motivo,
+                        c.estado,
+                        c.nombre_cliente,
+                        u.nombre as nombre_usuario,
+                        u.email as email_usuario
+                    FROM citas c 
+                    LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                    WHERE c.usuario_id = :usuario_id 
+                    ORDER BY c.fecha DESC, c.hora DESC";
+            
+            error_log("=== CONSULTA SQL CITAS POR USUARIO ===");
+            error_log("SQL: " . $sql);
+            error_log("Usuario ID: " . $usuarioId);
+            
             $stmt = $this->db->prepare($sql);
             $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("=== RESULTADOS DE CONSULTA POR USUARIO ===");
+            error_log("Total citas encontradas para usuario $usuarioId: " . count($resultados));
+            
+            foreach ($resultados as $i => $cita) {
+                error_log("Cita $i:");
+                error_log("  - ID: " . $cita['id']);
+                error_log("  - motivo: " . $cita['motivo']);
+                error_log("  - nombre_cliente: " . ($cita['nombre_cliente'] ?? 'NULL'));
+                error_log("  - nombre_usuario: " . ($cita['nombre_usuario'] ?? 'NULL'));
+            }
+            
+            return $resultados;
+            
         } catch (PDOException $e) {
             error_log("Error en obtenerCitasPorUsuario: " . $e->getMessage());
             return [];
@@ -58,32 +124,62 @@ class CitasModelo {
     /**
      * Crea una nueva cita
      */
-    public function crearCita($usuarioId, $fecha, $hora, $motivo, $tipo = 'general', $nombreCliente = null) {
+    public function crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente = null) {
         try {
-            // Validar que el tipo sea válido
-            if (!in_array($tipo, ['general', 'terapias'])) {
-                error_log("Tipo de cita no válido: " . $tipo);
+            error_log("=== DEBUG crearCita MODELO ===");
+            error_log("usuarioId: " . $usuarioId);
+            error_log("fecha: " . $fecha);
+            error_log("hora: " . $hora);
+            error_log("motivo (debe ser el motivo real): " . $motivo);
+            error_log("nombreCliente (debe ser el nombre del cliente): " . $nombreCliente);
+
+            // Verificar conexión a BD
+            if (!$this->db) {
+                error_log("ERROR: No hay conexión a la base de datos");
                 return false;
             }
 
-            $sql = "INSERT INTO citas (usuario_id, fecha, hora, motivo, tipo, nombre_cliente, estado) 
-                    VALUES (:usuario_id, :fecha, :hora, :motivo, :tipo, :nombre_cliente, 'pendiente')";
+            // SQL con los campos correctos
+            $sql = "INSERT INTO citas (usuario_id, fecha, hora, motivo, nombre_cliente, estado) 
+                    VALUES (:usuario_id, :fecha, :hora, :motivo, :nombre_cliente, 'pendiente')";
+            
+            error_log("SQL Query: " . $sql);
             
             $stmt = $this->db->prepare($sql);
+            
+            if (!$stmt) {
+                error_log("Error al preparar statement: " . print_r($this->db->errorInfo(), true));
+                return false;
+            }
+            
+            // VERIFICAR que los parámetros van a las columnas correctas
+            error_log("Binding - motivo: " . $motivo);
+            error_log("Binding - nombre_cliente: " . $nombreCliente);
+            
             $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':hora', $hora);
-            $stmt->bindParam(':motivo', $motivo);
-            $stmt->bindParam(':tipo', $tipo);
-            $stmt->bindParam(':nombre_cliente', $nombreCliente);
+            $stmt->bindParam(':motivo', $motivo);              // motivo va a columna motivo
+            $stmt->bindParam(':nombre_cliente', $nombreCliente); // nombre_cliente va a columna nombre_cliente
             
-            if ($stmt->execute()) {
-                return $this->db->lastInsertId();
+            $resultado = $stmt->execute();
+            
+            if ($resultado) {
+                $citaId = $this->db->lastInsertId();
+                error_log("Cita creada exitosamente con ID: " . $citaId);
+                return $citaId;
+            } else {
+                $errorInfo = $stmt->errorInfo();
+                error_log("Error al ejecutar query: " . print_r($errorInfo, true));
+                return false;
             }
             
-            return false;
         } catch (PDOException $e) {
-            error_log("Error en crearCita: " . $e->getMessage());
+            error_log("Error PDO en crearCita: " . $e->getMessage());
+            error_log("Código de error: " . $e->getCode());
+            return false;
+        } catch (Exception $e) {
+            error_log("Error general en crearCita: " . $e->getMessage());
             return false;
         }
     }
@@ -312,9 +408,39 @@ class CitasModelo {
     }
 
     public function obtenerTodosLosUsuarios() {
-        $sql = "SELECT id, nombre, apellidos, email FROM usuarios WHERE rol != 'admin' ORDER BY nombre, apellidos";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT id, nombre, apellidos, email FROM usuarios WHERE rol != 'admin' ORDER BY nombre, apellidos";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerTodosLosUsuarios: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Marcar como completadas las citas que ya pasaron de fecha/hora
+     */
+    public function marcarCitasVencidasComoCompletadas($fechaActual, $horaActual) {
+        try {
+            $sql = "UPDATE citas 
+                    SET estado = 'completada' 
+                    WHERE estado IN ('pendiente', 'confirmada') 
+                    AND (
+                        fecha < :fechaActual 
+                        OR (fecha = :fechaActual AND hora < :horaActual)
+                    )";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':fechaActual', $fechaActual);
+            $stmt->bindParam(':horaActual', $horaActual);
+            
+            return $stmt->execute();
+            
+        } catch (PDOException $e) {
+            error_log("Error en marcarCitasVencidasComoCompletadas: " . $e->getMessage());
+            return false;
+        }
     }
 } 

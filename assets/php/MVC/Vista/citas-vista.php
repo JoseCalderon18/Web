@@ -1,14 +1,17 @@
 <?php
-// Verificar si el usuario es administrador
-$esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin';
+// Verificar si el usuario está logueado
+$esUsuarioLogueado = isset($_SESSION['usuario_id']);
 ?>
 
 <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 <?php echo $esAdmin ? 'md:grid-cols-2' : ''; ?> gap-8">
-        <!-- Calendario de citas (siempre visible) -->
+    <?php if ($esUsuarioLogueado): ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Calendario de citas -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden border p-6 transition-all duration-300">
-            <h2 class="text-xl font-semibold mb-4 text-green-800 bg-green-50 p-3 rounded-lg">Calendario de Citas</h2>
-            <div id="calendario-citas" class="calendar-container" data-es-admin="<?= json_encode($esAdmin) ?>"></div>
+            <h2 class="text-xl font-semibold mb-4 text-green-800 bg-green-50 p-3 rounded-lg">
+                Calendario de Citas
+            </h2>
+            <div id="calendario-citas" class="calendar-container" data-es-admin="true"></div>
             
             <!-- Leyenda de estados -->
             <div class="flex justify-center gap-4 mt-4">
@@ -29,9 +32,8 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
                     Completada
                 </span>
             </div>
-
-            <!-- Próximas citas (mostrar solo las 2 primeras) -->
-            <?php if ($esAdmin): ?>
+            
+            <!-- Próximas citas -->
             <div class="mt-6 border-t pt-4">
                 <h3 class="text-lg font-semibold text-green-700 mb-3 bg-green-50 p-2 rounded">Próximas citas</h3>
                 <div id="lista-citas" class="space-y-4">
@@ -88,11 +90,9 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
                     ?>
                 </div>
             </div>
-            <?php endif; ?>
         </div>
 
-        <!-- Lista completa de citas (solo para admin) -->
-        <?php if ($esAdmin): ?>
+        <!-- Lista completa de citas -->
         <div class="bg-white rounded-xl shadow-lg overflow-hidden border p-6 transition-all duration-300">
             <h2 class="text-xl font-semibold mb-4 text-green-800 bg-green-50 p-3 rounded-lg">Todas las Citas</h2>
             <div id="lista-todas-citas" class="overflow-y-auto" style="max-height: 600px;">
@@ -132,17 +132,21 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
                             </div>
 
                             <div class="flex gap-2 mt-3">
-                                <button onclick="actualizarEstadoCita(<?= $cita['id'] ?>, 'pendiente')" 
+                                <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'pendiente')" 
                                         class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
                                     <i class="fas fa-clock mr-1"></i> Pendiente
                                 </button>
-                                <button onclick="actualizarEstadoCita(<?= $cita['id'] ?>, 'completada')" 
+                                <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'completada')" 
                                         class="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
                                     <i class="fas fa-check mr-1"></i> Completada
                                 </button>
-                                <button onclick="actualizarEstadoCita(<?= $cita['id'] ?>, 'cancelada')" 
+                                <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'cancelada')" 
                                         class="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
                                     <i class="fas fa-times mr-1"></i> Cancelada
+                                </button>
+                                <button type="button" onclick="eliminarCita(<?= $cita['id'] ?>); return false;" 
+                                        class="px-3 py-1 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors">
+                                    <i class="fas fa-trash mr-1"></i> Eliminar
                                 </button>
                             </div>
                         </div>
@@ -155,28 +159,11 @@ $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admi
                 <?php endif; ?>
             </div>
         </div>
-        <?php endif; ?>
     </div>
+    <?php endif; ?>
 
     <!-- Mensaje cuando no hay resultados -->
     <div id="mensajeNoResultados" class="text-center py-4 text-gray-500" style="display: none;">
         No se encontraron citas para la fecha seleccionada
     </div>
-
-    <!-- Instrucciones para usuarios -->
-    <?php if (!$esAdmin): ?>
-    <div class="mt-8 bg-green-50 p-6 rounded-xl shadow-md">
-        <h3 class="text-lg font-semibold text-green-800 mb-2">¿Cómo reservar una cita?</h3>
-        <ol class="list-decimal pl-5 space-y-2 text-gray-700">
-            <li>Haz clic en el día y hora que desees reservar en el calendario.</li>
-            <li>Completa el formulario con el motivo de tu cita.</li>
-            <li>Haz clic en "Reservar" para confirmar tu cita.</li>
-            <li>Recibirás una confirmación en pantalla.</li>
-        </ol>
-        <p class="mt-4 text-sm text-gray-600">
-            <i class="fas fa-info-circle text-green-600 mr-1"></i>
-            Las citas tienen una duración predeterminada de 1 hora y solo están disponibles de lunes a viernes en horario de 10:00-14:00 y 17:00-20:00.
-        </p>
-    </div>
-    <?php endif; ?>
 </div>

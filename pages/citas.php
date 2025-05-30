@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Verificar si el usuario está autenticado
+// Verificar si el usuario está autenticado (cualquier rol)
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: login.php");
     exit;
@@ -56,12 +56,33 @@ try {
     <main class="flex-grow">
         <div class="container mx-auto px-4 py-8">
             <!-- Título y descripción -->
-            <div class="mx-auto px-4 my-8 py-6">
+            <div class="mx-auto px-4 my-6 pb-6">
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-verde font-display-CormorantGaramond mb-4 py-4">
                     Gestión de Citas
                 </h1>
                 <p class="text-gray-700 text-center">
                     Reserva tus citas para consultas generales o terapias específicas. Selecciona la fecha y hora que mejor se adapte a tus necesidades.
+                </p>
+            </div>
+             <!-- Instrucciones para usuarios -->
+            <div class="mt-8 bg-green-50 p-6 rounded-xl shadow-md">
+                <h3 class="text-lg font-semibold text-green-800 mb-2">
+                   ¿Cómo gestionar las citas?
+                </h3>
+                
+                    <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                        <li>Haz clic en el día y hora que desees reservar en el calendario.</li>
+                        <li>Completa el formulario con el nombre del cliente y motivo de la cita.</li>
+                        <li>Haz clic en "Reservar" para confirmar la cita.</li>
+                        <li>Gestiona el estado de las citas desde el panel lateral.</li>
+                    </ol>
+                
+                <p class="mt-4 text-sm text-gray-600">
+                    <i class="fas fa-info-circle text-green-600 mr-1"></i>
+                    Las citas tienen una duración predeterminada de 1 hora y solo están disponibles de lunes a viernes en horario de 10:00-14:00 y 17:00-20:00.
+                    <br>
+                    <i class="fas fa-clock text-blue-600 mr-1"></i>
+                    <strong>Las citas se marcan automáticamente como completadas cuando pasa su fecha y hora programada.</strong>
                 </p>
             </div>
             
@@ -72,9 +93,11 @@ try {
     <?php include "../includes/footer.php"; ?>
 
     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/citas.js?v=<?= time() ?>"></script>
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/citas.js"></script>
+    <script src="../assets/js/animaciones.js"></script>
 </body>
 </html>
