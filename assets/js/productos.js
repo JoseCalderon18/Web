@@ -2,26 +2,26 @@ $(document).ready(function() {
     console.log('Productos.js inicializado');
     
     // Funcionalidad para la lista de productos
-    setupProductosLista();
+    configurarListaProductos();
     
     // Funcionalidad para el formulario de productos (crear/editar)
-    setupProductosForm();
+    configurarFormularioProductos();
 
     // Funcionalidad para el formulario de noticias
     if ($('#newsForm').length > 0) {
         // Vista previa de imagen
         $('#imagen').on('change', function() {
-            const file = this.files[0];
-            const preview = $('#preview');
+            const archivo = this.files[0];
+            const vistaPrevia = $('#preview');
             
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.attr('src', e.target.result).removeClass('hidden');
+            if (archivo) {
+                const lector = new FileReader();
+                lector.onload = function(e) {
+                    vistaPrevia.attr('src', e.target.result).removeClass('hidden');
                 }
-                reader.readAsDataURL(file);
+                lector.readAsDataURL(archivo);
             } else {
-                preview.addClass('hidden').attr('src', '');
+                vistaPrevia.addClass('hidden').attr('src', '');
             }
         });
         
@@ -30,14 +30,14 @@ $(document).ready(function() {
             e.preventDefault();
             
             // Crear FormData para enviar archivos
-            const formData = new FormData(this);
+            const datosFormulario = new FormData(this);
             
             // Verificar si es edición o creación
-            const isEditing = formData.has('id') && formData.get('id') !== '';
+            const esEdicion = datosFormulario.has('id') && datosFormulario.get('id') !== '';
             
             // URL de la acción
             const url = '../assets/php/MVC/Controlador/noticias-controlador.php?accion=' + 
-                        (isEditing ? 'actualizarNoticia' : 'crearNoticia');
+                        (esEdicion ? 'actualizarNoticia' : 'crearNoticia');
             
             // Mostrar indicador de carga
             Swal.fire({
@@ -53,18 +53,18 @@ $(document).ready(function() {
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: formData,
+                data: datosFormulario,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function(respuesta) {
                     try {
-                        const data = JSON.parse(response);
+                        const datos = JSON.parse(respuesta);
                         
-                        if (data.success) {
+                        if (datos.success) {
                             Swal.fire({
                                 icon: 'success',
                                 title: '¡Éxito!',
-                                text: data.message,
+                                text: datos.message,
                                 confirmButtonColor: '#4A6D50'
                             }).then(() => {
                                 window.location.href = 'noticias.php';
@@ -73,7 +73,7 @@ $(document).ready(function() {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: data.message,
+                                text: datos.message,
                                 confirmButtonColor: '#4A6D50'
                             });
                         }
@@ -100,23 +100,9 @@ $(document).ready(function() {
     }
 });
 
-function setupProductosLista() {
+function configurarListaProductos() {
     // Código para la lista de productos
     console.log('Configurando lista de productos');
-    
-    // Mostrar galería de fotos
-    $('.ver-foto').on('click', function() {
-        const foto = $(this).data('foto');
-        const nombre = $(this).data('nombre');
-        mostrarGaleria(foto, nombre);
-    });
-    
-    // Mostrar comentarios
-    $('.ver-comentarios').on('click', function() {
-        const comentarios = $(this).data('comentarios');
-        const nombre = $(this).data('nombre');
-        mostrarComentarios(nombre, comentarios);
-    });
     
     // Confirmar eliminación
     $('.eliminar-producto').on('click', function(e) {
@@ -133,8 +119,8 @@ function setupProductosLista() {
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
+        }).then((resultado) => {
+            if (resultado.isConfirmed) {
                 // Enviar formulario de eliminación
                 $(`#eliminar-form-${id}`).submit();
             }
@@ -142,44 +128,44 @@ function setupProductosLista() {
     });
 }
 
-function setupProductosForm() {
+function configurarFormularioProductos() {
     if ($('#productoForm').length > 0) {
         console.log('Formulario de productos encontrado');
         
         // Vista previa de imagen
         $('#foto').on('change', function() {
-            const file = this.files[0];
-            let preview = $('#preview');
+            const archivo = this.files[0];
+            let vistaPrevia = $('#preview');
             
             // Si no existe el elemento preview, crearlo
-            if (preview.length === 0) {
+            if (vistaPrevia.length === 0) {
                 // Buscar donde insertar la vista previa
-                const fotoContainer = $('#foto').closest('.space-y-1, .mb-4, .form-group');
-                if (fotoContainer.length > 0) {
-                    fotoContainer.append(`
+                const contenedorFoto = $('#foto').closest('.space-y-1, .mb-4, .form-group');
+                if (contenedorFoto.length > 0) {
+                    contenedorFoto.append(`
                         <div class="mt-2">
                             <img id="preview" class="hidden w-32 h-32 object-cover rounded-lg border-2 border-gray-300" alt="Vista previa">
                         </div>
                     `);
-                    preview = $('#preview');
+                    vistaPrevia = $('#preview');
                 }
             }
             
-            if (file) {
+            if (archivo) {
                 // Validar que sea una imagen
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.attr('src', e.target.result).removeClass('hidden');
+                if (archivo.type.startsWith('image/')) {
+                    const lector = new FileReader();
+                    lector.onload = function(e) {
+                        vistaPrevia.attr('src', e.target.result).removeClass('hidden');
                     }
-                    reader.readAsDataURL(file);
+                    lector.readAsDataURL(archivo);
                 } else {
                     alert('Por favor selecciona un archivo de imagen válido');
                     $(this).val('');
-                    preview.addClass('hidden').attr('src', '');
+                    vistaPrevia.addClass('hidden').attr('src', '');
                 }
             } else {
-                preview.addClass('hidden').attr('src', '');
+                vistaPrevia.addClass('hidden').attr('src', '');
             }
         });
         
@@ -189,14 +175,14 @@ function setupProductosForm() {
             console.log('Formulario enviado');
             
             // Crear FormData para enviar archivos
-            const formData = new FormData(this);
+            const datosFormulario = new FormData(this);
             
             // Verificar si es edición o creación
-            const isEditing = formData.has('id') && formData.get('id') !== '';
-            console.log('Es edición:', isEditing);
+            const esEdicion = datosFormulario.has('id') && datosFormulario.get('id') !== '';
+            console.log('Es edición:', esEdicion);
             
             // Determinar la acción
-            const accion = isEditing ? 'editar' : 'crear';
+            const accion = esEdicion ? 'editar' : 'crear';
             console.log('Acción:', accion);
             
             // URL de la acción
@@ -216,18 +202,18 @@ function setupProductosForm() {
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: formData,
+                data: datosFormulario,
                 processData: false,
                 contentType: false,
                 dataType: 'json',
-                success: function(response) {
-                    console.log('Respuesta del servidor:', response);
+                success: function(respuesta) {
+                    console.log('Respuesta del servidor:', respuesta);
                     
-                    if (response.success) {
+                    if (respuesta.success) {
                         Swal.fire({
                             icon: 'success',
                             title: '¡Éxito!',
-                            text: response.message,
+                            text: respuesta.message,
                             confirmButtonColor: '#4A6D50'
                         }).then(() => {
                             window.location.href = 'productos.php';
@@ -236,12 +222,12 @@ function setupProductosForm() {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: response.message,
+                            text: respuesta.message,
                             confirmButtonColor: '#4A6D50'
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, estado, error) {
                     console.error('Error en AJAX:', error);
                     console.error('Respuesta completa:', xhr.responseText);
                     
@@ -259,61 +245,8 @@ function setupProductosForm() {
     }
 }
 
-// Función para mostrar galería de fotos
-function mostrarGaleria(foto, nombre) {
-    if (!foto) {
-        Swal.fire({
-            title: nombre,
-            text: 'No hay imagen disponible para este producto',
-            confirmButtonText: 'Cerrar'
-        });
-        return;
-    }
-
-    Swal.fire({
-        title: nombre,
-        imageUrl: '../' + foto,
-        imageAlt: 'Foto de ' + nombre,
-        width: '250px',
-        imageWidth: '200px',
-        imageHeight: '200px',
-        confirmButtonText: 'Cerrar',
-        customClass: {
-            image: 'swal-image-small'
-        }
-    });
-}
-
-// Función para mostrar comentarios
-function mostrarComentarios(nombre, comentarios) {
-    Swal.fire({
-        title: `Comentarios de ${nombre}`,
-        text: comentarios || 'No hay comentarios para este producto',
-        confirmButtonText: 'Cerrar',
-        width: '250px'
-    });
-}
-
-// Función para sumar una unidad al stock
-function sumarUnidad(productoId) {
-    actualizarStock(productoId, 'sumar');
-}
-
-// Función para restar una unidad al stock
-function restarUnidad(productoId, stockActual) {
-    if (stockActual <= 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Stock insuficiente',
-            text: 'No se puede reducir más el stock'
-        });
-        return;
-    }
-    actualizarStock(productoId, 'restar');
-}
-
 // Definir la función globalmente
-function actualizarStock(productoId, operacion) {
+function actualizarStock(idProducto, operacion) {
     // Determinar la acción correcta según la operación
     const accion = operacion === 'sumar' ? 'sumarUnidad' : 'restarUnidad';
     
@@ -321,33 +254,33 @@ function actualizarStock(productoId, operacion) {
         url: '../assets/php/MVC/Controlador/productos-controlador.php?accion=' + accion,
         method: 'POST',
         data: {
-            id: productoId
+            id: idProducto
         },
         dataType: 'json',
-        success: function(response) {
-            console.log('Respuesta del servidor:', response);
+        success: function(respuesta) {
+            console.log('Respuesta del servidor:', respuesta);
             
-            if (response.success) {
-                // Buscar el botón que contiene el productoId para encontrar la fila
-                const botonSumar = document.querySelector(`button[onclick="sumarUnidad(${productoId})"]`);
+            if (respuesta.success) {
+                // Buscar el botón que contiene el idProducto para encontrar la fila
+                const botonSumar = document.querySelector(`button[onclick="sumarUnidad(${idProducto})"]`);
                 if (botonSumar) {
                     // Encontrar el span del stock en la misma fila
-                    const stockElement = botonSumar.parentElement.querySelector('span.font-medium');
-                    if (stockElement) {
-                        const currentStock = parseInt(stockElement.textContent);
-                        const newStock = operacion === 'sumar' ? currentStock + 1 : currentStock - 1;
-                        stockElement.textContent = newStock;
+                    const elementoStock = botonSumar.parentElement.querySelector('span.font-medium');
+                    if (elementoStock) {
+                        const stockActual = parseInt(elementoStock.textContent);
+                        const nuevoStock = operacion === 'sumar' ? stockActual + 1 : stockActual - 1;
+                        elementoStock.textContent = nuevoStock;
                         
                         // Actualizar el estado del botón de restar
-                        const botonRestar = botonSumar.parentElement.querySelector(`button[onclick*="restarUnidad(${productoId}"]`);
+                        const botonRestar = botonSumar.parentElement.querySelector(`button[onclick*="restarUnidad(${idProducto}"]`);
                         if (botonRestar) {
-                            if (newStock <= 0) {
+                            if (nuevoStock <= 0) {
                                 botonRestar.disabled = true;
                             } else {
                                 botonRestar.disabled = false;
                             }
                             // Actualizar el onclick del botón restar con el nuevo stock
-                            botonRestar.setAttribute('onclick', `restarUnidad(${productoId}, ${newStock})`);
+                            botonRestar.setAttribute('onclick', `restarUnidad(${idProducto}, ${nuevoStock})`);
                         }
                     }
                 }
@@ -362,13 +295,13 @@ function actualizarStock(productoId, operacion) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: response.message || 'Error al actualizar el stock'
+                    text: respuesta.message || 'Error al actualizar el stock'
                 });
             }
         },
-        error: function(xhr, status, error) {
+        error: function(xhr, estado, error) {
             console.error('Error AJAX:', error);
-            console.error('Estado:', status);
+            console.error('Estado:', estado);
             console.error('Respuesta XHR completa:', xhr.responseText);
             console.error('Status code:', xhr.status);
             
@@ -387,8 +320,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function modificarStock(operacion) {
-    const stockInput = document.getElementById('stock');
-    let valor = parseInt(stockInput.value) || 0;
+    const campoStock = document.getElementById('stock');
+    let valor = parseInt(campoStock.value) || 0;
     
     if (operacion === 'sumar') {
         valor++;
@@ -396,5 +329,5 @@ function modificarStock(operacion) {
         valor--;
     }
     
-    stockInput.value = valor;
+    campoStock.value = valor;
 }

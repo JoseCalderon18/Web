@@ -31,18 +31,18 @@ $(document).ready(function() {
                     buscar: textoBusqueda
                 },
                 dataType: 'json',
-                success: function(response) {
-                    console.log("Respuesta del servidor:", response);
+                success: function(respuesta) {
+                    console.log("Respuesta del servidor:", respuesta);
                     
-                    if (response.success) {
-                        mostrarResultados(response.data);
+                    if (respuesta.success) {
+                        mostrarResultados(respuesta.data);
                         // Ocultar paginación durante la búsqueda
                         $paginacion.hide();
                     } else {
-                        console.error("Error en la búsqueda:", response.message);
+                        console.error("Error en la búsqueda:", respuesta.message);
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, estado, error) {
                     console.error("Error en la petición AJAX:", error);
                 }
             });
@@ -73,14 +73,14 @@ $(document).ready(function() {
                                     <i class="fas fa-image text-gray-400"></i>
                                 </div>
                             ` : `
-                                <img src="../${escapeHtml(producto.foto)}" 
-                                     alt="Foto de ${escapeHtml(producto.nombre)}" 
+                                <img src="../${escaparHtml(producto.foto)}" 
+                                     alt="Foto de ${escaparHtml(producto.nombre)}" 
                                      class="w-12 h-12 object-cover rounded-md mx-auto cursor-pointer"
-                                     onclick="mostrarGaleria('${escapeHtml(producto.foto)}', '${escapeHtml(producto.nombre)}')">
+                                     onclick="mostrarGaleria('${escaparHtml(producto.foto)}', '${escaparHtml(producto.nombre)}')">
                             `}
                         </td>
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
-                            ${escapeHtml(producto.nombre)}
+                            ${escaparHtml(producto.nombre)}
                         </td>
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base">
                             <div class="flex items-center justify-center">
@@ -103,10 +103,10 @@ $(document).ready(function() {
                             </div>
                         </td>
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
-                            ${escapeHtml(producto.precio)} €
+                            ${escaparHtml(producto.precio)} €
                         </td>
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
-                            ${escapeHtml(producto.laboratorio ?? 'N/A')}
+                            ${escaparHtml(producto.laboratorio ?? 'N/A')}
                         </td>
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
                             ${producto.fecha_registro ? new Date(producto.fecha_registro).toLocaleDateString('es-ES') : 'N/A'}
@@ -114,8 +114,8 @@ $(document).ready(function() {
                         <td class="px-3 md:px-8 py-3 md:py-5 text-center">
                             ${producto.comentarios ? `
                                 <button 
-                                    onclick="mostrarComentarios('${escapeHtml(producto.nombre)}', '${escapeHtml(producto.comentarios)}')"
-                                    class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm cursor-pointer">
+                                    onclick="mostrarComentarios('${escaparHtml(producto.nombre)}', '${escaparHtml(producto.comentarios)}')"
+                                    class="px-3 py-1 text-xs bg-purple-400 hover:bg-purple-500 text-white rounded-lg shadow-sm cursor-pointer">
                                     <i class="fas fa-comment-alt mr-1"></i>Ver comentarios
                                 </button>
                             ` : `
@@ -145,15 +145,15 @@ $(document).ready(function() {
     }
     
     // Función para escapar HTML
-    function escapeHtml(text) {
-        if (text === null || text === undefined) return '';
-        const map = {
+    function escaparHtml(texto) {
+        if (texto === null || texto === undefined) return '';
+        const mapa = {
             '&': '&amp;',
             '<': '&lt;',
             '>': '&gt;',
             '"': '&quot;',
             "'": '&#039;'
         };
-        return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        return String(texto).replace(/[&<>"']/g, function(m) { return mapa[m]; });
     }
 }); 

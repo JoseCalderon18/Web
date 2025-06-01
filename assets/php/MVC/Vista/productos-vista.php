@@ -113,7 +113,7 @@
                                         <?php if (!empty($producto["comentarios"])): ?>
                                             <button 
                                                 onclick="mostrarComentarios('<?= htmlspecialchars($producto["nombre"]) ?>', '<?= htmlspecialchars($producto["comentarios"]) ?>')"
-                                                class="px-3 py-1 text-xs bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-sm cursor-pointer">
+                                                class="px-3 py-1 text-xs bg-purple-400 hover:bg-purple-500 text-white rounded-lg shadow-sm cursor-pointer">
                                                 <i class="fas fa-comment-alt mr-1"></i>Ver comentarios
                                             </button>
                                         <?php else: ?>

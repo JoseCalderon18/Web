@@ -57,7 +57,8 @@ function mostrarGaleria(foto, nombreProducto) {
         Swal.fire({
             title: nombreProducto,
             text: 'No hay imagen disponible para este producto',
-            confirmButtonText: 'Cerrar'
+            confirmButtonText: 'Cerrar',
+            confirmButtonColor: '#d33'
         });
         return;
     }
@@ -66,15 +67,11 @@ function mostrarGaleria(foto, nombreProducto) {
         title: nombreProducto,
         imageUrl: '../' + foto,
         imageAlt: 'Foto de ' + nombreProducto,
-        width: '80%',
-        imageHeight: '70vh',
+        width: '60%',
+        imageWidth: 'auto',
+        imageHeight: '50vh',
         confirmButtonText: 'Cerrar',
-        confirmButtonColor: '#166534',
-        showCloseButton: true,
-        customClass: {
-            popup: 'swal-large-image',
-            image: 'swal-image-fit'
-        }
+        confirmButtonColor: '#d33'
     });
 }
 
@@ -83,7 +80,8 @@ function mostrarComentarios(nombreProducto, comentarios) {
     Swal.fire({
         title: `Comentarios de ${nombreProducto}`,
         text: comentarios,
-        confirmButtonText: 'Cerrar'
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#d33'
     });
 }
 
