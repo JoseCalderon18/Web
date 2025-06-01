@@ -373,6 +373,104 @@ class CitasControlador {
             echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
     }
+
+    public function listarCitas() {
+        if (!isset($_SESSION['usuario_id'])) {
+            header('Location: /BioEspacio/login.php');
+            exit();
+        }
+        
+        $usuarioId = $_SESSION['usuario_id'];
+        
+        // IMPORTANTE: Usar el método que filtra por creado_por
+        $citas = $this->modelo->obtenerCitasUsuario($usuarioId);
+        
+        error_log("Listando citas para usuario " . $usuarioId . ": " . count($citas) . " citas encontradas");
+        
+        include __DIR__ . '/../Vista/citas/listar.php';
+    }
+
+    public function crear() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuarioId = $_POST['usuario_id'] ?? $_SESSION['usuario_id'];
+            $fecha = $_POST['fecha'];
+            $hora = $_POST['hora'];
+            $motivo = $_POST['motivo'];
+            $nombreCliente = $_POST['nombre_cliente'];
+            
+            // El crearCita ya maneja internamente el creado_por
+            if ($this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente)) {
+                $_SESSION['mensaje'] = "Cita creada exitosamente";
+                $_SESSION['tipo_mensaje'] = "success";
+            } else {
+                $_SESSION['mensaje'] = "Error al crear la cita";
+                $_SESSION['tipo_mensaje'] = "error";
+            }
+            
+            header('Location: /BioEspacio/citas.php');
+            exit();
+        }
+        
+        // Para el formulario, si es admin puede asignar a otros usuarios
+        if ($_SESSION['rol'] === 'admin') {
+            $usuarios = $this->modelo->obtenerTodosLosUsuarios();
+        }
+        
+        include __DIR__ . '/../Vista/citas/crear.php';
+    }
+
+    public function editar($id) {
+        $usuarioId = $_SESSION['usuario_id'];
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuarioAsignado = $_POST['usuario_id'] ?? $usuarioId;
+            $fecha = $_POST['fecha'];
+            $hora = $_POST['hora'];
+            $motivo = $_POST['motivo'];
+            $estado = $_POST['estado'];
+            $nombreCliente = $_POST['nombre_cliente'];
+            
+            if ($this->modelo->actualizarCita($id, $usuarioAsignado, $fecha, $hora, $motivo, $estado, $nombreCliente)) {
+                $_SESSION['mensaje'] = "Cita actualizada exitosamente";
+                $_SESSION['tipo_mensaje'] = "success";
+            } else {
+                $_SESSION['mensaje'] = "Error al actualizar la cita o no tienes permisos";
+                $_SESSION['tipo_mensaje'] = "error";
+            }
+            
+            header('Location: /BioEspacio/citas.php');
+            exit();
+        }
+        
+        // Obtener la cita (solo si el usuario tiene permisos)
+        $cita = $this->modelo->obtenerCitaPorId($id, $usuarioId);
+        
+        if (!$cita) {
+            $_SESSION['mensaje'] = "Cita no encontrada o sin permisos";
+            $_SESSION['tipo_mensaje'] = "error";
+            header('Location: /BioEspacio/citas.php');
+            exit();
+        }
+        
+        if ($_SESSION['rol'] === 'admin') {
+            $usuarios = $this->modelo->obtenerTodosLosUsuarios();
+        }
+        
+        include __DIR__ . '/../Vista/citas/editar.php';
+    }
+
+    public function eliminarCita($id) {
+        if ($this->modelo->eliminarCita($id)) {
+            $_SESSION['mensaje'] = "Cita eliminada exitosamente";
+            $_SESSION['tipo_mensaje'] = "success";
+        } else {
+            $_SESSION['mensaje'] = "Error al eliminar la cita o no tienes permisos";
+            $_SESSION['tipo_mensaje'] = "error";
+        }
+        
+        header('Location: /BioEspacio/citas.php');
+        exit();
+    }
 }
 
 // Manejo de acciones

@@ -122,7 +122,7 @@ class CitasModelo {
     }
 
     /**
-     * Crea una nueva cita
+     * Crea una nueva cita - AHORA con creado_por
      */
     public function crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente = null) {
         try {
@@ -130,18 +130,21 @@ class CitasModelo {
             error_log("usuarioId: " . $usuarioId);
             error_log("fecha: " . $fecha);
             error_log("hora: " . $hora);
-            error_log("motivo (debe ser el motivo real): " . $motivo);
-            error_log("nombreCliente (debe ser el nombre del cliente): " . $nombreCliente);
+            error_log("motivo: " . $motivo);
+            error_log("nombreCliente: " . $nombreCliente);
 
-            // Verificar conexión a BD
+            // IMPORTANTE: Obtener quien está creando la cita
+            $creadoPor = $_SESSION['usuario_id'];
+            error_log("creadoPor (usuario logueado): " . $creadoPor);
+
             if (!$this->db) {
                 error_log("ERROR: No hay conexión a la base de datos");
                 return false;
             }
 
-            // SQL con los campos correctos
-            $sql = "INSERT INTO citas (usuario_id, fecha, hora, motivo, nombre_cliente, estado) 
-                    VALUES (:usuario_id, :fecha, :hora, :motivo, :nombre_cliente, 'pendiente')";
+            // SQL actualizado con creado_por
+            $sql = "INSERT INTO citas (usuario_id, creado_por, fecha, hora, motivo, nombre_cliente, estado) 
+                    VALUES (:usuario_id, :creado_por, :fecha, :hora, :motivo, :nombre_cliente, 'pendiente')";
             
             error_log("SQL Query: " . $sql);
             
@@ -152,34 +155,25 @@ class CitasModelo {
                 return false;
             }
             
-            // VERIFICAR que los parámetros van a las columnas correctas
-            error_log("Binding - motivo: " . $motivo);
-            error_log("Binding - nombre_cliente: " . $nombreCliente);
-            
             $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            $stmt->bindParam(':creado_por', $creadoPor, PDO::PARAM_INT);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':hora', $hora);
-            $stmt->bindParam(':motivo', $motivo);              // motivo va a columna motivo
-            $stmt->bindParam(':nombre_cliente', $nombreCliente); // nombre_cliente va a columna nombre_cliente
+            $stmt->bindParam(':motivo', $motivo);
+            $stmt->bindParam(':nombre_cliente', $nombreCliente);
             
             $resultado = $stmt->execute();
             
             if ($resultado) {
-                $citaId = $this->db->lastInsertId();
-                error_log("Cita creada exitosamente con ID: " . $citaId);
-                return $citaId;
+                error_log("✅ Cita creada exitosamente con creado_por: " . $creadoPor);
+                return $this->db->lastInsertId();
             } else {
-                $errorInfo = $stmt->errorInfo();
-                error_log("Error al ejecutar query: " . print_r($errorInfo, true));
+                error_log("❌ Error al ejecutar: " . print_r($stmt->errorInfo(), true));
                 return false;
             }
             
         } catch (PDOException $e) {
-            error_log("Error PDO en crearCita: " . $e->getMessage());
-            error_log("Código de error: " . $e->getCode());
-            return false;
-        } catch (Exception $e) {
-            error_log("Error general en crearCita: " . $e->getMessage());
+            error_log("Error en crearCita: " . $e->getMessage());
             return false;
         }
     }
@@ -216,22 +210,6 @@ class CitasModelo {
         }
     }
 
-    /**
-     * Actualiza el estado de una cita
-     */
-    public function actualizarEstadoCita($citaId, $estado) {
-        try {
-            $sql = "UPDATE citas SET estado = :estado WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':estado', $estado);
-            $stmt->bindParam(':id', $citaId, PDO::PARAM_INT);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Error en actualizarEstadoCita: " . $e->getMessage());
-            return false;
-        }
-    }
-    
     /**
      * Obtiene las citas para mostrar en el calendario
      */
@@ -382,23 +360,144 @@ class CitasModelo {
     }
 
     /**
-     * Elimina una cita
+     * Obtener SOLO las citas que el usuario creó
      */
-    public function eliminarCita($citaId, $usuarioId = null) {
+    public function obtenerCitasUsuario($usuarioId) {
         try {
-            $sql = "DELETE FROM citas WHERE id = :id";
+            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
             
-            // Si se proporciona un ID de usuario, verificar que la cita pertenezca a ese usuario
-            if ($usuarioId !== null) {
-                $sql .= " AND usuario_id = :usuario_id";
+            if ($rolUsuario === 'admin') {
+                // Admin ve todas las citas + quien las creó
+                $query = "SELECT c.*, u.nombre as usuario_nombre, creador.nombre as creado_por_nombre 
+                         FROM citas c 
+                         LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                         LEFT JOIN usuarios creador ON c.creado_por = creador.id
+                         ORDER BY c.fecha DESC, c.hora DESC";
+                $stmt = $this->db->prepare($query);
+            } else {
+                // Usuario normal SOLO ve las citas que ÉL creó
+                $query = "SELECT c.*, u.nombre as usuario_nombre 
+                         FROM citas c 
+                         LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                         WHERE c.creado_por = :creado_por 
+                         ORDER BY c.fecha DESC, c.hora DESC";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':creado_por', $usuarioId, PDO::PARAM_INT);
             }
             
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $citaId, PDO::PARAM_INT);
+            $stmt->execute();
+            $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            if ($usuarioId !== null) {
-                $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            error_log("Citas obtenidas para usuario " . $usuarioId . " (rol: " . $rolUsuario . "): " . count($citas));
+            
+            return $citas;
+        } catch (PDOException $e) {
+            error_log("Error en obtenerCitasUsuario: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtener cita por ID - Solo si el usuario la creó
+     */
+    public function obtenerCitaPorId($id, $usuarioId = null) {
+        try {
+            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
+            
+            if ($rolUsuario === 'admin') {
+                // Admin puede ver cualquier cita
+                $query = "SELECT c.*, u.nombre as usuario_nombre 
+                         FROM citas c 
+                         LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                         WHERE c.id = :id";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            } else {
+                // Usuario normal solo puede ver citas que él creó
+                $query = "SELECT c.*, u.nombre as usuario_nombre 
+                         FROM citas c 
+                         LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                         WHERE c.id = :id AND c.creado_por = :creado_por";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->bindParam(':creado_por', $usuarioId, PDO::PARAM_INT);
             }
+            
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerCitaPorId: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Actualizar cita - Solo si el usuario la creó
+     */
+    public function actualizarCita($id, $usuarioId, $fecha, $hora, $motivo, $estado, $nombreCliente = null) {
+        try {
+            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
+            $usuarioLogueado = $_SESSION['usuario_id'];
+            
+            // Verificar permisos
+            if ($rolUsuario !== 'admin') {
+                $query = "SELECT creado_por FROM citas WHERE id = :id";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+                $cita = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$cita || $cita['creado_por'] != $usuarioLogueado) {
+                    error_log("Usuario " . $usuarioLogueado . " no tiene permisos para editar cita " . $id);
+                    return false;
+                }
+            }
+            
+            $query = "UPDATE citas SET usuario_id = :usuario_id, fecha = :fecha, hora = :hora, 
+                     motivo = :motivo, estado = :estado, nombre_cliente = :nombre_cliente 
+                     WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+            $stmt->bindParam(':fecha', $fecha);
+            $stmt->bindParam(':hora', $hora);
+            $stmt->bindParam(':motivo', $motivo);
+            $stmt->bindParam(':estado', $estado);
+            $stmt->bindParam(':nombre_cliente', $nombreCliente);
+            
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en actualizarCita: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Eliminar cita - Solo si el usuario la creó
+     */
+    public function eliminarCita($id) {
+        try {
+            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
+            $usuarioLogueado = $_SESSION['usuario_id'];
+            
+            // Verificar permisos
+            if ($rolUsuario !== 'admin') {
+                $query = "SELECT creado_por FROM citas WHERE id = :id";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+                $cita = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$cita || $cita['creado_por'] != $usuarioLogueado) {
+                    error_log("Usuario " . $usuarioLogueado . " no tiene permisos para eliminar cita " . $id);
+                    return false;
+                }
+            }
+            
+            $query = "DELETE FROM citas WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             
             return $stmt->execute();
         } catch (PDOException $e) {
@@ -407,14 +506,21 @@ class CitasModelo {
         }
     }
 
-    public function obtenerTodosLosUsuarios() {
+    /**
+     * Obtener todas las citas (solo para admin)
+     */
+    public function obtenerTodasCitas() {
         try {
-            $sql = "SELECT id, nombre, apellidos, email FROM usuarios WHERE rol != 'admin' ORDER BY nombre, apellidos";
-            $stmt = $this->db->prepare($sql);
+            $query = "SELECT c.*, u.nombre as usuario_nombre, creador.nombre as creado_por_nombre 
+                     FROM citas c 
+                     LEFT JOIN usuarios u ON c.usuario_id = u.id 
+                     LEFT JOIN usuarios creador ON c.creado_por = creador.id
+                     ORDER BY c.fecha DESC, c.hora DESC";
+            $stmt = $this->db->prepare($query);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error en obtenerTodosLosUsuarios: " . $e->getMessage());
+            error_log("Error en obtenerTodasCitas: " . $e->getMessage());
             return [];
         }
     }
@@ -440,6 +546,55 @@ class CitasModelo {
             
         } catch (PDOException $e) {
             error_log("Error en marcarCitasVencidasComoCompletadas: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Obtener todos los usuarios (para el admin)
+     */
+    public function obtenerTodosLosUsuarios() {
+        try {
+            $query = "SELECT id, nombre, email FROM usuarios ORDER BY nombre ASC";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error en obtenerTodosLosUsuarios: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Actualizar estado de cita - Solo si el usuario la creó
+     */
+    public function actualizarEstadoCita($id, $estado) {
+        try {
+            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
+            $usuarioLogueado = $_SESSION['usuario_id'];
+            
+            // Verificar permisos
+            if ($rolUsuario !== 'admin') {
+                $query = "SELECT creado_por FROM citas WHERE id = :id";
+                $stmt = $this->db->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+                $cita = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$cita || $cita['creado_por'] != $usuarioLogueado) {
+                    error_log("Usuario " . $usuarioLogueado . " no tiene permisos para actualizar estado de cita " . $id);
+                    return false;
+                }
+            }
+            
+            $query = "UPDATE citas SET estado = :estado WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':estado', $estado);
+            
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Error en actualizarEstadoCita: " . $e->getMessage());
             return false;
         }
     }
