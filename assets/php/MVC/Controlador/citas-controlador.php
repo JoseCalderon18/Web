@@ -67,52 +67,92 @@ class CitasControlador {
 
     // Crear cita básica (para usuarios normales)
     public function crearCita() {
+        error_log("=== CREAR CITA - INICIO ===");
+        
         try {
             // Limpiar cualquier output buffer previo
             if (ob_get_length()) {
                 ob_clean();
             }
             
+            error_log("Verificando sesión...");
             if (!isset($_SESSION['usuario_id'])) {
+                error_log("ERROR: Usuario no autenticado");
                 echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
                 exit;
             }
 
             $usuarioId = $_SESSION['usuario_id'];
+            error_log("Usuario ID: " . $usuarioId);
+            error_log("Usuario rol: " . ($_SESSION['usuario_rol'] ?? 'no establecido'));
+            
+            // Debug de datos recibidos
+            error_log("=== DATOS RECIBIDOS ===");
+            error_log("POST completo: " . print_r($_POST, true));
+            
             $fecha = $_POST['fecha'] ?? '';
             $hora = $_POST['hora'] ?? '';
-            $motivo = trim($_POST['motivo'] ?? '');
-            $nombreCliente = trim($_POST['nombre_cliente'] ?? $_SESSION['usuario_nombre'] ?? 'Cliente');
-            
-            if (empty($fecha) || empty($hora) || empty($motivo)) {
+            $motivo = $_POST['motivo'] ?? '';
+            $nombreCliente = $_POST['nombre_cliente'] ?? '';
+
+            error_log("Fecha: " . $fecha);
+            error_log("Hora: " . $hora);
+            error_log("Motivo: " . $motivo);
+            error_log("Nombre Cliente: " . $nombreCliente);
+
+            if (empty($fecha) || empty($hora) || empty($motivo) || empty($nombreCliente)) {
+                error_log("ERROR: Campos faltantes");
+                error_log("Fecha vacía: " . (empty($fecha) ? 'SÍ' : 'NO'));
+                error_log("Hora vacía: " . (empty($hora) ? 'SÍ' : 'NO'));
+                error_log("Motivo vacío: " . (empty($motivo) ? 'SÍ' : 'NO'));
+                error_log("Nombre vacío: " . (empty($nombreCliente) ? 'SÍ' : 'NO'));
                 echo json_encode(['exito' => false, 'mensaje' => 'Todos los campos son obligatorios']);
                 exit;
             }
 
-            // Validar que la fecha no sea pasada
-            $fechaSeleccionada = new DateTime($fecha);
-            $fechaHoy = new DateTime();
-            $fechaHoy->setTime(0, 0, 0);
+            // Validación de fecha
+            $fechaCompleta = $fecha . ' ' . $hora . ':00';
+            error_log("Fecha completa: " . $fechaCompleta);
+            error_log("Timestamp fecha: " . strtotime($fechaCompleta));
+            error_log("Timestamp actual: " . time());
             
-            if ($fechaSeleccionada < $fechaHoy) {
-                echo json_encode(['exito' => false, 'mensaje' => 'No se pueden crear citas en fechas pasadas']);
+            if (strtotime($fechaCompleta) <= time()) {
+                error_log("ERROR: Fecha en el pasado");
+                echo json_encode(['exito' => false, 'mensaje' => 'No se pueden crear citas en el pasado']);
                 exit;
             }
 
             // Verificar disponibilidad
-            if (!$this->modelo->verificarDisponibilidad($fecha, $hora)) {
+            error_log("Verificando disponibilidad...");
+            $disponible = $this->modelo->verificarDisponibilidad($fecha, $hora);
+            error_log("Resultado verificarDisponibilidad: " . ($disponible ? 'TRUE' : 'FALSE'));
+            
+            if (!$disponible) {
+                error_log("ERROR: Horario no disponible");
+                
+                // Debug temporal - ver qué citas existen
+                $this->modelo->debugCitasEnHorario($fecha, $hora);
+                
                 echo json_encode(['exito' => false, 'mensaje' => 'El horario no está disponible']);
                 exit;
             }
-            
-            if ($this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente)) {
+
+            // Intentar crear la cita
+            error_log("Creando cita en el modelo...");
+            $resultado = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente);
+            error_log("Resultado del modelo: " . ($resultado ? 'TRUE' : 'FALSE'));
+
+            if ($resultado) {
+                error_log("ÉXITO: Cita creada correctamente");
                 echo json_encode(['exito' => true, 'mensaje' => 'Cita creada exitosamente']);
             } else {
-                echo json_encode(['exito' => false, 'mensaje' => 'Error al crear la cita']);
+                error_log("ERROR: El modelo retornó false");
+                echo json_encode(['exito' => false, 'mensaje' => 'Error al crear la cita en la base de datos']);
             }
             
         } catch (Exception $e) {
-            error_log("Error en crearCita: " . $e->getMessage());
+            error_log("EXCEPCIÓN en crearCita: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
         exit;
@@ -371,19 +411,20 @@ class CitasControlador {
 }
 
 // Manejo de acciones AJAX
-if (isset($_POST['accion'])) {
-    header('Content-Type: application/json');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion'])) {
     $controlador = new CitasControlador();
+    $accion = $_POST['accion'];
     
-    switch ($_POST['accion']) {
+    error_log("=== ACCIÓN RECIBIDA: " . $accion . " ===");
+    error_log("Usuario ID: " . ($_SESSION['usuario_id'] ?? 'no establecido'));
+    error_log("Rol de usuario: " . ($_SESSION['usuario_rol'] ?? 'no establecido'));
+    
+    switch ($accion) {
         case 'obtenerCitas':
             $controlador->obtenerCitas();
             break;
         case 'crearCita':
             $controlador->crearCita();
-            break;
-        case 'crearCitaAdmin':
-            $controlador->crearCitaAdmin();
             break;
         case 'crearCitaConNombre':
             $controlador->crearCitaConNombre();
@@ -397,9 +438,6 @@ if (isset($_POST['accion'])) {
         case 'eliminar':
             $controlador->eliminar();
             break;
-        default:
-            echo json_encode(['exito' => false, 'mensaje' => 'Acción no válida']);
-            break;
     }
 }
-?> 
+?>

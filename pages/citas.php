@@ -49,11 +49,39 @@ try {
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/index.global.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/index.global.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/es.global.min.js'></script>
+    
+    <!-- CSS personalizado para el calendario -->
+    <style>
+        .fc-toolbar-title {
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+        }
+        
+        /* Hacer que el encabezado del calendario siempre sea verde */
+        .fc-scrollgrid-sync-inner {
+            background-color: #2C5530 !important; /* Verde oscuro */
+            color: #FFFFFF !important;
+        }
+        
+        .fc-daygrid-day-top {
+            color: #FFFFFF !important;
+        }
+
+        .fc-daygrid-day-frame{
+            background-color: #FFFFFF !important;
+        }
+
+        .fc-daygrid-day-number{
+            color: #2C5530 !important;
+        }
+        
+        
+    </style>
 </head>
-<body class="flex flex-col min-h-full bg-beige <?php echo isset($_SESSION['usuario_id']) ? 'usuario-autenticado' : ''; ?>">
+<body class="flex flex-col bg-beige <?php echo isset($_SESSION['usuario_id']) ? 'usuario-autenticado' : ''; ?>">
     <?php include "../includes/header.php"; ?>
 
-    <main class="flex-grow">
+    <main class="flex-grow pt-44">
         <div class="container mx-auto px-4 py-8">
             <!-- Título y descripción -->
             <div class="mx-auto px-4 my-6 pb-6">

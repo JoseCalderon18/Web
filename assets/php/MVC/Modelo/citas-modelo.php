@@ -93,47 +93,96 @@ class CitasModelo {
     }
 
     /**
-     * Crear nueva cita (estado por defecto: confirmada)
+     * Crear una nueva cita
      */
-    public function crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente) {
+    public function crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente = null) {
+        error_log("=== MODELO CREAR CITA ===");
+        error_log("Usuario ID: " . $usuarioId);
+        error_log("Fecha: " . $fecha);
+        error_log("Hora: " . $hora);
+        error_log("Motivo: " . $motivo);
+        error_log("Nombre Cliente: " . $nombreCliente);
+        
         try {
-            $creadoPor = $_SESSION['usuario_id'];
-            
-            // Verificar disponibilidad
-            if (!$this->verificarDisponibilidad($fecha, $hora)) {
-                return false;
-            }
-            
+            // IMPORTANTE: Incluir el campo creado_por que es NOT NULL
             $query = "INSERT INTO citas (usuario_id, creado_por, fecha, hora, motivo, nombre_cliente, estado) 
                      VALUES (:usuario_id, :creado_por, :fecha, :hora, :motivo, :nombre_cliente, 'confirmada')";
             
+            error_log("Query SQL: " . $query);
+            
             $stmt = $this->db->prepare($query);
+            
+            if (!$stmt) {
+                error_log("ERROR: No se pudo preparar la query");
+                error_log("Error info prepare: " . print_r($this->db->errorInfo(), true));
+                return false;
+            }
+            
+            // Bind parameters incluyendo creado_por
+            error_log("Binding parámetros...");
             $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
-            $stmt->bindParam(':creado_por', $creadoPor, PDO::PARAM_INT);
+            $stmt->bindParam(':creado_por', $usuarioId, PDO::PARAM_INT); // Mismo usuario que la crea
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':hora', $hora);
             $stmt->bindParam(':motivo', $motivo);
             $stmt->bindParam(':nombre_cliente', $nombreCliente);
             
-            return $stmt->execute();
+            error_log("Ejecutando query...");
+            $resultado = $stmt->execute();
+            error_log("Resultado execute(): " . ($resultado ? 'TRUE' : 'FALSE'));
+            
+            if (!$resultado) {
+                error_log("ERROR EN EXECUTE:");
+                error_log("Error info stmt: " . print_r($stmt->errorInfo(), true));
+                return false;
+            }
+            
+            $insertId = $this->db->lastInsertId();
+            error_log("ID de la cita creada: " . $insertId);
+            
+            return $resultado;
+            
         } catch (PDOException $e) {
-            error_log("Error en crearCita: " . $e->getMessage());
+            error_log("ERROR PDO en crearCita: " . $e->getMessage());
+            error_log("Código error: " . $e->getCode());
             return false;
         }
     }
 
     // Verificar disponibilidad de horario
-    public function verificarDisponibilidad($fecha, $hora, $tipo = 'general') {
+    public function verificarDisponibilidad($fecha, $hora, $idExcluir = null) {
         try {
+            error_log("=== VERIFICAR DISPONIBILIDAD ===");
+            error_log("Fecha: " . $fecha);
+            error_log("Hora: " . $hora);
+            error_log("ID a excluir: " . ($idExcluir ?? 'ninguno'));
+            
             $sql = "SELECT COUNT(*) as total FROM citas 
-                    WHERE fecha = ? AND hora = ? AND tipo = ? 
+                    WHERE fecha = ? AND hora = ? 
                     AND estado NOT IN ('cancelada')";
             
+            $params = [$fecha, $hora];
+            
+            // Si se proporciona un ID, excluirlo (útil para actualizaciones)
+            if ($idExcluir) {
+                $sql .= " AND id != ?";
+                $params[] = $idExcluir;
+            }
+            
+            error_log("SQL: " . $sql);
+            error_log("Parámetros: " . print_r($params, true));
+            
             $stmt = $this->db->prepare($sql);
-            $stmt->execute([$fecha, $hora, $tipo]);
+            $stmt->execute($params);
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            return $resultado['total'] == 0;
+            error_log("Citas encontradas: " . $resultado['total']);
+            
+            $disponible = $resultado['total'] == 0;
+            error_log("¿Disponible?: " . ($disponible ? 'SÍ' : 'NO'));
+            
+            return $disponible;
+            
         } catch (PDOException $e) {
             error_log("Error en verificarDisponibilidad: " . $e->getMessage());
             return false;
@@ -475,6 +524,31 @@ class CitasModelo {
         } catch (PDOException $e) {
             error_log("Error en obtenerCitasUsuario: " . $e->getMessage());
             return [];
+        }
+    }
+
+    // Función temporal para debug - ver qué citas existen en una fecha/hora
+    public function debugCitasEnHorario($fecha, $hora) {
+        try {
+            $sql = "SELECT * FROM citas WHERE fecha = ? AND hora = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$fecha, $hora]);
+            $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            error_log("=== CITAS EN " . $fecha . " " . $hora . " ===");
+            if (empty($citas)) {
+                error_log("No hay citas en ese horario");
+            } else {
+                foreach ($citas as $cita) {
+                    error_log("Cita ID: " . $cita['id'] . 
+                             ", Usuario: " . $cita['usuario_id'] . 
+                             ", Estado: " . $cita['estado'] . 
+                             ", Cliente: " . ($cita['nombre_cliente'] ?? 'N/A'));
+                }
+            }
+            
+        } catch (PDOException $e) {
+            error_log("Error en debugCitasEnHorario: " . $e->getMessage());
         }
     }
 } 

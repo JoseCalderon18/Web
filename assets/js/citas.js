@@ -7,13 +7,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Obtener el valor de esAdmin
+    // Obtener el valor de esAdmin para mostrar información diferente
     const esAdmin = calendarEl.dataset.esAdmin === 'true';
     console.log('Es admin:', esAdmin);
+    
+    // Hacer esAdmin disponible globalmente
+    window.esAdmin = esAdmin;
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         locale: 'es',
+        timeZone: 'local',
+        firstDay: 1,
+        now: new Date(),
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -46,28 +52,56 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         ],
         selectConstraint: "businessHours",
+        selectAllow: function(selectInfo) {
+            return true;
+        },
         dateClick: function(info) {
             console.log('Click en fecha:', info.dateStr);
+            
+            const selectedDate = new Date(info.dateStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Fecha no disponible',
+                    text: 'No se pueden crear citas en fechas pasadas. Solo puedes agendar citas para hoy o fechas futuras.',
+                    confirmButtonColor: '#2C5530',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+            
             const fecha = info.dateStr.split('T')[0];
             const hora = info.dateStr.includes('T') ? 
                 info.dateStr.split('T')[1].substring(0, 5) : '10:00';
             
-            if (esAdmin) {
-                mostrarFormularioCitaAdmin(fecha, hora);
-            } else {
-                mostrarFormularioCita(fecha, hora);
-            }
+            mostrarFormularioCita(fecha, hora);
         },
         select: function(info) {
             console.log('Selección:', info);
+            
+            const selectedDate = new Date(info.startStr);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Fecha no disponible',
+                    text: 'No se pueden crear citas en fechas pasadas. Solo puedes agendar citas para hoy o fechas futuras.',
+                    confirmButtonColor: '#2C5530',
+                    confirmButtonText: 'Entendido'
+                });
+                calendar.unselect();
+                return;
+            }
+            
             const fecha = info.startStr.split('T')[0];
             const hora = info.startStr.split('T')[1].substring(0, 5);
             
-            if (esAdmin) {
-                mostrarFormularioCitaAdmin(fecha, hora);
-            } else {
-                mostrarFormularioCita(fecha, hora);
-            }
+            mostrarFormularioCita(fecha, hora);
             calendar.unselect();
         },
         events: function(info, successCallback, failureCallback) {
@@ -121,9 +155,45 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Función personalizada para ir a hoy
+    function irAHoy() {
+        const hoy = new Date();
+        console.log('Ir a hoy:', hoy);
+        calendar.gotoDate(hoy);
+        
+        // Si estamos en vista de semana, asegurar que muestre la semana actual
+        if (calendar.view.type === 'timeGridWeek') {
+            calendar.gotoDate(hoy);
+        }
+    }
+
+    // Sobrescribir el comportamiento del botón today después del render
     calendar.render();
     console.log('Calendario renderizado');
+    
+    // Buscar y reemplazar el event listener del botón today
+    setTimeout(() => {
+        const todayButton = document.querySelector('.fc-today-button');
+        if (todayButton) {
+            // Clonar el botón para remover todos los event listeners
+            const newTodayButton = todayButton.cloneNode(true);
+            todayButton.parentNode.replaceChild(newTodayButton, todayButton);
+            
+            // Agregar nuestro event listener personalizado
+            newTodayButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                irAHoy();
+            });
+            
+            console.log('Botón Hoy personalizado configurado');
+        }
+    }, 500);
 
+    // Debug: verificar la fecha actual del calendario
+    console.log('Fecha actual del calendario:', calendar.getDate());
+    console.log('Fecha actual del sistema:', new Date());
+    
     // Función para obtener color según el estado
     function getColorByStatus(estado) {
         switch (estado) {
@@ -208,221 +278,201 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Función para mostrar formulario de nueva cita (usuarios)
-    function mostrarFormularioCita(fecha, hora = '') {
-        console.log('Mostrando formulario usuario:', fecha, hora);
+    // Función para mostrar formulario de cita (para todos los usuarios)
+    function mostrarFormularioCita(fecha, hora) {
+        console.log('=== MOSTRAR FORMULARIO CITA ===');
+        console.log('Fecha:', fecha, 'Hora:', hora);
         
-        // Validar que no sea una fecha pasada
-        const fechaSeleccionada = new Date(fecha);
-        const fechaHoy = new Date();
-        fechaHoy.setHours(0, 0, 0, 0);
+        // Validación adicional de fecha
+        const selectedDate = new Date(fecha);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
         
-        if (fechaSeleccionada < fechaHoy) {
+        if (selectedDate < today) {
             Swal.fire({
-                icon: 'warning',
+                icon: 'error',
                 title: 'Fecha no válida',
-                text: 'No puedes crear citas en fechas pasadas',
-                confirmButtonColor: '#DC3545'
-            });
-            return;
-        }
-
-        const fechaMinima = new Date().toISOString().split('T')[0];
-
-        Swal.fire({
-            title: 'Reservar Nueva Cita',
-            html: `
-                <div class="text-left space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha:</label>
-                        <input type="date" id="fecha-cita" class="w-full p-2 border border-gray-300 rounded-md" value="${fecha}" min="${fechaMinima}">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Hora:</label>
-                        <select id="hora-cita" class="w-full p-2 border border-gray-300 rounded-md">
-                            <option value="">Selecciona una hora</option>
-                            <option value="10:00" ${hora === '10:00' ? 'selected' : ''}>10:00</option>
-                            <option value="11:00" ${hora === '11:00' ? 'selected' : ''}>11:00</option>
-                            <option value="12:00" ${hora === '12:00' ? 'selected' : ''}>12:00</option>
-                            <option value="13:00" ${hora === '13:00' ? 'selected' : ''}>13:00</option>
-                            <option value="17:00" ${hora === '17:00' ? 'selected' : ''}>17:00</option>
-                            <option value="18:00" ${hora === '18:00' ? 'selected' : ''}>18:00</option>
-                            <option value="19:00" ${hora === '19:00' ? 'selected' : ''}>19:00</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la consulta:</label>
-                        <textarea id="motivo-cita" class="w-full p-2 border border-gray-300 rounded-md" rows="3" placeholder="Describe brevemente el motivo de tu consulta..."></textarea>
-                    </div>
-                </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Reservar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#2C5530',
-            cancelButtonColor: '#6B7280',
-            preConfirm: () => {
-                const fechaSeleccionada = document.getElementById('fecha-cita').value;
-                const horaSeleccionada = document.getElementById('hora-cita').value;
-                const motivo = document.getElementById('motivo-cita').value.trim();
-
-                if (!fechaSeleccionada || !horaSeleccionada || !motivo) {
-                    Swal.showValidationMessage('Todos los campos son obligatorios');
-                    return false;
-                }
-
-                // Validar fecha nuevamente
-                const fechaValidacion = new Date(fechaSeleccionada);
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                
-                if (fechaValidacion < hoy) {
-                    Swal.showValidationMessage('No puedes seleccionar una fecha pasada');
-                    return false;
-                }
-
-                return { fecha: fechaSeleccionada, hora: horaSeleccionada, motivo };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const { fecha, hora, motivo } = result.value;
-                crearCita(fecha, hora, motivo);
-            }
-        });
-    }
-
-    // Función para mostrar formulario de nueva cita (admin)
-    function mostrarFormularioCitaAdmin(fecha, hora = '') {
-        console.log('Mostrando formulario admin:', fecha, hora);
-        
-        // Validar que no sea una fecha pasada
-        const fechaSeleccionada = new Date(fecha);
-        const fechaHoy = new Date();
-        fechaHoy.setHours(0, 0, 0, 0);
-        
-        if (fechaSeleccionada < fechaHoy) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Fecha no válida',
-                text: 'No puedes crear citas en fechas pasadas',
+                text: 'No se pueden crear citas en fechas pasadas',
                 confirmButtonColor: '#DC3545'
             });
             return;
         }
         
-        mostrarFormularioConNombreCliente(fecha, hora);
-    }
-
-    // Función para mostrar el formulario con nombre de cliente
-    function mostrarFormularioConNombreCliente(fecha, hora) {
+        // Establecer fecha mínima en el input
         const fechaMinima = new Date().toISOString().split('T')[0];
         
         Swal.fire({
-            title: 'Reservar Cita para Cliente',
+            title: 'Nueva Cita',
             html: `
                 <div class="text-left space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Cliente:</label>
-                        <input type="text" id="nombre-cliente" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ingresa el nombre completo del cliente" required>
+                        <input type="text" id="nombre_cliente" placeholder="Nombre completo del cliente" class="w-full p-2 border rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Fecha:</label>
-                        <input type="date" id="fecha-cita" class="w-full p-2 border border-gray-300 rounded-md" value="${fecha}" min="${fechaMinima}">
+                        <input type="date" id="fecha" value="${fecha}" min="${fechaMinima}" class="w-full p-2 border rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Hora:</label>
-                        <select id="hora-cita" class="w-full p-2 border border-gray-300 rounded-md">
-                            <option value="">Selecciona una hora</option>
-                            <option value="10:00" ${hora === '10:00' ? 'selected' : ''}>10:00</option>
-                            <option value="11:00" ${hora === '11:00' ? 'selected' : ''}>11:00</option>
-                            <option value="12:00" ${hora === '12:00' ? 'selected' : ''}>12:00</option>
-                            <option value="13:00" ${hora === '13:00' ? 'selected' : ''}>13:00</option>
-                            <option value="17:00" ${hora === '17:00' ? 'selected' : ''}>17:00</option>
-                            <option value="18:00" ${hora === '18:00' ? 'selected' : ''}>18:00</option>
-                            <option value="19:00" ${hora === '19:00' ? 'selected' : ''}>19:00</option>
-                        </select>
+                        <input type="time" id="hora" value="${hora}" min="10:00" max="20:00" class="w-full p-2 border rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la consulta:</label>
-                        <textarea id="motivo-cita" class="w-full p-2 border border-gray-300 rounded-md" rows="3" placeholder="Describe brevemente el motivo de la consulta..."></textarea>
+                        <textarea id="motivo" placeholder="Describe el motivo de la consulta..." class="w-full p-2 border rounded-md" rows="3"></textarea>
                     </div>
                 </div>
             `,
             showCancelButton: true,
-            confirmButtonText: 'Reservar Cita',
+            confirmButtonText: 'Crear Cita',
             cancelButtonText: 'Cancelar',
             confirmButtonColor: '#2C5530',
             cancelButtonColor: '#6B7280',
             preConfirm: () => {
-                const nombreCliente = document.getElementById('nombre-cliente').value.trim();
-                const fechaSeleccionada = document.getElementById('fecha-cita').value;
-                const horaSeleccionada = document.getElementById('hora-cita').value;
-                const motivo = document.getElementById('motivo-cita').value.trim();
-
-                if (!nombreCliente || !fechaSeleccionada || !horaSeleccionada || !motivo) {
-                    Swal.showValidationMessage('Todos los campos son obligatorios');
+                const nombreCliente = document.getElementById('nombre_cliente').value.trim();
+                const fechaSeleccionada = document.getElementById('fecha').value;
+                const horaSeleccionada = document.getElementById('hora').value;
+                const motivo = document.getElementById('motivo').value.trim();
+                
+                if (!nombreCliente) {
+                    Swal.showValidationMessage('El nombre del cliente es obligatorio');
                     return false;
                 }
-
-                // Validar fecha nuevamente
-                const fechaValidacion = new Date(fechaSeleccionada);
+                
+                if (!fechaSeleccionada) {
+                    Swal.showValidationMessage('La fecha es obligatoria');
+                    return false;
+                }
+                
+                if (!horaSeleccionada) {
+                    Swal.showValidationMessage('La hora es obligatoria');
+                    return false;
+                }
+                
+                if (!motivo) {
+                    Swal.showValidationMessage('El motivo es obligatorio');
+                    return false;
+                }
+                
+                // Validar que la fecha no sea del pasado
+                const fechaSeleccionadaObj = new Date(fechaSeleccionada);
                 const hoy = new Date();
                 hoy.setHours(0, 0, 0, 0);
                 
-                if (fechaValidacion < hoy) {
-                    Swal.showValidationMessage('No puedes seleccionar una fecha pasada');
+                if (fechaSeleccionadaObj < hoy) {
+                    Swal.showValidationMessage('No se pueden crear citas en fechas pasadas');
                     return false;
                 }
-
+                
+                // Validar horario de trabajo (10:00-14:00 y 17:00-20:00)
+                const hora = horaSeleccionada.split(':');
+                const horaNumerica = parseInt(hora[0]) + parseInt(hora[1]) / 60;
+                
+                if (!((horaNumerica >= 10 && horaNumerica < 14) || (horaNumerica >= 17 && horaNumerica < 20))) {
+                    Swal.showValidationMessage('Solo se pueden crear citas de 10:00-14:00 y 17:00-20:00');
+                    return false;
+                }
+                
                 return { nombreCliente, fecha: fechaSeleccionada, hora: horaSeleccionada, motivo };
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                const { nombreCliente, fecha, hora, motivo } = result.value;
-                crearCitaConNombre(nombreCliente, fecha, hora, motivo);
+                console.log('=== CREAR CITA ===');
+                console.log('Datos:', result.value);
+                
+                // TODOS los usuarios usan el mismo método
+                crearCita(result.value.nombreCliente, result.value.fecha, result.value.hora, result.value.motivo);
             }
         });
     }
 
-    // Función para crear cita (usuarios)
-    function crearCita(fecha, hora, motivo) {
+    // Función única para crear citas (para todos los usuarios)
+    function crearCita(nombreCliente, fecha, hora, motivo) {
+        console.log('=== CREAR CITA - DEBUG COMPLETO ===');
+        console.log('Nombre Cliente:', nombreCliente);
+        console.log('Fecha:', fecha);
+        console.log('Hora:', hora);
+        console.log('Motivo:', motivo);
+
         const formData = new FormData();
         formData.append('accion', 'crearCita');
+        formData.append('nombre_cliente', nombreCliente);
         formData.append('fecha', fecha);
         formData.append('hora', hora);
         formData.append('motivo', motivo);
+
+        // Debug: mostrar todos los datos que se envían
+        console.log('=== DATOS ENVIADOS ===');
+        for (let [key, value] of formData.entries()) {
+            console.log(key + ':', value);
+        }
 
         fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.exito) {
+        .then(response => {
+            console.log('=== RESPONSE STATUS ===');
+            console.log('Status:', response.status);
+            console.log('StatusText:', response.statusText);
+            console.log('Headers:', response.headers);
+            return response.text();
+        })
+        .then(text => {
+            console.log('=== RESPONSE TEXT COMPLETO ===');
+            console.log('Longitud:', text.length);
+            console.log('Texto:', text);
+            console.log('Primeros 200 caracteres:', text.substring(0, 200));
+            
+            try {
+                const data = JSON.parse(text);
+                console.log('=== JSON PARSEADO ===');
+                console.log('Response data:', data);
+                
+                if (data.exito) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'Cita creada correctamente',
+                        confirmButtonColor: '#2C5530',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then(() => {
+                        calendar.refetchEvents();
+                        location.reload();
+                    });
+                } else {
+                    console.error('=== ERROR DEL SERVIDOR ===');
+                    console.error('Mensaje:', data.mensaje);
+                    throw new Error(data.mensaje || 'Error al crear la cita');
+                }
+            } catch (parseError) {
+                console.error('=== ERROR AL PARSEAR JSON ===');
+                console.error('Error:', parseError);
+                console.error('Texto que falló:', text);
                 Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Cita creada exitosamente',
-                    confirmButtonColor: '#2C5530',
-                    timer: 3000, // 3 segundos
+                    icon: 'error',
+                    title: 'Error de parseo',
+                    text: 'Respuesta del servidor no válida: ' + text.substring(0, 100),
+                    confirmButtonColor: '#DC3545',
+                    timer: 8000,
                     timerProgressBar: true,
                     showConfirmButton: true,
                     allowOutsideClick: false
-                }).then(() => {
-                    calendar.refetchEvents();
-                    location.reload();
                 });
-            } else {
-                throw new Error(data.mensaje || 'Error al crear la cita');
             }
         })
         .catch(error => {
+            console.error('=== ERROR DE FETCH ===');
+            console.error('Error:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
+                title: 'Error de conexión',
                 text: error.message || 'Error al crear la cita',
                 confirmButtonColor: '#DC3545',
-                timer: 4000, // 4 segundos para errores
+                timer: 4000,
                 timerProgressBar: true,
                 showConfirmButton: true,
                 allowOutsideClick: false
@@ -430,48 +480,68 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Función para mostrar detalles de cita (usuario)
-    function mostrarDetallesCitaUsuario(evento) {
-        Swal.fire({
-            title: 'Detalles de tu Cita',
-            html: `
-                <div class="text-left">
-                    <p><strong>Fecha:</strong> ${evento.start.toLocaleDateString()}</p>
-                    <p><strong>Hora:</strong> ${evento.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                    <p><strong>Motivo:</strong> ${evento.extendedProps.motivo}</p>
-                    <p><strong>Estado:</strong> ${evento.extendedProps.estado}</p>
-                </div>
-            `,
-            confirmButtonText: 'Cerrar',
-            confirmButtonColor: '#2C5530'
-        });
+    // Solo mostrar detalles diferentes según el rol
+    function mostrarDetallesCitaAdmin(cita) {
+        mostrarDetallesCita(cita, true);
     }
 
-    // Función para mostrar detalles de cita (admin)
-    function mostrarDetallesCitaAdmin(evento) {
+    function mostrarDetallesCitaUsuario(cita) {
+        mostrarDetallesCita(cita, false);
+    }
+
+    function mostrarDetallesCita(cita, esAdmin) {
+        const nombreCliente = cita.extendedProps.nombre_cliente || 'Cliente';
+        const motivo = cita.extendedProps.motivo || 'Sin motivo especificado';
+        
+        let botonesAccion = '';
+        if (esAdmin) {
+            botonesAccion = `
+                <div class="mt-4 space-y-2">
+                    <h4 class="font-semibold text-gray-700">Acciones:</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="actualizarEstadoCita(${cita.id}, 'confirmada')" 
+                                class="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">
+                            Confirmar
+                        </button>
+                        <button onclick="actualizarEstadoCita(${cita.id}, 'completada')" 
+                                class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                            Completar
+                        </button>
+                        <button onclick="actualizarEstadoCita(${cita.id}, 'cancelada')" 
+                                class="px-3 py-1 bg-yellow-600 text-white rounded-md text-sm hover:bg-yellow-700">
+                            Cancelar
+                        </button>
+                        <button onclick="eliminarCita(${cita.id})" 
+                                class="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         Swal.fire({
-            title: 'Gestionar Cita',
+            title: 'Detalles de la Cita',
             html: `
-                <div class="text-left">
-                    <p><strong>Cliente:</strong> ${evento.extendedProps.nombre_cliente}</p>
-                    <p><strong>Fecha:</strong> ${evento.start.toLocaleDateString()}</p>
-                    <p><strong>Hora:</strong> ${evento.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                    <p><strong>Motivo:</strong> ${evento.extendedProps.motivo}</p>
-                    <p><strong>Estado actual:</strong> ${evento.extendedProps.estado}</p>
+                <div class="text-left space-y-3">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p><strong>Cliente:</strong> ${nombreCliente}</p>
+                        <p><strong>Fecha:</strong> ${formatearFecha(cita.start)}</p>
+                        <p><strong>Hora:</strong> ${formatearHora(cita.start)}</p>
+                        <p><strong>Estado:</strong> <span class="estado-${cita.extendedProps.estado}">${cita.extendedProps.estado.toUpperCase()}</span></p>
+                    </div>
+                    <div>
+                        <p><strong>Motivo de la consulta:</strong></p>
+                        <p class="mt-1 text-gray-700 bg-gray-50 p-2 rounded">${motivo}</p>
+                    </div>
+                    ${botonesAccion}
                 </div>
             `,
-            showDenyButton: true,
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            denyButtonText: 'Cancelar Cita',
-            cancelButtonText: 'Cerrar',
-            confirmButtonColor: '#10B981',
-            denyButtonColor: '#EF4444'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                actualizarEstadoCita(evento.id, 'confirmada');
-            } else if (result.isDenied) {
-                actualizarEstadoCita(evento.id, 'cancelada');
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: '600px',
+            customClass: {
+                popup: 'text-sm'
             }
         });
     }
@@ -579,159 +649,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 });
             }
-        });
-    }
-
-    // Función para mostrar detalles de la cita
-    function mostrarDetallesCita(cita) {
-        console.log('=== DEBUG mostrar detalles ===');
-        console.log('Cita completa:', cita);
-        console.log('nombre_cliente:', cita.nombre_cliente);
-        console.log('motivo:', cita.motivo);
-        console.log('nombre_usuario:', cita.nombre_usuario);
-        
-        // Determinar el nombre del cliente correcto
-        let nombreCliente = '';
-        if (cita.nombre_cliente && cita.nombre_cliente.trim() !== '') {
-            // Si hay nombre_cliente, es una cita creada por admin para un cliente específico
-            nombreCliente = cita.nombre_cliente;
-        } else if (cita.nombre_usuario) {
-            // Si no hay nombre_cliente, mostrar el nombre del usuario que creó la cita
-            nombreCliente = cita.nombre_usuario;
-        } else {
-            nombreCliente = 'Cliente no especificado';
-        }
-        
-        // El motivo SIEMPRE debe ser el campo motivo
-        const motivo = cita.motivo || 'Sin motivo especificado';
-
-        const esAdmin = window.esAdmin || false;
-        
-        let botonesAccion = '';
-        if (esAdmin) {
-            botonesAccion = `
-                <div class="mt-4 space-y-2">
-                    <h4 class="font-semibold text-gray-700">Acciones:</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="actualizarEstadoCita(${cita.id}, 'confirmada')" 
-                                class="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">
-                            Confirmar
-                        </button>
-                        <button onclick="actualizarEstadoCita(${cita.id}, 'completada')" 
-                                class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
-                            Completar
-                        </button>
-                        <button onclick="actualizarEstadoCita(${cita.id}, 'cancelada')" 
-                                class="px-3 py-1 bg-yellow-600 text-white rounded-md text-sm hover:bg-yellow-700">
-                            Cancelar
-                        </button>
-                        <button onclick="eliminarCita(${cita.id})" 
-                                class="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
-                            Eliminar
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        Swal.fire({
-            title: 'Detalles de la Cita',
-            html: `
-                <div class="text-left space-y-3">
-                    <div class="bg-gray-50 p-3 rounded-lg">
-                        <p><strong>Cliente:</strong> ${nombreCliente}</p>
-                        <p><strong>Fecha:</strong> ${formatearFecha(cita.fecha)}</p>
-                        <p><strong>Hora:</strong> ${cita.hora}</p>
-                        <p><strong>Estado:</strong> <span class="estado-${cita.estado}">${cita.estado.toUpperCase()}</span></p>
-                    </div>
-                    <div>
-                        <p><strong>Motivo de la consulta:</strong></p>
-                        <p class="mt-1 text-gray-700 bg-gray-50 p-2 rounded">${motivo}</p>
-                    </div>
-                    ${botonesAccion}
-                </div>
-            `,
-            showCloseButton: true,
-            showConfirmButton: false,
-            width: '600px',
-            customClass: {
-                popup: 'text-sm'
-            }
-        });
-    }
-
-    // Función para crear cita con nombre del cliente
-    function crearCitaConNombre(nombreCliente, fecha, hora, motivo) {
-        console.log('=== DEBUG crearCitaConNombre ===');
-        console.log('Nombre Cliente:', nombreCliente);
-        console.log('Fecha:', fecha);
-        console.log('Hora:', hora);
-        console.log('Motivo:', motivo);
-
-        const formData = new FormData();
-        formData.append('accion', 'crearCitaConNombre');
-        formData.append('nombre_cliente', nombreCliente);
-        formData.append('fecha', fecha);
-        formData.append('hora', hora);
-        formData.append('motivo', motivo);
-
-        fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            return response.text();
-        })
-        .then(text => {
-            console.log('Response text:', text);
-            try {
-                const data = JSON.parse(text);
-                console.log('Response data:', data);
-                
-                if (data.exito) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: 'Cita creada correctamente',
-                        confirmButtonColor: '#2C5530',
-                        timer: 3000, // 3 segundos
-                        timerProgressBar: true,
-                        showConfirmButton: true,
-                        allowOutsideClick: false
-                    }).then(() => {
-                        calendar.refetchEvents();
-                        location.reload();
-                    });
-                } else {
-                    throw new Error(data.mensaje || 'Error al crear la cita');
-                }
-            } catch (parseError) {
-                console.error('Error al parsear JSON:', parseError);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error en la respuesta del servidor',
-                    confirmButtonColor: '#DC3545',
-                    timer: 4000, // 4 segundos para errores
-                    timerProgressBar: true,
-                    showConfirmButton: true,
-                    allowOutsideClick: false
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error fetch:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'Error al crear la cita',
-                confirmButtonColor: '#DC3545',
-                timer: 4000, // 4 segundos para errores
-                timerProgressBar: true,
-                showConfirmButton: true,
-                allowOutsideClick: false
-            });
         });
     }
 });
