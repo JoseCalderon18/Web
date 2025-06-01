@@ -127,11 +127,84 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para obtener color según el estado
     function getColorByStatus(estado) {
         switch (estado) {
-            case 'pendiente': return '#F59E0B';
             case 'confirmada': return '#10B981';
             case 'cancelada': return '#EF4444';
-            case 'completada': return '#3B82F6';
+            case 'completada': return '#6B7280';
             default: return '#6B7280';
+        }
+    }
+
+    // Función para obtener texto según el estado
+    function getTextByStatus(estado) {
+        switch (estado) {
+            case 'confirmada': return 'Confirmada';
+            case 'cancelada': return 'Cancelada';
+            case 'completada': return 'Completada';
+            default: return estado;
+        }
+    }
+
+    // Función para mostrar citas en la lista
+    function mostrarCitas(citas) {
+        const listaCitas = document.getElementById('lista-citas');
+        if (!listaCitas) return;
+        
+        if (citas.length === 0) {
+            listaCitas.innerHTML = '<div class="text-center text-gray-500 py-8">No hay citas registradas</div>';
+            return;
+        }
+        
+        let html = '';
+        citas.forEach(cita => {
+            const fechaFormateada = new Date(cita.fecha).toLocaleDateString('es-ES');
+            const estadoColor = getColorByStatus(cita.estado);
+            const estadoTexto = getTextByStatus(cita.estado);
+            
+            html += `
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4" style="border-left-color: ${estadoColor}">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">${cita.nombre_cliente}</h3>
+                            <p class="text-gray-600">${fechaFormateada} a las ${cita.hora}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium text-white" style="background-color: ${estadoColor}">
+                            ${estadoTexto}
+                        </span>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-4">${cita.motivo}</p>
+                    
+                    <div class="flex gap-2">
+                        ${cita.estado === 'confirmada' ? `
+                            <button onclick="cambiarEstado(${cita.id}, 'completada')" 
+                                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                                Marcar Completada
+                            </button>
+                            <button onclick="cambiarEstado(${cita.id}, 'cancelada')" 
+                                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                                Cancelar
+                            </button>
+                        ` : ''}
+                        
+                        <button onclick="eliminarCita(${cita.id})" 
+                                class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        listaCitas.innerHTML = html;
+    }
+
+    // Función para filtrar por estado
+    function filtrarPorEstado(estado) {
+        if (estado === 'todos') {
+            mostrarCitas(citasData);
+        } else {
+            const citasFiltradas = citasData.filter(cita => cita.estado === estado);
+            mostrarCitas(citasFiltradas);
         }
     }
 
@@ -311,17 +384,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Función para crear cita con nombre del cliente
-    function crearCitaConNombre(nombreCliente, fecha, hora, motivo) {
-        console.log('=== DEBUG crearCitaConNombre ===');
-        console.log('Nombre Cliente:', nombreCliente);
-        console.log('Fecha:', fecha);
-        console.log('Hora:', hora);
-        console.log('Motivo:', motivo);
-
+    // Función para crear cita (usuarios)
+    function crearCita(fecha, hora, motivo) {
         const formData = new FormData();
-        formData.append('accion', 'crearCitaConNombre');
-        formData.append('nombre_cliente', nombreCliente);
+        formData.append('accion', 'crearCita');
         formData.append('fecha', fecha);
         formData.append('hora', hora);
         formData.append('motivo', motivo);
@@ -330,45 +396,36 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             body: formData
         })
-        .then(response => {
-            console.log('Response status:', response.status);
-            return response.text();
-        })
-        .then(text => {
-            console.log('Response text:', text);
-            try {
-                const data = JSON.parse(text);
-                console.log('Response data:', data);
-                
-                if (data.exito) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Éxito!',
-                        text: 'Cita creada correctamente',
-                        confirmButtonColor: '#2C5530'
-                    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.exito) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Cita creada exitosamente',
+                    confirmButtonColor: '#2C5530',
+                    timer: 3000, // 3 segundos
+                    timerProgressBar: true,
+                    showConfirmButton: true,
+                    allowOutsideClick: false
+                }).then(() => {
                     calendar.refetchEvents();
                     location.reload();
-                } else {
-                    throw new Error(data.mensaje || 'Error al crear la cita');
-                }
-            } catch (parseError) {
-                console.error('Error al parsear JSON:', parseError);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error en la respuesta del servidor',
-                    confirmButtonColor: '#DC3545'
                 });
+            } else {
+                throw new Error(data.mensaje || 'Error al crear la cita');
             }
         })
         .catch(error => {
-            console.error('Error fetch:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: error.message || 'Error al crear la cita',
-                confirmButtonColor: '#DC3545'
+                confirmButtonColor: '#DC3545',
+                timer: 4000, // 4 segundos para errores
+                timerProgressBar: true,
+                showConfirmButton: true,
+                allowOutsideClick: false
             });
         });
     }
@@ -437,10 +494,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon: 'success',
                     title: '¡Éxito!',
                     text: 'Estado actualizado correctamente',
-                    confirmButtonColor: '#2C5530'
+                    confirmButtonColor: '#2C5530',
+                    timer: 3000, // 3 segundos
+                    timerProgressBar: true,
+                    showConfirmButton: true,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                }).then(() => {
+                    calendar.refetchEvents();
+                    location.reload();
                 });
-                calendar.refetchEvents();
-                location.reload();
             } else {
                 throw new Error(data.mensaje || 'Error al actualizar el estado');
             }
@@ -450,7 +513,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon: 'error',
                 title: 'Error',
                 text: error.message || 'Error al actualizar el estado',
-                confirmButtonColor: '#DC3545'
+                confirmButtonColor: '#DC3545',
+                timer: 4000, // 4 segundos para errores
+                timerProgressBar: true,
+                showConfirmButton: true,
+                allowOutsideClick: false
             });
         });
     }
@@ -465,11 +532,14 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
             confirmButtonColor: '#DC3545',
-            cancelButtonColor: '#6B7280'
+            cancelButtonColor: '#6B7280',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
                 const formData = new FormData();
-                formData.append('accion', 'eliminarCita');
+                formData.append('accion', 'eliminar');
                 formData.append('id', citaId);
 
                 fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
@@ -483,10 +553,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             icon: 'success',
                             title: '¡Eliminada!',
                             text: 'La cita ha sido eliminada correctamente',
-                            confirmButtonColor: '#2C5530'
+                            confirmButtonColor: '#2C5530',
+                            timer: 3000, // 3 segundos
+                            timerProgressBar: true,
+                            showConfirmButton: true,
+                            allowOutsideClick: false
+                        }).then(() => {
+                            calendar.refetchEvents();
+                            location.reload();
                         });
-                        calendar.refetchEvents();
-                        location.reload();
                     } else {
                         throw new Error(data.mensaje || 'Error al eliminar la cita');
                     }
@@ -496,7 +571,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         icon: 'error',
                         title: 'Error',
                         text: error.message || 'Error al eliminar la cita',
-                        confirmButtonColor: '#DC3545'
+                        confirmButtonColor: '#DC3545',
+                        timer: 4000, // 4 segundos para errores
+                        timerProgressBar: true,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
                     });
                 });
             }
@@ -578,6 +657,81 @@ document.addEventListener('DOMContentLoaded', function() {
             customClass: {
                 popup: 'text-sm'
             }
+        });
+    }
+
+    // Función para crear cita con nombre del cliente
+    function crearCitaConNombre(nombreCliente, fecha, hora, motivo) {
+        console.log('=== DEBUG crearCitaConNombre ===');
+        console.log('Nombre Cliente:', nombreCliente);
+        console.log('Fecha:', fecha);
+        console.log('Hora:', hora);
+        console.log('Motivo:', motivo);
+
+        const formData = new FormData();
+        formData.append('accion', 'crearCitaConNombre');
+        formData.append('nombre_cliente', nombreCliente);
+        formData.append('fecha', fecha);
+        formData.append('hora', hora);
+        formData.append('motivo', motivo);
+
+        fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.text();
+        })
+        .then(text => {
+            console.log('Response text:', text);
+            try {
+                const data = JSON.parse(text);
+                console.log('Response data:', data);
+                
+                if (data.exito) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'Cita creada correctamente',
+                        confirmButtonColor: '#2C5530',
+                        timer: 3000, // 3 segundos
+                        timerProgressBar: true,
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    }).then(() => {
+                        calendar.refetchEvents();
+                        location.reload();
+                    });
+                } else {
+                    throw new Error(data.mensaje || 'Error al crear la cita');
+                }
+            } catch (parseError) {
+                console.error('Error al parsear JSON:', parseError);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error en la respuesta del servidor',
+                    confirmButtonColor: '#DC3545',
+                    timer: 4000, // 4 segundos para errores
+                    timerProgressBar: true,
+                    showConfirmButton: true,
+                    allowOutsideClick: false
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetch:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Error al crear la cita',
+                confirmButtonColor: '#DC3545',
+                timer: 4000, // 4 segundos para errores
+                timerProgressBar: true,
+                showConfirmButton: true,
+                allowOutsideClick: false
+            });
         });
     }
 });

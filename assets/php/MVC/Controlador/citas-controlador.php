@@ -17,26 +17,6 @@ class CitasControlador {
         $this->modelo = new CitasModelo();
     }
 
-    // Obtener todas las citas
-    public function obtenerTodasLasCitas() {
-        try {
-            return $this->modelo->obtenerTodasLasCitas();
-        } catch (Exception $e) {
-            error_log("Error en obtenerTodasLasCitas: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    // Obtener citas de un usuario específico
-    public function obtenerCitasUsuario($usuarioId) {
-        try {
-            return $this->modelo->obtenerCitasPorUsuario($usuarioId);
-        } catch (Exception $e) {
-            error_log("Error en obtenerCitasUsuario: " . $e->getMessage());
-            return [];
-        }
-    }
-
     // Obtener citas para AJAX
     public function obtenerCitas() {
         try {
@@ -66,7 +46,7 @@ class CitasControlador {
             } else {
                 // Usuario normal ve solo sus citas
                 $usuarioId = $_SESSION['usuario_id'];
-                $citas = $this->modelo->obtenerCitasPorUsuario($usuarioId);
+                $citas = $this->modelo->obtenerCitasUsuario($usuarioId);
             }
             
             error_log("Total de citas obtenidas: " . count($citas));
@@ -85,26 +65,60 @@ class CitasControlador {
         }
     }
 
-    // Nuevo método para actualizar citas vencidas automáticamente
-    private function actualizarCitasVencidas() {
+    // Crear cita básica (para usuarios normales)
+    public function crearCita() {
         try {
-            // Obtener fecha y hora actual
-            $fechaActual = date('Y-m-d');
-            $horaActual = date('H:i:s');
+            // Limpiar cualquier output buffer previo
+            if (ob_get_length()) {
+                ob_clean();
+            }
             
-            // Actualizar citas que ya pasaron y están pendientes o confirmadas
-            $resultado = $this->modelo->marcarCitasVencidasComoCompletadas($fechaActual, $horaActual);
+            if (!isset($_SESSION['usuario_id'])) {
+                echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
+                exit;
+            }
+
+            $usuarioId = $_SESSION['usuario_id'];
+            $fecha = $_POST['fecha'] ?? '';
+            $hora = $_POST['hora'] ?? '';
+            $motivo = trim($_POST['motivo'] ?? '');
+            $nombreCliente = trim($_POST['nombre_cliente'] ?? $_SESSION['usuario_nombre'] ?? 'Cliente');
             
-            if ($resultado) {
-                error_log("Citas vencidas actualizadas automáticamente");
+            if (empty($fecha) || empty($hora) || empty($motivo)) {
+                echo json_encode(['exito' => false, 'mensaje' => 'Todos los campos son obligatorios']);
+                exit;
+            }
+
+            // Validar que la fecha no sea pasada
+            $fechaSeleccionada = new DateTime($fecha);
+            $fechaHoy = new DateTime();
+            $fechaHoy->setTime(0, 0, 0);
+            
+            if ($fechaSeleccionada < $fechaHoy) {
+                echo json_encode(['exito' => false, 'mensaje' => 'No se pueden crear citas en fechas pasadas']);
+                exit;
+            }
+
+            // Verificar disponibilidad
+            if (!$this->modelo->verificarDisponibilidad($fecha, $hora)) {
+                echo json_encode(['exito' => false, 'mensaje' => 'El horario no está disponible']);
+                exit;
+            }
+            
+            if ($this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente)) {
+                echo json_encode(['exito' => true, 'mensaje' => 'Cita creada exitosamente']);
+            } else {
+                echo json_encode(['exito' => false, 'mensaje' => 'Error al crear la cita']);
             }
             
         } catch (Exception $e) {
-            error_log("Error al actualizar citas vencidas: " . $e->getMessage());
+            error_log("Error en crearCita: " . $e->getMessage());
+            echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
+        exit;
     }
 
-    // Crear cita con nombre del cliente
+    // Crear cita con nombre del cliente (para admins)
     public function crearCitaConNombre() {
         try {
             error_log("=== DEBUG crearCitaConNombre INICIO ===");
@@ -136,8 +150,8 @@ class CitasControlador {
             $motivo = trim($_POST['motivo'] ?? '');
             
             error_log("=== VALORES RECIBIDOS ===");
-            error_log("nombre_cliente (cliente): " . $nombreCliente);
-            error_log("motivo (motivo): " . $motivo);
+            error_log("nombre_cliente: " . $nombreCliente);
+            error_log("motivo: " . $motivo);
             error_log("fecha: " . $fecha);
             error_log("hora: " . $hora);
             
@@ -160,166 +174,75 @@ class CitasControlador {
 
             $usuarioId = $_SESSION['usuario_id'];
             
-            error_log("=== ANTES DE LLAMAR AL MODELO ===");
-            error_log("usuarioId: " . $usuarioId);
-            error_log("fecha: " . $fecha);
-            error_log("hora: " . $hora);
-            error_log("motivo: " . $motivo);
-            error_log("nombreCliente: " . $nombreCliente);
+            // Verificar disponibilidad
+            if (!$this->modelo->verificarDisponibilidad($fecha, $hora)) {
+                echo json_encode(['exito' => false, 'mensaje' => 'El horario no está disponible']);
+                exit;
+            }
             
-            $citaId = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente);
-
-            if ($citaId) {
-                error_log("Cita creada exitosamente con ID: " . $citaId);
-                echo json_encode([
-                    'exito' => true,
-                    'mensaje' => 'Cita creada correctamente',
-                    'id' => $citaId
-                ]);
+            $resultado = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente);
+            error_log("Resultado de crear cita: " . ($resultado ? 'true' : 'false'));
+            
+            if ($resultado) {
+                echo json_encode(['exito' => true, 'mensaje' => 'Cita creada exitosamente']);
             } else {
-                error_log("Error al crear la cita");
-                echo json_encode([
-                    'exito' => false,
-                    'mensaje' => 'Error al crear la cita en la base de datos'
-                ]);
+                echo json_encode(['exito' => false, 'mensaje' => 'Error al crear la cita']);
             }
             
         } catch (Exception $e) {
-            error_log("Excepción en crearCitaConNombre: " . $e->getMessage());
-            echo json_encode([
-                'exito' => false,
-                'mensaje' => 'Error al crear la cita: ' . $e->getMessage()
-            ]);
-            exit;
+            error_log("Error en crearCitaConNombre: " . $e->getMessage());
+            echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
+        exit;
     }
 
-    // Crear cita (usuario normal)
-    public function crearCita() {
-        try {
-            if (!isset($_SESSION['usuario_id'])) {
-                echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
-                return;
-            }
-
-            $usuarioId = $_SESSION['usuario_id'];
-            $fecha = $_POST['fecha'] ?? '';
-            $hora = $_POST['hora'] ?? '';
-            $motivo = trim($_POST['motivo'] ?? '');
-            
-            if (empty($fecha) || empty($hora) || empty($motivo)) {
-                echo json_encode(['exito' => false, 'mensaje' => 'Todos los campos son obligatorios']);
-                return;
-            }
-
-            // Validar que la fecha no sea pasada
-            $fechaSeleccionada = new DateTime($fecha);
-            $fechaHoy = new DateTime();
-            $fechaHoy->setTime(0, 0, 0);
-            
-            if ($fechaSeleccionada < $fechaHoy) {
-                echo json_encode(['exito' => false, 'mensaje' => 'No se pueden crear citas en fechas pasadas']);
-                return;
-            }
-
-            // Para usuarios normales, nombre_cliente será null
-            $citaId = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, null);
-
-            if ($citaId) {
-                echo json_encode([
-                    'exito' => true,
-                    'mensaje' => 'Cita creada correctamente',
-                    'id' => $citaId
-                ]);
-            } else {
-                echo json_encode([
-                    'exito' => false,
-                    'mensaje' => 'Error al crear la cita'
-                ]);
-            }
-        } catch (Exception $e) {
-            error_log("Error en crearCita: " . $e->getMessage());
-            echo json_encode([
-                'exito' => false,
-                'mensaje' => 'Error al crear la cita: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    // Crear cita como admin
+    // Alias para compatibilidad
     public function crearCitaAdmin() {
-        try {
-            if (!isset($_SESSION['usuario_id'])) {
-                echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
-                return;
-            }
-
-            $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin';
-            
-            if (!$esAdmin) {
-                echo json_encode(['exito' => false, 'mensaje' => 'No tienes permisos para esta acción']);
-                return;
-            }
-
-            $usuarioId = $_POST['usuario_id'] ?? '';
-            $fecha = $_POST['fecha'] ?? '';
-            $hora = $_POST['hora'] ?? '';
-            $motivo = $_POST['motivo'] ?? '';
-            
-            if (empty($usuarioId) || empty($fecha) || empty($hora) || empty($motivo)) {
-                echo json_encode(['exito' => false, 'mensaje' => 'Todos los campos son obligatorios']);
-                return;
-            }
-
-            $citaId = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo);
-
-            echo json_encode([
-                'exito' => true,
-                'mensaje' => 'Cita creada correctamente',
-                'id' => $citaId
-            ]);
-        } catch (Exception $e) {
-            error_log("Error en crearCitaAdmin: " . $e->getMessage());
-            echo json_encode([
-                'exito' => false,
-                'mensaje' => 'Error al crear la cita: ' . $e->getMessage()
-            ]);
-        }
+        $this->crearCitaConNombre();
     }
 
-    // Obtener usuarios
+    // Obtener usuarios (para admins)
     public function obtenerUsuarios() {
         try {
+            // Limpiar cualquier output buffer previo
+            if (ob_get_length()) {
+                ob_clean();
+            }
+            
             if (!isset($_SESSION['usuario_id'])) {
                 echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
-                return;
+                exit;
             }
 
             $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin';
             
             if (!$esAdmin) {
-                echo json_encode(['exito' => false, 'mensaje' => 'No tienes permisos para esta acción']);
-                return;
+                echo json_encode(['exito' => false, 'mensaje' => 'No tienes permisos para ver usuarios']);
+                exit;
             }
 
             $usuarios = $this->modelo->obtenerTodosLosUsuarios();
-
+            
             echo json_encode([
                 'exito' => true,
                 'datos' => $usuarios
             ]);
+            
         } catch (Exception $e) {
             error_log("Error en obtenerUsuarios: " . $e->getMessage());
-            echo json_encode([
-                'exito' => false,
-                'mensaje' => 'Error al obtener usuarios: ' . $e->getMessage()
-            ]);
+            echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
+        exit;
     }
 
     // Actualizar estado de cita
     public function actualizarEstado() {
         try {
+            // Limpiar cualquier output buffer previo
+            if (ob_get_length()) {
+                ob_clean();
+            }
+            
             if (!isset($_SESSION['usuario_id'])) {
                 echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
                 exit;
@@ -328,27 +251,77 @@ class CitasControlador {
             $id = $_POST['id'] ?? null;
             $estado = $_POST['estado'] ?? null;
 
+            error_log("=== DEBUG actualizarEstado ===");
+            error_log("ID recibido: " . ($id ?? 'null'));
+            error_log("Estado recibido: " . ($estado ?? 'null'));
+
             if (!$id || !$estado) {
+                error_log("Datos incompletos - ID: " . ($id ?? 'null') . ", Estado: " . ($estado ?? 'null'));
                 echo json_encode(['exito' => false, 'mensaje' => 'Datos incompletos']);
                 exit;
             }
 
-            $resultado = $this->modelo->actualizarEstadoCita($id, $estado);
+            // Validar estados permitidos
+            $estadosPermitidos = ['confirmada', 'cancelada', 'completada'];
+            if (!in_array($estado, $estadosPermitidos)) {
+                error_log("Estado no válido: " . $estado);
+                echo json_encode(['exito' => false, 'mensaje' => 'Estado no válido. Estados permitidos: ' . implode(', ', $estadosPermitidos)]);
+                exit;
+            }
 
-            if ($resultado) {
-                echo json_encode(['exito' => true, 'mensaje' => 'Estado actualizado correctamente']);
-            } else {
-                echo json_encode(['exito' => false, 'mensaje' => 'Error al actualizar el estado']);
+            // Verificar que el método existe antes de llamarlo
+            if (!method_exists($this->modelo, 'actualizarEstadoCita')) {
+                error_log("Método actualizarEstadoCita no existe en el modelo");
+                
+                // Buscar métodos similares
+                $metodos = get_class_methods($this->modelo);
+                $metodosSimilares = array_filter($metodos, function($metodo) {
+                    return stripos($metodo, 'actualizar') !== false || stripos($metodo, 'estado') !== false;
+                });
+                error_log("Métodos similares encontrados: " . implode(', ', $metodosSimilares));
+                
+                echo json_encode(['exito' => false, 'mensaje' => 'Error interno: método no encontrado']);
+                exit;
+            }
+
+            error_log("Llamando a actualizarEstadoCita con ID: $id, Estado: $estado");
+            
+            // Intentar la actualización con manejo de errores más específico
+            try {
+                $resultado = $this->modelo->actualizarEstadoCita($id, $estado);
+                error_log("Resultado de actualizarEstadoCita: " . ($resultado ? 'true' : 'false'));
+                
+                if ($resultado === true) {
+                    echo json_encode(['exito' => true, 'mensaje' => 'Estado actualizado correctamente']);
+                } else {
+                    error_log("El modelo retornó: " . var_export($resultado, true));
+                    echo json_encode(['exito' => false, 'mensaje' => 'Error al actualizar el estado en la base de datos']);
+                }
+                
+            } catch (PDOException $e) {
+                error_log("Error PDO en actualizarEstado: " . $e->getMessage());
+                echo json_encode(['exito' => false, 'mensaje' => 'Error de base de datos: ' . $e->getMessage()]);
+            } catch (Exception $e) {
+                error_log("Error en el modelo actualizarEstadoCita: " . $e->getMessage());
+                echo json_encode(['exito' => false, 'mensaje' => 'Error en el modelo: ' . $e->getMessage()]);
             }
             
         } catch (Exception $e) {
+            error_log("Excepción en actualizarEstado: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
+        exit;
     }
 
     // Eliminar cita
     public function eliminar() {
         try {
+            // Limpiar cualquier output buffer previo
+            if (ob_get_length()) {
+                ob_clean();
+            }
+            
             if (!isset($_SESSION['usuario_id'])) {
                 echo json_encode(['exito' => false, 'mensaje' => 'Usuario no autenticado']);
                 exit;
@@ -361,119 +334,43 @@ class CitasControlador {
                 exit;
             }
 
-            $resultado = $this->modelo->eliminarCita($id);
-
-            if ($resultado) {
-                echo json_encode(['exito' => true, 'mensaje' => 'Cita eliminada correctamente']);
+            if ($this->modelo->eliminarCita($id)) {
+                echo json_encode(['exito' => true, 'mensaje' => 'Cita eliminada exitosamente']);
             } else {
-                echo json_encode(['exito' => false, 'mensaje' => 'Error al eliminar la cita']);
+                echo json_encode(['exito' => false, 'mensaje' => 'Error al eliminar la cita o no tienes permisos']);
             }
             
         } catch (Exception $e) {
+            error_log("Error en eliminar: " . $e->getMessage());
             echo json_encode(['exito' => false, 'mensaje' => 'Error: ' . $e->getMessage()]);
         }
+        exit;
     }
 
-    public function listarCitas() {
-        if (!isset($_SESSION['usuario_id'])) {
-            header('Location: /BioEspacio/login.php');
-            exit();
+    // Actualizar citas vencidas
+    private function actualizarCitasVencidas() {
+        try {
+            $fechaActual = date('Y-m-d');
+            $horaActual = date('H:i:s');
+            
+            return $this->modelo->marcarCitasVencidasComoCompletadas($fechaActual, $horaActual);
+        } catch (Exception $e) {
+            error_log("Error en actualizarCitasVencidas: " . $e->getMessage());
+            return false;
         }
-        
-        $usuarioId = $_SESSION['usuario_id'];
-        
-        // IMPORTANTE: Usar el método que filtra por creado_por
-        $citas = $this->modelo->obtenerCitasUsuario($usuarioId);
-        
-        error_log("Listando citas para usuario " . $usuarioId . ": " . count($citas) . " citas encontradas");
-        
-        include __DIR__ . '/../Vista/citas/listar.php';
     }
 
-    public function crear() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $usuarioId = $_POST['usuario_id'] ?? $_SESSION['usuario_id'];
-            $fecha = $_POST['fecha'];
-            $hora = $_POST['hora'];
-            $motivo = $_POST['motivo'];
-            $nombreCliente = $_POST['nombre_cliente'];
-            
-            // El crearCita ya maneja internamente el creado_por
-            if ($this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente)) {
-                $_SESSION['mensaje'] = "Cita creada exitosamente";
-                $_SESSION['tipo_mensaje'] = "success";
-            } else {
-                $_SESSION['mensaje'] = "Error al crear la cita";
-                $_SESSION['tipo_mensaje'] = "error";
-            }
-            
-            header('Location: /BioEspacio/citas.php');
-            exit();
-        }
-        
-        // Para el formulario, si es admin puede asignar a otros usuarios
-        if ($_SESSION['rol'] === 'admin') {
-            $usuarios = $this->modelo->obtenerTodosLosUsuarios();
-        }
-        
-        include __DIR__ . '/../Vista/citas/crear.php';
+    // Métodos para obtener citas (sin AJAX)
+    public function obtenerTodasLasCitas() {
+        return $this->modelo->obtenerTodasLasCitas();
     }
 
-    public function editar($id) {
-        $usuarioId = $_SESSION['usuario_id'];
-        
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $usuarioAsignado = $_POST['usuario_id'] ?? $usuarioId;
-            $fecha = $_POST['fecha'];
-            $hora = $_POST['hora'];
-            $motivo = $_POST['motivo'];
-            $estado = $_POST['estado'];
-            $nombreCliente = $_POST['nombre_cliente'];
-            
-            if ($this->modelo->actualizarCita($id, $usuarioAsignado, $fecha, $hora, $motivo, $estado, $nombreCliente)) {
-                $_SESSION['mensaje'] = "Cita actualizada exitosamente";
-                $_SESSION['tipo_mensaje'] = "success";
-            } else {
-                $_SESSION['mensaje'] = "Error al actualizar la cita o no tienes permisos";
-                $_SESSION['tipo_mensaje'] = "error";
-            }
-            
-            header('Location: /BioEspacio/citas.php');
-            exit();
-        }
-        
-        // Obtener la cita (solo si el usuario tiene permisos)
-        $cita = $this->modelo->obtenerCitaPorId($id, $usuarioId);
-        
-        if (!$cita) {
-            $_SESSION['mensaje'] = "Cita no encontrada o sin permisos";
-            $_SESSION['tipo_mensaje'] = "error";
-            header('Location: /BioEspacio/citas.php');
-            exit();
-        }
-        
-        if ($_SESSION['rol'] === 'admin') {
-            $usuarios = $this->modelo->obtenerTodosLosUsuarios();
-        }
-        
-        include __DIR__ . '/../Vista/citas/editar.php';
-    }
-
-    public function eliminarCita($id) {
-        if ($this->modelo->eliminarCita($id)) {
-            $_SESSION['mensaje'] = "Cita eliminada exitosamente";
-            $_SESSION['tipo_mensaje'] = "success";
-        } else {
-            $_SESSION['mensaje'] = "Error al eliminar la cita o no tienes permisos";
-            $_SESSION['tipo_mensaje'] = "error";
-        }
-        
-        header('Location: /BioEspacio/citas.php');
-        exit();
+    public function obtenerCitasUsuario($usuarioId) {
+        return $this->modelo->obtenerCitasUsuario($usuarioId);
     }
 }
 
-// Manejo de acciones
+// Manejo de acciones AJAX
 if (isset($_POST['accion'])) {
     header('Content-Type: application/json');
     $controlador = new CitasControlador();

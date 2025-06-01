@@ -3,7 +3,7 @@
 $esUsuarioLogueado = isset($_SESSION['usuario_id']);
 ?>
 
-<div class="container mx-auto px-4">
+<div class="container mx-auto px-4 my-10">
     <?php if ($esUsuarioLogueado): ?>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Calendario de citas -->
@@ -15,10 +15,6 @@ $esUsuarioLogueado = isset($_SESSION['usuario_id']);
             
             <!-- Leyenda de estados -->
             <div class="flex justify-center gap-4 mt-4">
-                <span class="inline-flex items-center">
-                    <span class="w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>
-                    Pendiente
-                </span>
                 <span class="inline-flex items-center">
                     <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
                     Confirmada
@@ -61,15 +57,17 @@ $esUsuarioLogueado = isset($_SESSION['usuario_id']);
                                 <span class="px-3 py-1 rounded-full text-sm 
                                     <?php
                                     switch($cita['estado']) {
-                                        case 'pendiente':
-                                            echo 'bg-yellow-100 text-yellow-800';
+                                        case 'confirmada':
+                                            echo 'bg-green-100 text-green-800';
                                             break;
                                         case 'completada':
-                                            echo 'bg-green-100 text-green-800';
+                                            echo 'bg-blue-100 text-blue-800';
                                             break;
                                         case 'cancelada':
                                             echo 'bg-red-100 text-red-800';
                                             break;
+                                        default:
+                                            echo 'bg-blue-100 text-blue-800';
                                     }
                                     ?>">
                                     <?= ucfirst($cita['estado']) ?>
@@ -111,15 +109,17 @@ $esUsuarioLogueado = isset($_SESSION['usuario_id']);
                                 <span class="px-3 py-1 rounded-full text-sm 
                                     <?php
                                     switch($cita['estado']) {
-                                        case 'pendiente':
-                                            echo 'bg-yellow-100 text-yellow-800';
+                                        case 'confirmada':
+                                            echo 'bg-green-100 text-green-800';
                                             break;
                                         case 'completada':
-                                            echo 'bg-green-100 text-green-800';
+                                            echo 'bg-blue-100 text-blue-800';
                                             break;
                                         case 'cancelada':
                                             echo 'bg-red-100 text-red-800';
                                             break;
+                                        default:
+                                            echo 'bg-blue-100 text-blue-800';
                                     }
                                     ?>">
                                     <?= ucfirst($cita['estado']) ?>
@@ -132,13 +132,13 @@ $esUsuarioLogueado = isset($_SESSION['usuario_id']);
                             </div>
 
                             <div class="flex gap-2 mt-3">
-                                <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'pendiente')" 
-                                        class="px-3 py-1 text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
-                                    <i class="fas fa-clock mr-1"></i> Pendiente
+                                <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'confirmada')" 
+                                        class="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                                    <i class="fas fa-check mr-1"></i> Confirmar
                                 </button>
                                 <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'completada')" 
-                                        class="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                                    <i class="fas fa-check mr-1"></i> Completada
+                                        class="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                    <i class="fas fa-check-circle mr-1"></i> Completada
                                 </button>
                                 <button type="button" onclick="return actualizarEstadoCita(<?= $cita['id'] ?>, 'cancelada')" 
                                         class="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">

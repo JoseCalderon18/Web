@@ -65,7 +65,7 @@ try {
                 </p>
             </div>
              <!-- Instrucciones para usuarios -->
-            <div class="mt-8 bg-green-50 p-6 rounded-xl shadow-md">
+            <div class="mt-8 bg-green-50 p-6 rounded-xl shadow-md mx-auto">
                 <h3 class="text-lg font-semibold text-green-800 mb-2">
                    ¿Cómo gestionar las citas?
                 </h3>
