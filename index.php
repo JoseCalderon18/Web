@@ -14,7 +14,6 @@ if (session_status() === PHP_SESSION_NONE) {
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-    <?php include "pages/cookieBanner.php"; ?>
     <header class="fixed top-0 left-0 right-0 z-50">
         <nav class="flex flex-wrap justify-between items-center p-4 w-full h-32 bg-logo" aria-label="Navegación principal">
             <a href="index.php"><img src="assets/img/logo.png" alt="Logotipo de BioSpace - Centro de bienestar natural" class="h-24 md:h-26 lg:h-28"></a>
@@ -283,6 +282,7 @@ if (session_status() === PHP_SESSION_NONE) {
     </div>
     </footer>
     <!-- Scripts al final del body -->
+    <script src="assets/js/cookies.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="assets/js/script.js"></script>
