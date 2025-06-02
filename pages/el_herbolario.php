@@ -20,7 +20,7 @@ session_start();
         <div class="bg-beige">
             <div class="pt-4 py-6 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900">
                 <div class="flex flex-col w-full sm:w-1/2 text-center aparecer">
-                    <h1 class="text-4xl font-bold font-display-CormorantGaramond mb-4">El Herbolario</h1>
+                    <h1 class="text-4xl font-bold font-display-CormorantGaramond mb-4 text-verde">El Herbolario</h1>
                     <p class="text-base aparecer-secuencial">Bienvenido a nuestro espacio dedicado a la salud natural</p>
                     <p class="text-base aparecer-secuencial">Productos naturales seleccionados con cuidado para tu bienestar</p>
                 </div>

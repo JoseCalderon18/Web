@@ -19,6 +19,11 @@ class NoticiasControlador {
         return $this->modelo->obtenerNoticias($limite, $offset);
     }
 
+    // Metodo para la ediion de la noticia
+    public function obtenerNoticiaPorId($id) {
+        return $this->modelo->obtenerNoticiaPorId($id);
+    }
+
     // Método para la API: obtener noticia
     public function obtenerNoticia() {
         try {

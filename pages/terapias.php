@@ -17,7 +17,7 @@
         <div class="bg-beige">
             <div class="pt-8 py-10 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900 px-4 md:px-8">
                 <div class="flex flex-col w-full sm:w-1/2 text-center sm:text-left mb-6 sm:mb-0 aparecer">
-                    <h1 class="text-3xl md:text-4xl font-bold font-display-CormorantGaramond mb-4">Salas de Terapias Naturales</h1>
+                    <h1 class="text-3xl md:text-4xl font-bold font-display-CormorantGaramond mb-4 text-verde">Salas de Terapias Naturales</h1>
                     <p class="text-sm md:text-base mb-2 aparecer-secuencial">En nuestro herbolario, hemos creado un espacio de armonía y bienestar donde cuerpo, mente y espíritu encuentran equilibrio.</p>
                 </div>
                 <div class="w-full flex justify-center">
