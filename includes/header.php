@@ -57,7 +57,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <div class="bg-beige h-32"></div>
     <?php if (isset($_SESSION['usuario_id'])): ?>
     <!-- Header con datos del usuario -->
-    <div class="bg-gray-800 w-full p-4">
+    <div class="bg-gray-800 w-full p-4 mt-2">
         <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
             <span class="py-2 text-sm md:text-base">
                 <i class="fas fa-user mr-2"></i>
@@ -67,7 +67,7 @@ if (session_status() === PHP_SESSION_NONE) {
                 <i class="fas fa-clock mr-2"></i>
                 Última conexión: <?= date('d/m/Y H:i:s') ?>
             </span>
-            <div class="flex gap-2 sm:gap-4">
+            <div class="flex gap-4">
                 <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
                     <a href="productos.php" 
                        class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">

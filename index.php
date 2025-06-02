@@ -53,10 +53,45 @@ if (session_status() === PHP_SESSION_NONE) {
         </nav> 
         <div class="bg-gray-700 w-full h-3" aria-label="Separador decorativo"></div>
     </header>
-    <!-- Espacio para compensar el nav fijo -->
-    <div class="h-32 bg-black"></div>
+    <!-- separado del header -->
+    <div class="bg-beige h-32"></div>
+    <?php if (isset($_SESSION['usuario_id'])): ?>
+    <!-- Header con datos del usuario -->
+    <div class="bg-gray-800 w-full p-4 mt-2">
+        <div class="mx-auto flex flex-col sm:flex-row flex-wrap justify-around items-center text-white gap-3">
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-user mr-2"></i>
+                Usuario: <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+            </span>
+            <span class="py-2 text-sm md:text-base">
+                <i class="fas fa-clock mr-2"></i>
+                Última conexión: <?= date('d/m/Y H:i:s') ?>
+            </span>
+            <div class="flex gap-4">
+                <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
+                    <a href="productos.php" 
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-shopping-basket mr-1 sm:mr-2"></i>Productos
+                    </a>
+                    <a href="usuarios.php" 
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-users mr-1 sm:mr-2"></i>Usuarios
+                    </a>
+                    <a href="citas.php" 
+                       class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-700 hover:bg-green-800 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-check mr-1 sm:mr-2"></i>Citas
+                    </a>
+                <?php endif; ?>
+                <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
+                   class="px-2 sm:px-4 py-1.5 sm:py-2 text-sm bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+                    <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
     <main>
-    <h1 class="bg-logo text-white text-center text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-display-Parisienne font-bold tracking-widest w-full h-full mt-3" aria-label="Lema principal">"Recupera tu equilibrio de manera natural"</h1>
+    <h1 class="bg-logo text-white text-center text-xl md:text-2xl lg:text-3xl 2xl:text-4xl p-4 font-display-Parisienne font-bold tracking-widest w-full h-full" aria-label="Lema principal">"Recupera tu equilibrio de manera natural"</h1>
 
         <!-- Carrusel de fotos -->
         <div id="default-carousel" class="relative w-full h-72 md:h-80 lg:h-96 xl:h-[54rem]" data-carousel="slide" aria-label="Carrusel de imágenes de BioEspacio">

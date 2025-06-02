@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Inicializando calendario...');
 
     const calendarEl = document.getElementById('calendario-citas');
     if (!calendarEl) {
@@ -9,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Obtener el valor de esAdmin para mostrar información diferente
     const esAdmin = calendarEl.dataset.esAdmin === 'true';
-    console.log('Es admin:', esAdmin);
     
     // Hacer esAdmin disponible globalmente
     window.esAdmin = esAdmin;
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return true;
         },
         dateClick: function(info) {
-            console.log('Click en fecha:', info.dateStr);
             
             const selectedDate = new Date(info.dateStr);
             const today = new Date();
@@ -80,8 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
             mostrarFormularioCita(fecha, hora);
         },
         select: function(info) {
-            console.log('Selección:', info);
-            
+
             const selectedDate = new Date(info.startStr);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -105,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function() {
             calendar.unselect();
         },
         events: function(info, successCallback, failureCallback) {
-            console.log('Cargando eventos...');
             
             const formData = new FormData();
             formData.append('accion', 'obtenerCitas');
@@ -116,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.text())
             .then(text => {
-                console.log('Response text:', text);
                 try {
                     const data = JSON.parse(text);
                     if (data.exito) {
@@ -158,7 +152,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función personalizada para ir a hoy
     function irAHoy() {
         const hoy = new Date();
-        console.log('Ir a hoy:', hoy);
         calendar.gotoDate(hoy);
         
         // Si estamos en vista de semana, asegurar que muestre la semana actual
@@ -169,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Sobrescribir el comportamiento del botón today después del render
     calendar.render();
-    console.log('Calendario renderizado');
     
     // Buscar y reemplazar el event listener del botón today
     setTimeout(() => {
@@ -186,14 +178,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 irAHoy();
             });
             
-            console.log('Botón Hoy personalizado configurado');
         }
     }, 500);
 
-    // Debug: verificar la fecha actual del calendario
-    console.log('Fecha actual del calendario:', calendar.getDate());
-    console.log('Fecha actual del sistema:', new Date());
-    
     // Función para obtener color según el estado
     function getColorByStatus(estado) {
         switch (estado) {
@@ -280,9 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para mostrar formulario de cita (para todos los usuarios)
     function mostrarFormularioCita(fecha, hora) {
-        console.log('=== MOSTRAR FORMULARIO CITA ===');
-        console.log('Fecha:', fecha, 'Hora:', hora);
-        
+
         // Validación adicional de fecha
         const selectedDate = new Date(fecha);
         const today = new Date();
@@ -377,9 +362,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log('=== CREAR CITA ===');
-                console.log('Datos:', result.value);
-                
                 // TODOS los usuarios usan el mismo método
                 crearCita(result.value.nombreCliente, result.value.fecha, result.value.hora, result.value.motivo);
             }
@@ -388,11 +370,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función única para crear citas (para todos los usuarios)
     function crearCita(nombreCliente, fecha, hora, motivo) {
-        console.log('=== CREAR CITA - DEBUG COMPLETO ===');
-        console.log('Nombre Cliente:', nombreCliente);
-        console.log('Fecha:', fecha);
-        console.log('Hora:', hora);
-        console.log('Motivo:', motivo);
 
         const formData = new FormData();
         formData.append('accion', 'crearCita');
@@ -401,33 +378,17 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('hora', hora);
         formData.append('motivo', motivo);
 
-        // Debug: mostrar todos los datos que se envían
-        console.log('=== DATOS ENVIADOS ===');
-        for (let [key, value] of formData.entries()) {
-            console.log(key + ':', value);
-        }
-
         fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
             method: 'POST',
             body: formData
         })
         .then(response => {
-            console.log('=== RESPONSE STATUS ===');
-            console.log('Status:', response.status);
-            console.log('StatusText:', response.statusText);
-            console.log('Headers:', response.headers);
+
             return response.text();
         })
         .then(text => {
-            console.log('=== RESPONSE TEXT COMPLETO ===');
-            console.log('Longitud:', text.length);
-            console.log('Texto:', text);
-            console.log('Primeros 200 caracteres:', text.substring(0, 200));
-            
             try {
                 const data = JSON.parse(text);
-                console.log('=== JSON PARSEADO ===');
-                console.log('Response data:', data);
                 
                 if (data.exito) {
                     Swal.fire({

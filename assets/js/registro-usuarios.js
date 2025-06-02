@@ -71,12 +71,6 @@ $(document).ready(function() {
         if (contrasenia !== confirmarContrasenia) {
             errores.push("Las contraseñas no coinciden");
         }
-
-        // Verificar reCAPTCHA
-        const recaptchaResponse = grecaptcha.getResponse();
-        if (!recaptchaResponse) {
-            errores.push("Por favor, completa el captcha");
-        }
         
         // Si hay errores, mostrar alerta
         if(errores.length > 0) {
@@ -98,7 +92,6 @@ $(document).ready(function() {
                 usuario: nombre,
                 correo: correo,
                 contrasenia: contrasenia,
-                'g-recaptcha-response': recaptchaResponse,
                 from: new URLSearchParams(window.location.search).get('from')
             },
             dataType: 'json',
@@ -125,9 +118,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.log("Error Status:", status);
                 console.log("Error:", error);
-                console.log("Response Text:", xhr.responseText);
                 
                 Swal.fire({
                     icon: "error",

@@ -1,28 +1,24 @@
+// Espera a que el documento esté listo antes de ejecutar el código
 $(document).ready(function() {
-    console.log("Script de búsqueda de productos cargado");
-    
+    // Referencias a elementos del DOM
     const $barraBusqueda = $('#barraBusqueda');
     const $tablaProductos = $('#tablaProductos');
     const $mensajeNoResultados = $('#mensajeNoResultados');
-    const $paginacion = $('.flex.justify-center'); // Selector para la paginación
+    const $paginacion = $('.flex.justify-center');
     
-    console.log("Barra de búsqueda encontrada:", $barraBusqueda.length);
-    console.log("Tabla productos encontrada:", $tablaProductos.length);
-    console.log("Mensaje no resultados encontrado:", $mensajeNoResultados.length);
-    
+    // Verifica que existan los elementos necesarios
     if ($barraBusqueda.length && $tablaProductos.length) {
-        // Evento que se dispara al escribir (tiempo real)
+        // Evento que se dispara al escribir en la barra de búsqueda
         $barraBusqueda.on('input keyup', function() {
             const textoBusqueda = $(this).val().toLowerCase().trim();
-            console.log("Buscando:", textoBusqueda);
             
+            // Si no hay texto de búsqueda, recarga la página
             if (textoBusqueda === '') {
-                // Si no hay búsqueda, recargar la página para mostrar la paginación normal
                 location.reload();
                 return;
             }
             
-            // Hacer petición AJAX para buscar en toda la base de datos
+            // Petición AJAX para buscar productos
             $.ajax({
                 url: '../assets/php/MVC/Controlador/productos-controlador.php',
                 type: 'GET',
@@ -32,56 +28,59 @@ $(document).ready(function() {
                 },
                 dataType: 'json',
                 success: function(respuesta) {
-                    console.log("Respuesta del servidor:", respuesta);
-                    
                     if (respuesta.success) {
+                        // Muestra los resultados y oculta paginación
                         mostrarResultados(respuesta.data);
-                        // Ocultar paginación durante la búsqueda
                         $paginacion.hide();
                     } else {
+                        // Maneja error en la búsqueda
                         console.error("Error en la búsqueda:", respuesta.message);
                     }
                 },
-                error: function(xhr, estado, error) {
-                    console.error("Error en la petición AJAX:", error);
+                error: function(xhr, status, error) {
+                    // Maneja error en la petición AJAX
+                    console.error("Error AJAX:", error);
                 }
             });
         });
-        
-        console.log("Eventos de búsqueda configurados correctamente");
-    } else {
-        console.error("No se encontraron los elementos necesarios para la búsqueda");
     }
     
-    // Función para mostrar los resultados de búsqueda
+    // Función para mostrar los resultados en la tabla
     function mostrarResultados(productos) {
         const $tbody = $tablaProductos.find('tbody');
         $tbody.empty();
         
+        // Si no hay productos, muestra mensaje
         if (productos.length === 0) {
             $tbody.html('<tr><td colspan="8" class="px-3 md:px-8 py-5 text-center text-gray-500">No hay productos disponibles</td></tr>');
             $mensajeNoResultados.show();
         } else {
+            // Oculta mensaje y muestra productos
             $mensajeNoResultados.hide();
             
+            // Itera sobre cada producto y crea su fila
             productos.forEach(function(producto) {
                 const fila = `
                     <tr class="border-b">
                         <td class="px-3 md:px-8 py-3 md:py-5 text-center">
                             ${!producto.foto ? `
+                                <!-- Muestra placeholder si no hay foto -->
                                 <div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mx-auto">
                                     <i class="fas fa-image text-gray-400"></i>
                                 </div>
                             ` : `
+                                <!-- Muestra la foto del producto -->
                                 <img src="../${escaparHtml(producto.foto)}" 
                                      alt="Foto de ${escaparHtml(producto.nombre)}" 
                                      class="w-12 h-12 object-cover rounded-md mx-auto cursor-pointer"
                                      onclick="mostrarGaleria('${escaparHtml(producto.foto)}', '${escaparHtml(producto.nombre)}')">
                             `}
                         </td>
+                        <!-- Nombre del producto -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
                             ${escaparHtml(producto.nombre)}
                         </td>
+                        <!-- Control de stock -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base">
                             <div class="flex items-center justify-center">
                                 <button 
@@ -102,15 +101,19 @@ $(document).ready(function() {
                                 </button>
                             </div>
                         </td>
+                        <!-- Precio -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
                             ${escaparHtml(producto.precio)} €
                         </td>
+                        <!-- Laboratorio -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
                             ${escaparHtml(producto.laboratorio ?? 'N/A')}
                         </td>
+                        <!-- Fecha de registro -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
                             ${producto.fecha_registro ? new Date(producto.fecha_registro).toLocaleDateString('es-ES') : 'N/A'}
                         </td>
+                        <!-- Comentarios -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-center">
                             ${producto.comentarios ? `
                                 <button 
@@ -122,6 +125,7 @@ $(document).ready(function() {
                                 <span class="text-gray-400">Sin comentarios</span>
                             `}
                         </td>
+                        <!-- Acciones (solo para administradores) -->
                         <td class="px-3 md:px-8 py-3 md:py-5 text-center">
                             <?php if (isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] === "admin"): ?>
                                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-5 justify-center">
@@ -144,7 +148,7 @@ $(document).ready(function() {
         }
     }
     
-    // Función para escapar HTML
+    // Función auxiliar para escapar caracteres HTML especiales
     function escaparHtml(texto) {
         if (texto === null || texto === undefined) return '';
         const mapa = {

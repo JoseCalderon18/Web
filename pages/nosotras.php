@@ -12,8 +12,8 @@
 <body>
     <?php include "../includes/header.php"; ?>
 
-    <main>
-        <div class="bg-white pt-8 px-8 py-10 w-full aparecer">
+    <main class="bg-beige">
+        <div class="bg-white pt-10 px-8 py-10 w-full aparecer mb-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto w-3/4">
                 <!-- Columna de texto -->
                 <div class="flex flex-col justify-center aparecer-secuencial">
@@ -65,50 +65,78 @@
         </div>
 
         <!-- Sección de Misión y Valores -->
-        <section class="bg-beige py-12 px-6 md:px-20 text-center aparecer">
-            <h2 class="text-4xl font-display-CormorantGaramond font-bold text-verde mb-10">Misión y Valores</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <!-- Misión -->
-                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition text-left aparecer-secuencial">
-                    <div class="flex items-center justify-between gap-4 mb-4">
-                        <div class="flex items-center gap-4">
-                            <img src="../assets/img/mision.png" alt="Misión" class="w-16 h-16 rounded-full shadow">
-                            <h3 class="text-2xl font-semibold text-verde">Nuestra Misión</h3>
+        <section class="bg-beige py-5 aparecer">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-4xl font-display-CormorantGaramond font-bold text-verde text-center mb-5">Misión y Valores</h2>
+                <p class="text-sm text-verde/80 text-center mb-8 max-w-2xl mx-auto">Comprometidas con tu bienestar integral a través de la naturaleza y el cuidado personalizado</p>
+                
+                <div class="flex flex-col gap-8 max-w-6xl mx-auto">
+                    <!-- Misión -->
+                    <div class="flex flex-col aparecer-secuencial w-full">
+                        <div class="bg-white rounded-[2rem] p-8 shadow-lg h-full transform transition-all duration-500 hover:-translate-y-2">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-verde/5 rounded-full -mr-16 -mt-16"></div>
+                            <div class="absolute bottom-0 left-0 w-24 h-24 bg-verde/5 rounded-full -ml-12 -mb-12"></div>
+                            <div class="relative">
+                                <span class="inline-block text-verde text-sm font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestra Misión</span>
+                                <h3 class="text-2xl font-display-CormorantGaramond font-bold text-verde mb-6">Acompañándote en tu camino hacia el bienestar</h3>
+                                <p class="text-gray-700 leading-relaxed text-base relative z-10">
+                                    Acompañar a cada persona en su camino hacia el bienestar físico, emocional y mental, ofreciendo un espacio de calma y conexión con la naturaleza, a través de terapias naturales, productos seleccionados y atención cercana.
+                                </p>
+                            </div>
                         </div>
-                        <button type="button" class="text-verde hover:text-verde-700 focus:outline-none" data-collapse-toggle="mision-content">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
                     </div>
-                    <div id="mision-content" class="hidden">
-                        <p class="text-sm text-gray-700 leading-relaxed">
-                            Acompañar a cada persona en su camino hacia el bienestar físico, emocional y mental, ofreciendo un espacio de calma y conexión con la naturaleza, a través de terapias naturales, productos seleccionados y atención cercana.
-                        </p>
-                    </div>
-                </div>
 
-                <!-- Valores -->
-                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition text-left aparecer-secuencial">
-                    <div class="flex items-center justify-between gap-4 mb-4">
-                        <div class="flex items-center gap-4">
-                            <img src="../assets/img/valores.png" alt="Valores" class="w-16 h-16 rounded-full shadow">
-                            <h3 class="text-2xl font-semibold text-verde">Nuestros Valores</h3>
+                    <!-- Valores -->
+                    <div class="aparecer-secuencial w-full mb-10">
+                        <div class="bg-white rounded-[2rem] p-8 shadow-lg">
+                            <div class="absolute top-0 right-0 w-40 h-40 bg-verde/5 rounded-full -mr-20 -mt-20"></div>
+                            <div class="relative">
+                                <span class="inline-block text-verde text-sm font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestros Valores</span>
+                                <div class="space-y-8">
+                                    <!-- Empatía -->
+                                    <div class="flex items-start gap-6 group">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-verde/10 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                                            <i class="fas fa-heart text-verde text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Empatía</h4>
+                                            <p class="text-sm text-gray-700 leading-relaxed">
+                                                Escuchamos con el corazón para comprender las necesidades únicas de cada persona.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Respeto -->
+                                    <div class="flex items-start gap-6 group">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-verde/10 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                                            <i class="fas fa-hands text-verde text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Respeto</h4>
+                                            <p class="text-sm text-gray-700 leading-relaxed">
+                                                Valoramos profundamente el cuerpo, el tiempo y el proceso de cada cliente.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Compromiso -->
+                                    <div class="flex items-start gap-6 group">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-verde/10 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+                                            <i class="fas fa-star text-verde text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Compromiso</h4>
+                                            <p class="text-sm text-gray-700 leading-relaxed">
+                                                Buscamos constantemente la excelencia y calidad en cada producto y terapia.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button type="button" class="text-verde hover:text-verde-700 focus:outline-none" data-collapse-toggle="valores-content">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="valores-content" class="hidden">
-                        <ul class="text-sm text-gray-700 leading-relaxed list-disc list-inside">
-                            <li><strong>Empatía:</strong> Escuchamos con el corazón para comprender las necesidades de cada persona.</li>
-                            <li><strong>Respeto:</strong> Valoramos el cuerpo, el tiempo y el proceso de cada cliente.</li>
-                            <li><strong>Compromiso:</strong> Buscamos constantemente la mejora y la calidad en cada producto y terapia.</li>
                     </div>
                 </div>
+            </div>
         </section>
     </main>
 

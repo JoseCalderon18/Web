@@ -103,14 +103,8 @@ class UsuariosControlador {
                 return;
             }
 
-            // Determinar el rol
-            $rol = 'usuario'; // Por defecto, todos son usuarios normales
-            
-            // Solo si es admin puede crear otros admins
-            if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin' && 
-                isset($_POST['from']) && $_POST['from'] === 'admin') {
-                $rol = 'admin';
-            }
+            // Siempre asignar rol de usuario
+            $rol = 'usuario';
 
             // Intentar crear el usuario
             if ($this->modelo->crearUsuario($nombre, $email, $password, $rol)) {

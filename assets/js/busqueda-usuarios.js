@@ -1,28 +1,25 @@
+// Espera a que el documento esté listo
 $(document).ready(function() {
-    console.log("Script de búsqueda de usuarios cargado");
     
+    // Referencias a elementos del DOM
     const $barraBusqueda = $('#barraBusqueda');
     const $tablaUsuarios = $('#tablaUsuarios');
     const $mensajeNoResultados = $('#mensajeNoResultados');
     const $paginacion = $('.flex.justify-center'); // Selector para la paginación
     
-    console.log("Barra de búsqueda encontrada:", $barraBusqueda.length);
-    console.log("Tabla usuarios encontrada:", $tablaUsuarios.length);
-    console.log("Mensaje no resultados encontrado:", $mensajeNoResultados.length);
-    
+    // Verifica que existan los elementos necesarios
     if ($barraBusqueda.length && $tablaUsuarios.length) {
         // Evento que se dispara al escribir (tiempo real)
         $barraBusqueda.on('input keyup', function() {
             const textoBusqueda = $(this).val().toLowerCase().trim();
-            console.log("Buscando:", textoBusqueda);
             
+            // Si no hay texto de búsqueda, recarga la página
             if (textoBusqueda === '') {
-                // Si no hay búsqueda, recargar la página para mostrar la paginación normal
                 location.reload();
                 return;
             }
             
-            // Hacer petición AJAX para buscar en toda la base de datos
+            // Petición AJAX para buscar usuarios
             $.ajax({
                 url: '../assets/php/MVC/Controlador/usuarios-controlador.php',
                 type: 'GET',
@@ -32,19 +29,19 @@ $(document).ready(function() {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    console.log("Respuesta del servidor:", response);
-                    
                     if (response.success) {
+                        // Muestra los resultados y oculta paginación
                         mostrarResultados(response.data);
-                        // Ocultar paginación cuando hay resultados de búsqueda
                         $paginacion.hide();
                     } else {
+                        // Maneja error en la búsqueda
                         console.error("Error en la búsqueda:", response.message);
                         mostrarResultados([]);
                         $paginacion.hide();
                     }
                 },
                 error: function(xhr, status, error) {
+                    // Maneja error en la petición AJAX
                     console.error("Error AJAX:", error);
                     mostrarResultados([]);
                     $paginacion.hide();
@@ -53,16 +50,20 @@ $(document).ready(function() {
         });
     }
     
+    // Función para mostrar los resultados en la tabla
     function mostrarResultados(usuarios) {
         const $tbody = $tablaUsuarios.find('tbody');
         $tbody.empty();
         
+        // Si no hay usuarios, muestra mensaje
         if (usuarios.length === 0) {
             $tbody.html('<tr><td colspan="3" class="px-3 md:px-8 py-4 md:py-6 text-center text-gray-500 text-sm md:text-base">No se encontraron usuarios</td></tr>');
             $mensajeNoResultados.show();
         } else {
+            // Oculta mensaje y muestra usuarios
             $mensajeNoResultados.hide();
             
+            // Itera sobre cada usuario y crea su fila
             usuarios.forEach(function(usuario) {
                 const fila = `
                     <tr class="border-b">
@@ -95,13 +96,14 @@ $(document).ready(function() {
         }
     }
     
-    // Event delegation para botones dinámicos - CAMBIAR ROL
+    // Manejador de evento para cambiar rol de usuario
     $(document).on('click', '.btn-cambiar-rol', function() {
         const usuarioId = $(this).data('usuario-id');
         const rolActual = $(this).data('usuario-rol');
         const nuevoRol = rolActual === 'admin' ? 'usuario' : 'admin';
         const mensaje = rolActual === 'admin' ? 'quitar permisos de administrador' : 'dar permisos de administrador';
 
+        // Muestra confirmación con SweetAlert2
         Swal.fire({
             title: '¿Estás seguro?',
             text: `¿Deseas ${mensaje} a este usuario?`,
@@ -118,10 +120,11 @@ $(document).ready(function() {
         });
     });
     
-    // Event delegation para botones dinámicos - ELIMINAR
+    // Manejador de evento para eliminar usuario
     $(document).on('click', '.btn-eliminar', function() {
         const usuarioId = $(this).data('usuario-id');
         
+        // Muestra confirmación con SweetAlert2
         Swal.fire({
             title: '¿Estás seguro?',
             text: "Esta acción no se puede deshacer",
@@ -138,7 +141,7 @@ $(document).ready(function() {
         });
     });
     
-    // Función para escapar HTML
+    // Función auxiliar para escapar caracteres HTML especiales
     function escapeHtml(text) {
         const map = {
             '&': '&amp;',

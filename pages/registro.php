@@ -6,7 +6,6 @@
     <title>Registro - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="flex flex-col xl:min-h-screen min-h-screen">
     <?php include "../includes/header.php"; ?>
@@ -102,11 +101,6 @@
                             </svg>
                         </button>
                     </div>
-                </div>
-
-                <!-- Codigo Captcha -->
-                <div class="flex justify-center">
-                    <div class="g-recaptcha" data-sitekey="6LdvVR4rAAAAAPT-iP-013nOxJyozIDXUxVtDR84"></div>
                 </div>
                 
                 <!-- Botón de Registrarse -->

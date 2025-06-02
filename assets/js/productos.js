@@ -1,6 +1,4 @@
-$(document).ready(function() {
-    console.log('Productos.js inicializado');
-    
+$(document).ready(function() {    
     // Funcionalidad para la lista de productos
     configurarListaProductos();
     
@@ -101,8 +99,6 @@ $(document).ready(function() {
 });
 
 function configurarListaProductos() {
-    // Código para la lista de productos
-    console.log('Configurando lista de productos');
     
     // Confirmar eliminación
     $('.eliminar-producto').on('click', function(e) {
@@ -130,8 +126,7 @@ function configurarListaProductos() {
 
 function configurarFormularioProductos() {
     if ($('#productoForm').length > 0) {
-        console.log('Formulario de productos encontrado');
-        
+
         // Vista previa de imagen
         $('#foto').on('change', function() {
             const archivo = this.files[0];
@@ -172,18 +167,15 @@ function configurarFormularioProductos() {
         // Envío del formulario
         $('#productoForm').on('submit', function(e) {
             e.preventDefault();
-            console.log('Formulario enviado');
             
             // Crear FormData para enviar archivos
             const datosFormulario = new FormData(this);
             
             // Verificar si es edición o creación
             const esEdicion = datosFormulario.has('id') && datosFormulario.get('id') !== '';
-            console.log('Es edición:', esEdicion);
             
             // Determinar la acción
             const accion = esEdicion ? 'editar' : 'crear';
-            console.log('Acción:', accion);
             
             // URL de la acción
             const url = '../assets/php/MVC/Controlador/productos-controlador.php?accion=' + accion;
@@ -207,8 +199,6 @@ function configurarFormularioProductos() {
                 contentType: false,
                 dataType: 'json',
                 success: function(respuesta) {
-                    console.log('Respuesta del servidor:', respuesta);
-                    
                     if (respuesta.success) {
                         Swal.fire({
                             icon: 'success',
@@ -240,9 +230,7 @@ function configurarFormularioProductos() {
                 }
             });
         });
-    } else {
-        console.log('No estamos en la página del formulario de productos');
-    }
+    } 
 }
 
 // Definir la función globalmente
@@ -258,8 +246,6 @@ function actualizarStock(idProducto, operacion) {
         },
         dataType: 'json',
         success: function(respuesta) {
-            console.log('Respuesta del servidor:', respuesta);
-            
             if (respuesta.success) {
                 // Buscar el botón que contiene el idProducto para encontrar la fila
                 const botonSumar = document.querySelector(`button[onclick="sumarUnidad(${idProducto})"]`);
@@ -313,11 +299,6 @@ function actualizarStock(idProducto, operacion) {
         }
     });
 }
-
-// Código que se ejecuta cuando el DOM está listo
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('JavaScript cargado correctamente');
-});
 
 function modificarStock(operacion) {
     const campoStock = document.getElementById('stock');

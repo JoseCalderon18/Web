@@ -21,8 +21,8 @@ session_start();
             <div class="pt-4 py-6 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900">
                 <div class="flex flex-col w-full sm:w-1/2 text-center aparecer">
                     <h1 class="text-4xl font-bold font-display-CormorantGaramond mb-4">El Herbolario</h1>
-                    <p class="text-base aparecer-secuencial">Lorem ipsum dolor sit amet</p>
-                    <p class="text-base aparecer-secuencial">consectetur adipisicing elit. Quisquam, quos.</p>
+                    <p class="text-base aparecer-secuencial">Bienvenido a nuestro espacio dedicado a la salud natural</p>
+                    <p class="text-base aparecer-secuencial">Productos naturales seleccionados con cuidado para tu bienestar</p>
                 </div>
                 <div class="w-full sm:w-2/3 flex justify-center mt-6 sm:mt-0">
                     <img src="../assets/img/el_herbolario/foto2.png" alt="El Herbolario" class="object-contain w-3/4 sm:w-1/2 imagen-aparecer">
