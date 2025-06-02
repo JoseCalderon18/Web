@@ -132,16 +132,6 @@ class ProductosModelo {
         }
     }
 
-    public function editarProducto($id, $nombre, $stock, $foto, $precio, $fecha_registro, $comentarios) {
-        try {
-            $sql = "UPDATE productos SET nombre = ?, stock = ?, foto = ?, precio = ?, fecha_registro = ?, comentarios = ? WHERE id = ?";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$nombre, $stock, $foto, $precio, $fecha_registro, $comentarios, $id]);
-        } catch (PDOException $e) {
-            error_log('Error en editarProducto: ' . $e->getMessage());
-            return false;
-        }
-    }
 
     public function actualizarStock($id, $nuevoStock) {
         try {

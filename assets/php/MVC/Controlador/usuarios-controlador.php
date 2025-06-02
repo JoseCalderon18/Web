@@ -31,7 +31,8 @@ class UsuariosControlador {
                 
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Inicio de sesión exitoso'
+                    'message' => 'Login exitoso',
+                    'redirect' => '../index.php'
                 ]);
             } else {
                 throw new Exception("Credenciales incorrectas");
@@ -61,14 +62,10 @@ class UsuariosControlador {
             
             // Destruir la sesión
             session_destroy();
-
-            header('Location: ../../../../pages/noticias.php');
             
-            echo json_encode([
-                'success' => true,
-                'message' => 'Sesión cerrada correctamente'
-            ]);
-            
+            // Redirigir a index.php
+            header('Location: ../../../../index.php');
+            exit();
         } catch (Exception $e) {
             echo json_encode([
                 'success' => false,
@@ -281,31 +278,6 @@ class UsuariosControlador {
         }
     }
 
-    public function obtenerClientes() {
-        try {
-            // Verificar si el usuario es administrador
-            if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'No tienes permisos para realizar esta acción'
-                ]);
-                return;
-            }
-            
-            $clientes = $this->modelo->obtenerClientes();
-            
-            echo json_encode([
-                'success' => true,
-                'data' => $clientes
-            ]);
-        } catch (Exception $e) {
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-        }
-    }
-
     public function buscarUsuarios() {
         try {
             // Verificar si es una petición AJAX
@@ -365,9 +337,6 @@ if (isset($_GET['accion'])) {
             break;
         case 'crearUsuario':
             $controlador->crearUsuario();
-            break;
-        case 'obtenerClientes':
-            $controlador->obtenerClientes();
             break;
         case 'buscar':
             $controlador->buscarUsuarios();

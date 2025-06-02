@@ -1,8 +1,24 @@
 <?php
-// Iniciar sesión si no está iniciada
+// Evitamos iniciar sesión si ya está activa
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Incluir el controlador para obtener las noticias
+require_once __DIR__ . '/../Controlador/noticias-controlador.php';
+
+// Crear instancia del controlador
+$controlador = new NoticiasControlador();
+
+// Obtener las noticias (cambiado a 6 por página)
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$resultado_noticias = $controlador->obtenerNoticias(6, ($pagina - 1) * 6);
+$noticias = $resultado_noticias['noticias'];
+$total_noticias = $resultado_noticias['total'];
+$total_paginas = ceil($total_noticias / 6);
+
+// Asegurarse de que la página actual está dentro de los límites válidos
+$pagina = max(1, min($pagina, $total_paginas));
 ?>
 
 <main class="mx-auto py-8 w-3/4 mb-10">
@@ -79,4 +95,40 @@ if (session_status() === PHP_SESSION_NONE) {
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+
+    <!-- Paginación -->
+    <?php if ($total_paginas > 0): ?>
+        <div class="flex justify-center mt-4 gap-2 pt-8">
+            <!-- Primera página -->
+            <a href="?pagina=1" 
+               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+
+            <!-- Números de página -->
+            <?php
+            $inicio = max(1, $pagina - 2);
+            $fin = min($total_paginas, $pagina + 2);
+
+            for ($i = $inicio; $i <= $fin; $i++):
+            ?>
+                <a href="?pagina=<?= $i ?>" 
+                   class="px-3 py-2 rounded-lg <?= $i === $pagina ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+            <!-- Última página -->
+            <a href="?pagina=<?= $total_paginas ?>" 
+               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+        </div>
+
+        <!-- Información de paginación -->
+        <div class="text-center mt-4 text-gray-600 pb-8">
+            Mostrando página <?= $pagina ?> de <?= $total_paginas ?> 
+            (<?= $total_noticias ?> noticias en total)
+        </div>
+    <?php endif; ?>
 </main>

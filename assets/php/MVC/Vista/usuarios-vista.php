@@ -154,7 +154,7 @@
             </div>
 
             <!-- Información de paginación -->
-            <div class="text-center mt-4 text-gray-600 mb-8 pb-8">
+            <div class="text-center mt-4 text-gray-600 pb-8">
                 Mostrando página <?= $paginaActual ?> de <?= $totalPaginas ?> 
                 (<?= $total ?> usuarios en total)
             </div>

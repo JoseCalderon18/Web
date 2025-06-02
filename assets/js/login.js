@@ -34,10 +34,9 @@ $(document).ready(function() {
     }
     
     // Validacion y envio del formulario de  login
-    $("#loginForm").on("submit", function(e){
+    $("#loginForm").on("submit", function(e) {
         e.preventDefault();
 
-        // Obtener datos del formulario
         const correo = $("#correoElectronico").val().trim();
         const contrasenia = $("#contrasenia").val();
 
@@ -59,7 +58,7 @@ $(document).ready(function() {
                 icon: "error",
                 title: "Por favor, completa correctamente todos los campos",
                 html: errores.join("<br>"),
-                confirmButtonText: "Aceptar",                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                confirmButtonText: "Aceptar",
                 confirmButtonColor: "#4A6D50"
             });
             return;
@@ -75,17 +74,8 @@ $(document).ready(function() {
             },
             dataType: 'json',
             success: function(response){
-                if(response.success){
-                    Swal.fire({
-                        icon: "success",
-                        title: "¡Inicio de sesión exitoso!",
-                        text: response.message,
-                        confirmButtonColor: "#4A6D50"
-                    }).then((result) => {
-                        if(result.isConfirmed){
-                            window.location.href = "noticias.php";
-                        }
-                    });
+                if(response.success) {
+                    window.location.href = response.redirect;
                 } else {
                     Swal.fire({
                         icon: "error",  

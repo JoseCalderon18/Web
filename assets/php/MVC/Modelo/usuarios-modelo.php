@@ -37,21 +37,6 @@ class UsuariosModelo {
         }
     }
 
-    // Obtener usuario por ID
-    public function obtenerUsuarioPorId($id) {
-        try {
-            $sql = "SELECT * FROM usuarios WHERE id = :id LIMIT 1";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-            
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error en obtenerUsuarioPorId: " . $e->getMessage());
-            return false;
-        }
-    }
-
     // Registrar nuevo usuario
     public function registrarUsuario($nombre, $email, $password) {
         try {
@@ -221,16 +206,6 @@ class UsuariosModelo {
             return $stmt->fetchColumn() > 0;
         } catch (PDOException $e) {
             throw new Exception("Error al verificar el email: " . $e->getMessage());
-        }
-    }
-
-    public function obtenerClientes() {
-        try {
-            $sql = "SELECT id, nombre, email FROM usuarios WHERE rol = 'cliente'";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error al obtener los clientes: " . $e->getMessage());
         }
     }
 
