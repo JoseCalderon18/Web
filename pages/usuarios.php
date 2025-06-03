@@ -7,24 +7,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'admin') {
     exit;
 }
 
-require_once '../assets/php/MVC/Controlador/usuarios-controlador.php';
-$controlador = new UsuariosControlador();
-
-// Obtener los datos paginados
-$resultado = $controlador->obtenerTodosLosUsuarios();
-
-// Extraer los datos
-$usuarios = $resultado['usuarios'];
-$paginaActual = $resultado['paginaActual'];
-$totalPaginas = $resultado['totalPaginas'];
-$total = $resultado['total'];
-
-// Si no hay usuarios, inicializar como array vacío
-if (!is_array($usuarios)) {
-    $usuarios = [];
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>

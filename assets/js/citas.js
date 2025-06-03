@@ -184,10 +184,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para obtener color según el estado
     function getColorByStatus(estado) {
         switch (estado) {
-            case 'confirmada': return '#10B981';
-            case 'cancelada': return '#EF4444';
-            case 'completada': return '#6B7280';
-            default: return '#6B7280';
+            case 'confirmada': return '#10B981';  // Verde
+            case 'cancelada': return '#EF4444';   // Rojo
+            case 'completada': return '#3B82F6';  // Azul 
         }
     }
 

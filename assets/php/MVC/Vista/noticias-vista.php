@@ -32,7 +32,7 @@ if (session_status() === PHP_SESSION_NONE) {
     </div>
 
     <!-- Grid de noticias -->
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
         <?php if(empty($noticias)): ?>
             <div class="col-span-full text-center py-8">
                 <p class="text-gray-500">No hay noticias disponibles en este momento.</p>
@@ -79,4 +79,40 @@ if (session_status() === PHP_SESSION_NONE) {
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+
+    <!-- Paginación -->
+    <?php if ($total_paginas > 1): ?>
+        <div class="flex justify-center mt-4 gap-2 pt-8">
+            <!-- Primera página -->
+            <a href="?pagina=1" 
+               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                <i class="fas fa-angle-double-left"></i>
+            </a>
+
+            <!-- Números de página -->
+            <?php
+            $inicio = max(1, $pagina - 2);
+            $fin = min($total_paginas, $pagina + 2);
+
+            for ($i = $inicio; $i <= $fin; $i++):
+            ?>
+                <a href="?pagina=<?= $i ?>" 
+                   class="px-3 py-2 rounded-lg <?= $i === $pagina ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                    <?= $i ?>
+                </a>
+            <?php endfor; ?>
+
+            <!-- Última página -->
+            <a href="?pagina=<?= $total_paginas ?>" 
+               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                <i class="fas fa-angle-double-right"></i>
+            </a>
+        </div>
+
+        <!-- Información de paginación -->
+        <div class="text-center mt-4 text-gray-600 pb-8">
+            Mostrando página <?= $pagina ?> de <?= $total_paginas ?> 
+            (<?= $total_noticias ?> noticias en total)
+        </div>
+    <?php endif; ?>
 </main>

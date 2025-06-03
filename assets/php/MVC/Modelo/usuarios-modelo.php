@@ -37,39 +37,6 @@ class UsuariosModelo {
         }
     }
 
-    // Registrar nuevo usuario
-    public function registrarUsuario($nombre, $email, $password) {
-        try {
-            // Verificar si el email ya existe
-            $sql = "SELECT COUNT(*) FROM usuarios WHERE email = :email";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            
-            if ($stmt->fetchColumn() > 0) {
-                return ['exito' => false, 'mensaje' => 'El email ya está registrado'];
-            }
-            
-            // Crear hash de la contraseña
-            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            
-            // Insertar nuevo usuario
-            $sql = "INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES (:nombre, :email, :password_hash, 'usuario')";
-            $stmt = $this->db->prepare($sql);
-            $stmt->bindParam(':nombre', $nombre);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':password_hash', $passwordHash);
-            
-            if ($stmt->execute()) {
-                return ['exito' => true, 'id' => $this->db->lastInsertId()];
-            } else {
-                return ['exito' => false, 'mensaje' => 'Error al registrar el usuario'];
-            }
-        } catch (PDOException $e) {
-            error_log("Error en registrarUsuario: " . $e->getMessage());
-            return ['exito' => false, 'mensaje' => 'Error en la base de datos'];
-        }
-    }
 
     // Verificar usuario para login
     public function verificarUsuario($email, $password) {
@@ -107,11 +74,9 @@ class UsuariosModelo {
     // Obtener usuarios paginados
     public function obtenerTodos($inicio, $cantidadPorPagina) {
         try {
-            // Asegurarnos de que los parámetros son enteros
-            $inicio = (int)$inicio;
-            $cantidadPorPagina = (int)$cantidadPorPagina;
-            
-            $sql = "SELECT id, nombre, email, rol FROM usuarios ORDER BY id ASC LIMIT :inicio, :cantidadPorPagina";
+            $sql = "SELECT id, nombre, email, rol FROM usuarios 
+                    ORDER BY id ASC 
+                    LIMIT :inicio, :cantidadPorPagina";
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
             $stmt->bindValue(':cantidadPorPagina', $cantidadPorPagina, PDO::PARAM_INT);

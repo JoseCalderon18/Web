@@ -96,55 +96,21 @@ class CitasModelo {
      * Crear una nueva cita
      */
     public function crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente = null) {
-        error_log("=== MODELO CREAR CITA ===");
-        error_log("Usuario ID: " . $usuarioId);
-        error_log("Fecha: " . $fecha);
-        error_log("Hora: " . $hora);
-        error_log("Motivo: " . $motivo);
-        error_log("Nombre Cliente: " . $nombreCliente);
-        
         try {
-            // IMPORTANTE: Incluir el campo creado_por que es NOT NULL
-            $query = "INSERT INTO citas (usuario_id, creado_por, fecha, hora, motivo, nombre_cliente, estado) 
-                     VALUES (:usuario_id, :creado_por, :fecha, :hora, :motivo, :nombre_cliente, 'confirmada')";
-            
-            error_log("Query SQL: " . $query);
+            // Eliminamos creado_por del INSERT
+            $query = "INSERT INTO citas (usuario_id, fecha, hora, motivo, nombre_cliente, estado) 
+                     VALUES (:usuario_id, :fecha, :hora, :motivo, :nombre_cliente, 'confirmada')";
             
             $stmt = $this->db->prepare($query);
-            
-            if (!$stmt) {
-                error_log("ERROR: No se pudo preparar la query");
-                error_log("Error info prepare: " . print_r($this->db->errorInfo(), true));
-                return false;
-            }
-            
-            // Bind parameters incluyendo creado_por
-            error_log("Binding parámetros...");
-            $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
-            $stmt->bindParam(':creado_por', $usuarioId, PDO::PARAM_INT); // Mismo usuario que la crea
+            $stmt->bindParam(':usuario_id', $usuarioId);
             $stmt->bindParam(':fecha', $fecha);
             $stmt->bindParam(':hora', $hora);
             $stmt->bindParam(':motivo', $motivo);
             $stmt->bindParam(':nombre_cliente', $nombreCliente);
             
-            error_log("Ejecutando query...");
-            $resultado = $stmt->execute();
-            error_log("Resultado execute(): " . ($resultado ? 'TRUE' : 'FALSE'));
-            
-            if (!$resultado) {
-                error_log("ERROR EN EXECUTE:");
-                error_log("Error info stmt: " . print_r($stmt->errorInfo(), true));
-                return false;
-            }
-            
-            $insertId = $this->db->lastInsertId();
-            error_log("ID de la cita creada: " . $insertId);
-            
-            return $resultado;
-            
+            return $stmt->execute();
         } catch (PDOException $e) {
-            error_log("ERROR PDO en crearCita: " . $e->getMessage());
-            error_log("Código error: " . $e->getCode());
+            error_log("Error en crearCita: " . $e->getMessage());
             return false;
         }
     }

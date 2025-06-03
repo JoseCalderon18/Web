@@ -9,8 +9,15 @@ class NoticiasModelo {
     }
     
     // Obtener todas las noticias con paginación
-    public function obtenerNoticias($limite = 10, $offset = 0) {
+    public function obtenerNoticias($limite = 6, $offset = 0) {
         try {
+            // Primero, obtener el total de noticias
+            $queryCount = "SELECT COUNT(*) as total FROM noticias";
+            $stmtCount = $this->db->prepare($queryCount);
+            $stmtCount->execute();
+            $totalNoticias = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'];
+            
+            // Luego, obtener las noticias para la página actual
             $query = "SELECT n.*, u.nombre as autor_nombre 
                      FROM noticias n 
                      LEFT JOIN usuarios u ON n.usuario_id = u.id 
@@ -22,23 +29,17 @@ class NoticiasModelo {
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
             
-            $noticias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            // Contar total de noticias para paginación
-            $queryCount = "SELECT COUNT(*) as total FROM noticias";
-            $stmtCount = $this->db->prepare($queryCount);
-            $stmtCount->execute();
-            $totalNoticias = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'];
-            
             return [
-                'noticias' => $noticias,
-                'total' => $totalNoticias
+                'noticias' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+                'total' => $totalNoticias,
+                'paginas' => ceil($totalNoticias / $limite)
             ];
         } catch (PDOException $e) {
             error_log("Error en obtenerNoticias: " . $e->getMessage());
             return [
                 'noticias' => [],
-                'total' => 0
+                'total' => 0,
+                'paginas' => 0
             ];
         }
     }

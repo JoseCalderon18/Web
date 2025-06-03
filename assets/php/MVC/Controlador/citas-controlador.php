@@ -139,7 +139,13 @@ class CitasControlador {
 
             // Intentar crear la cita
             error_log("Creando cita en el modelo...");
-            $resultado = $this->modelo->crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente);
+            $resultado = $this->modelo->crearCita(
+                $usuarioId,
+                $fecha,
+                $hora,
+                $motivo,
+                $nombreCliente
+            );
             error_log("Resultado del modelo: " . ($resultado ? 'TRUE' : 'FALSE'));
 
             if ($resultado) {

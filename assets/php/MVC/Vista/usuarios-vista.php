@@ -1,3 +1,19 @@
+<?php
+require_once __DIR__ . '/../Controlador/usuarios-controlador.php';
+
+// Crear instancia del controlador
+$controlador = new UsuariosControlador();
+
+// Obtener los datos de usuarios
+$datosUsuarios = $controlador->obtenerTodosLosUsuarios();
+
+// Extraer las variables para la vista
+$usuarios = $datosUsuarios['usuarios'];
+$paginaActual = $datosUsuarios['paginaActual'];
+$totalPaginas = $datosUsuarios['totalPaginas'];
+$total = $datosUsuarios['total'];
+?>
+
 <div class="bg-beige">
 
     <!-- Título y descripción -->
@@ -60,14 +76,7 @@
                                 </td>
                             </tr>
                         <?php else: ?>
-                            <?php 
-                            // Ordenar usuarios por ID de menor a mayor
-                            usort($usuarios, function($a, $b) {
-                                return $a['id'] - $b['id'];
-                            });
-                            
-                            foreach ($usuarios as $usuario): 
-                            ?>
+                            <?php foreach ($usuarios as $usuario): ?>
                                 <tr class="border-b">
                                     <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base font-medium"><?= htmlspecialchars($usuario["nombre"]) ?></td>
                                     <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base"><?= htmlspecialchars($usuario["email"]) ?></td>

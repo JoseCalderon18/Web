@@ -15,7 +15,7 @@ class NoticiasControlador {
     }
 
     // Obtener todas las noticias
-    public function obtenerNoticias($limite = 10, $offset = 0) {
+    public function obtenerNoticias($limite = 6, $offset = 0) {
         return $this->modelo->obtenerNoticias($limite, $offset);
     }
 
@@ -233,7 +233,6 @@ if (isset($_GET['accion'])) {
         case 'obtenerNoticia':
             $controlador->obtenerNoticia();
             break;
-        // Otras acciones...
     }
 }
 ?>

@@ -34,14 +34,6 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="w-full sm:w-auto"><a href="pages/terapias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Terapias">Terapias</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/encuentranos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección Encuentranos">Encuentranos</a></li>
                 <li class="w-full sm:w-auto"><a href="pages/noticias.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección noticias">Noticias</a></li>
-                
-                <?php if (isset($_SESSION['usuario_id'])): ?>
-                    <li class="w-full sm:w-auto"><a href="pages/citas.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección citas">Citas</a></li>
-                    <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
-                        <li class="w-full sm:w-auto"><a href="pages/productos.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección productos">Productos</a></li>
-                        <li class="w-full sm:w-auto"><a href="pages/usuarios.php" class="block py-2 sm:py-0 text-black hover:text-gray-600 hover:underline pl-4 sm:pl-0" aria-label="Ir a sección usuarios">Usuarios</a></li>
-                    <?php endif; ?>
-                <?php endif; ?>
 
                 <!-- Enlace de login con icono de usuario -->
                 <a href="pages/login.php" class="flex items-center hover:opacity-80 transition-opacity">
@@ -85,6 +77,7 @@ if (session_status() === PHP_SESSION_NONE) {
                        class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-green-700 hover:bg-green-800 rounded-lg transition-colors text-center">
                         <i class="fas fa-users mr-1 sm:mr-2"></i>Usuarios
                     </a>
+                <?php endif; ?>
                     <a href="pages/citas.php" 
                        class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-green-700 hover:bg-green-800 rounded-lg transition-colors text-center">
                         <i class="fas fa-calendar-check mr-1 sm:mr-2"></i>Citas
@@ -93,7 +86,6 @@ if (session_status() === PHP_SESSION_NONE) {
                        class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-red-600 hover:bg-red-700 rounded-lg transition-colors text-center">
                         <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Cerrar sesión
                     </a>
-                <?php endif; ?>
             </div>
         </div>
     </div>

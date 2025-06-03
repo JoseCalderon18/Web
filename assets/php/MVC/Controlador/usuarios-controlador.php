@@ -172,35 +172,29 @@ class UsuariosControlador {
     // Funcion para obtener todos los usuarios
     public function obtenerTodosLosUsuarios() {
         try {
-            // Verificar si el usuario es administrador
+            // Verifica permisos de admin
             if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'admin') {
                 throw new Exception("No tienes permisos para ver esta página");
             }
 
-            $porPagina = 10; // Número de usuarios por página
+            $porPagina = 10; // Usuarios por página
             $paginaActual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-            $paginaActual = max(1, $paginaActual); // Asegurarse de que no sea menor que 1
             
-            // Obtener total de registros
+            // Obtiene total de usuarios
             $totalRegistros = $this->modelo->obtenerTotalUsuarios();
             
-            // Calcular total de páginas
+            // Calcula paginación
             $totalPaginas = max(1, ceil($totalRegistros / $porPagina));
-            
-            // Asegurar que la página actual no exceda el total de páginas
             $paginaActual = min($paginaActual, $totalPaginas);
-            
-            // Calcular el inicio para la consulta SQL
             $inicio = ($paginaActual - 1) * $porPagina;
             
-            // Obtener los usuarios para la página actual
+            // Obtiene usuarios de la página actual
             $usuarios = $this->modelo->obtenerTodos($inicio, $porPagina);
             
             return [
                 'usuarios' => $usuarios,
                 'paginaActual' => $paginaActual,
                 'totalPaginas' => $totalPaginas,
-                'porPagina' => $porPagina,
                 'total' => $totalRegistros
             ];
         } catch (Exception $e) {
@@ -209,7 +203,6 @@ class UsuariosControlador {
                 'usuarios' => [],
                 'paginaActual' => 1,
                 'totalPaginas' => 1,
-                'porPagina' => $porPagina,
                 'total' => 0
             ];
         }
