@@ -121,7 +121,7 @@ $total = $datosUsuarios['total'];
                     <i class="fas fa-angle-double-left"></i>
                 </a>
 
-                <!-- Página anterior -->
+                <!-- Botón Anterior -->
                 <a href="?pagina=<?= max(1, $paginaActual - 1) ?>" 
                    class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-left"></i>
@@ -129,27 +129,38 @@ $total = $datosUsuarios['total'];
 
                 <!-- Números de página -->
                 <?php
-                $inicio = max(1, $paginaActual - 2);
-                $fin = min($totalPaginas, $paginaActual + 2);
-
-                // Asegurarse de mostrar siempre 5 páginas si es posible
-                if ($fin - $inicio + 1 < 5) {
-                    if ($inicio === 1) {
-                        $fin = min($totalPaginas, $inicio + 4);
-                    } else {
-                        $inicio = max(1, $fin - 4);
+                $numeroPaginasAMostrar = 5;
+                $mitad = floor($numeroPaginasAMostrar / 2);
+                
+                // Calcular inicio y fin
+                if ($totalPaginas <= $numeroPaginasAMostrar) {
+                    $inicio = 1;
+                    $fin = $totalPaginas;
+                } else {
+                    $inicio = $paginaActual - $mitad;
+                    $fin = $paginaActual + $mitad;
+                    
+                    if ($inicio < 1) {
+                        $inicio = 1;
+                        $fin = $numeroPaginasAMostrar;
+                    }
+                    
+                    if ($fin > $totalPaginas) {
+                        $fin = $totalPaginas;
+                        $inicio = max(1, $totalPaginas - $numeroPaginasAMostrar + 1);
                     }
                 }
 
                 for ($i = $inicio; $i <= $fin; $i++):
+                    $esActual = $i == $paginaActual;
                 ?>
                     <a href="?pagina=<?= $i ?>" 
-                       class="px-3 py-2 rounded-lg <?= $i === $paginaActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                       class="px-3 py-2 rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>
 
-                <!-- Página siguiente -->
+                <!-- Botón Siguiente -->
                 <a href="?pagina=<?= min($totalPaginas, $paginaActual + 1) ?>" 
                    class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-right"></i>

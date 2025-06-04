@@ -34,7 +34,7 @@ class CitasControlador {
             // Primero actualizamos las citas vencidas automáticamente
             $this->actualizarCitasVencidas();
             
-            // Cualquier usuario logueado puede ver citas
+            // Verificar si el usuario es admin
             $esAdmin = isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin';
             
             error_log("Rol del usuario: " . ($_SESSION['usuario_rol'] ?? 'sin rol'));
@@ -51,9 +51,22 @@ class CitasControlador {
             
             error_log("Total de citas obtenidas: " . count($citas));
             
+            // Formatear las citas según el rol del usuario
+            $citasFormateadas = array_map(function($cita) use ($esAdmin) {
+                // Si es admin, mostrar toda la información
+                if ($esAdmin) {
+                    return $cita;
+                } else {
+                    // Si es usuario normal, solo mostrar sus propias citas
+                    if ($cita['usuario_id'] == $_SESSION['usuario_id']) {
+                        return $cita;
+                    }
+                }
+            }, array_filter($citas));
+            
             echo json_encode([
                 'exito' => true,
-                'datos' => $citas
+                'datos' => array_values($citasFormateadas) // array_values para reindexar el array
             ]);
             
         } catch (Exception $e) {

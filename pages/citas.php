@@ -7,28 +7,6 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-// Incluir el controlador
-require_once '../assets/php/MVC/Controlador/citas-controlador.php';
-
-// Crear una instancia del controlador
-$controlador = new CitasControlador();
-
-// Obtener las citas según el rol del usuario
-try {
-    // Verificar si el controlador se ha inicializado correctamente
-    if (!$controlador) {
-        throw new Exception("Error al inicializar el controlador de citas");
-    }
-    
-    if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin') {
-        $citas = $controlador->obtenerTodasLasCitas();
-    } else {
-        $citas = $controlador->obtenerCitasUsuario($_SESSION['usuario_id']); // Cambiado el nombre del método
-    }
-} catch (Exception $e) {
-    $error = "Error al cargar las citas: " . $e->getMessage();
-    $citas = [];
-}
 ?>
 
 <!DOCTYPE html>

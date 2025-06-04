@@ -372,6 +372,7 @@ class CitasModelo {
             
             // Verificar permisos
             if ($rolUsuario !== 'admin') {
+                // Si no es admin, solo puede eliminar sus propias citas
                 $query = "SELECT usuario_id FROM citas WHERE id = :id";
                 $stmt = $this->db->prepare($query);
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -384,6 +385,7 @@ class CitasModelo {
                 }
             }
             
+            // Si es admin o es su propia cita, proceder con la eliminación
             $query = "DELETE FROM citas WHERE id = :id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -426,8 +428,9 @@ class CitasModelo {
             $rolUsuario = $_SESSION['rol'] ?? 'usuario';
             $usuarioLogueado = $_SESSION['usuario_id'];
             
-            // Verificar permisos - solo admin puede cambiar estados o el usuario propietario
+            // Verificar permisos
             if ($rolUsuario !== 'admin') {
+                // Si no es admin, solo puede actualizar sus propias citas
                 $query = "SELECT usuario_id FROM citas WHERE id = :id";
                 $stmt = $this->db->prepare($query);
                 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -435,11 +438,12 @@ class CitasModelo {
                 $cita = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if (!$cita || $cita['usuario_id'] != $usuarioLogueado) {
-                    error_log("Usuario " . $usuarioLogueado . " no puede actualizar el estado de la cita " . $id);
+                    error_log("Usuario " . $usuarioLogueado . " no puede actualizar la cita " . $id);
                     return false;
                 }
             }
             
+            // Si es admin o es su propia cita, proceder con la actualización
             $query = "UPDATE citas SET estado = :estado WHERE id = :id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);

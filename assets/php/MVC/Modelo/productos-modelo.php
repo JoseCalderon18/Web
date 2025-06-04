@@ -27,7 +27,7 @@ class ProductosModelo {
             $inicio = (int)$inicio;
             $cantidadPorPagina = (int)$cantidadPorPagina;
             
-            $sql = "SELECT * FROM productos ORDER BY id ASC LIMIT :inicio, :cantidadPorPagina";
+            $sql = "SELECT * FROM productos ORDER BY nombre ASC LIMIT :inicio, :cantidadPorPagina";
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
             $stmt->bindValue(':cantidadPorPagina', $cantidadPorPagina, PDO::PARAM_INT);

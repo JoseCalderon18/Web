@@ -3,6 +3,20 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Incluir el controlador para obtener las noticias
+require_once '../Controlador/noticias-controlador.php';
+
+// Crear instancia del controlador
+$controlador = new NoticiasControlador();
+
+// Obtener las noticias (con límite de 6 por página)
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$resultado_noticias = $controlador->obtenerNoticias(6, ($pagina - 1) * 6);
+$noticias = $resultado_noticias['noticias'];
+$total_noticias = $resultado_noticias['total'];
+$total_paginas = ceil($total_noticias / 6);
+
 ?>
 
 <main class="mx-auto py-8 w-3/4 mb-10">
@@ -89,18 +103,50 @@ if (session_status() === PHP_SESSION_NONE) {
                 <i class="fas fa-angle-double-left"></i>
             </a>
 
+            <!-- Botón Anterior -->
+            <a href="?pagina=<?= max(1, $pagina - 1) ?>" 
+               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                <i class="fas fa-angle-left"></i>
+            </a>
+
             <!-- Números de página -->
             <?php
-            $inicio = max(1, $pagina - 2);
-            $fin = min($total_paginas, $pagina + 2);
+            $numeroPaginasAMostrar = 5;
+            $mitad = floor($numeroPaginasAMostrar / 2);
+            
+            // Calcular inicio y fin
+            if ($total_paginas <= $numeroPaginasAMostrar) {
+                $inicio = 1;
+                $fin = $total_paginas;
+            } else {
+                $inicio = $pagina - $mitad;
+                $fin = $pagina + $mitad;
+                
+                if ($inicio < 1) {
+                    $inicio = 1;
+                    $fin = $numeroPaginasAMostrar;
+                }
+                
+                if ($fin > $total_paginas) {
+                    $fin = $total_paginas;
+                    $inicio = max(1, $total_paginas - $numeroPaginasAMostrar + 1);
+                }
+            }
 
             for ($i = $inicio; $i <= $fin; $i++):
+                $esActual = $i == $pagina;
             ?>
                 <a href="?pagina=<?= $i ?>" 
-                   class="px-3 py-2 rounded-lg <?= $i === $pagina ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                   class="px-3 py-2 rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
+
+            <!-- Botón Siguiente -->
+            <a href="?pagina=<?= min($total_paginas, $pagina + 1) ?>" 
+               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                <i class="fas fa-angle-right"></i>
+            </a>
 
             <!-- Última página -->
             <a href="?pagina=<?= $total_paginas ?>" 

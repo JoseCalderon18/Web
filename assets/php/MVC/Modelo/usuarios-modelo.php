@@ -75,8 +75,7 @@ class UsuariosModelo {
     public function obtenerTodos($inicio, $cantidadPorPagina) {
         try {
             $sql = "SELECT id, nombre, email, rol FROM usuarios 
-                    ORDER BY id ASC 
-                    LIMIT :inicio, :cantidadPorPagina";
+                    ORDER BY nombre ASC LIMIT :inicio, :cantidadPorPagina";
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
             $stmt->bindValue(':cantidadPorPagina', $cantidadPorPagina, PDO::PARAM_INT);

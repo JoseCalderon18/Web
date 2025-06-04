@@ -48,8 +48,8 @@ $(document).ready(function() {
         // Validación del nombre de usuario
         if (!nombre) {
             errores.push("El nombre de usuario es obligatorio");
-        } else if (nombre.length < 4) {
-            errores.push("El nombre de usuario debe tener al menos 4 caracteres");
+        } else if (nombre.length < 3) {
+            errores.push("El nombre de usuario debe tener al menos 3 caracteres");
         }
 
         // Validación del correo electrónico

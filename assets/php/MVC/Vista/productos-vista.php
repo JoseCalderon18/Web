@@ -1,3 +1,22 @@
+<?php
+require_once __DIR__.'/../Controlador/productos-controlador.php';
+$controlador = new ProductosControlador();
+
+// Obtener los datos paginados
+$resultado = $controlador->obtenerTodosLosProductos();
+
+// Extraer los datos
+$productos = $resultado['productos'];
+$paginaActual = $resultado['paginaActual'];
+$totalPaginas = $resultado['totalPaginas'];
+$total = $resultado['total'];
+
+// Si no hay productos, inicializar como array vacío
+if (!is_array($productos)) {
+    $productos = [];
+}
+?>
+
 <div class="bg-beige">
     <!-- Título y descripción -->
     <div class=" mx-auto px-4 my-8 py-6">
@@ -156,18 +175,50 @@
                     <i class="fas fa-angle-double-left"></i>
                 </a>
 
+                <!-- Botón Anterior -->
+                <a href="?pagina=<?= max(1, $paginaActual - 1) ?>" 
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+
                 <!-- Números de página -->
                 <?php
-                $inicio = max(1, $paginaActual - 2);
-                $fin = min($totalPaginas, $paginaActual + 2);
+                $numeroPaginasAMostrar = 5;
+                $mitad = floor($numeroPaginasAMostrar / 2);
+                
+                // Calcular inicio y fin
+                if ($totalPaginas <= $numeroPaginasAMostrar) {
+                    $inicio = 1;
+                    $fin = $totalPaginas;
+                } else {
+                    $inicio = $paginaActual - $mitad;
+                    $fin = $paginaActual + $mitad;
+                    
+                    if ($inicio < 1) {
+                        $inicio = 1;
+                        $fin = $numeroPaginasAMostrar;
+                    }
+                    
+                    if ($fin > $totalPaginas) {
+                        $fin = $totalPaginas;
+                        $inicio = max(1, $totalPaginas - $numeroPaginasAMostrar + 1);
+                    }
+                }
 
                 for ($i = $inicio; $i <= $fin; $i++):
+                    $esActual = $i == $paginaActual;
                 ?>
                     <a href="?pagina=<?= $i ?>" 
-                       class="px-3 py-2 rounded-lg <?= $i === $paginaActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                       class="px-3 py-2 rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>
+
+                <!-- Botón Siguiente -->
+                <a href="?pagina=<?= min($totalPaginas, $paginaActual + 1) ?>" 
+                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                    <i class="fas fa-angle-right"></i>
+                </a>
 
                 <!-- Última página -->
                 <a href="?pagina=<?= $totalPaginas ?>" 
@@ -183,4 +234,4 @@
             </div>
         <?php endif; ?>
     </div>
-</div>
+</d>

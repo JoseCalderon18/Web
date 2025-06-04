@@ -4,23 +4,6 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'admin') {
     header("Location: login.php");
     exit;
 }
-
-require_once '../assets/php/MVC/Controlador/productos-controlador.php';
-$controlador = new ProductosControlador();
-
-// Obtener los datos paginados
-$resultado = $controlador->obtenerTodosLosProductos();
-
-// Extraer los datos
-$productos = $resultado['productos'];
-$paginaActual = $resultado['paginaActual'];
-$totalPaginas = $resultado['totalPaginas'];
-$total = $resultado['total'];
-
-// Si no hay productos, inicializar como array vacío
-if (!is_array($productos)) {
-    $productos = [];
-}
 ?>
 
 <!DOCTYPE html>

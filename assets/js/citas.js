@@ -454,7 +454,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const motivo = cita.extendedProps.motivo || 'Sin motivo especificado';
         
         let botonesAccion = '';
-        if (esAdmin) {
+        // Solo mostrar botones de acción si es admin o si la cita pertenece al usuario actual
+        if (esAdmin || (cita.extendedProps.usuario_id === window.usuarioId)) {
             botonesAccion = `
                 <div class="mt-4 space-y-2">
                     <h4 class="font-semibold text-gray-700">Acciones:</h4>
