@@ -47,6 +47,12 @@ $(document).ready(function() {
     
     // Función para mostrar los resultados en la tabla
     function mostrarResultados(productos) {
+        // Asegurarse de que la tabla tenga el contenedor de scroll
+        if (!$tablaProductos.parent().hasClass('overflow-x-auto')) {
+            $tablaProductos.wrap('<div class="overflow-x-auto w-full"></div>');
+            $tablaProductos.addClass('min-w-[800px]');
+        }
+
         const $tbody = $tablaProductos.find('tbody');
         $tbody.empty();
         
@@ -62,7 +68,7 @@ $(document).ready(function() {
             productos.forEach(function(producto) {
                 const fila = `
                     <tr class="border-b">
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-center whitespace-nowrap">
                             ${!producto.foto ? `
                                 <!-- Muestra placeholder si no hay foto -->
                                 <div class="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mx-auto">
@@ -77,11 +83,11 @@ $(document).ready(function() {
                             `}
                         </td>
                         <!-- Nombre del producto -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center whitespace-nowrap">
                             ${escaparHtml(producto.nombre)}
                         </td>
                         <!-- Control de stock -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base whitespace-nowrap">
                             <div class="flex items-center justify-center">
                                 <button 
                                     onclick="sumarUnidad(${producto.id})"
@@ -102,19 +108,19 @@ $(document).ready(function() {
                             </div>
                         </td>
                         <!-- Precio -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center whitespace-nowrap">
                             ${escaparHtml(producto.precio)} €
                         </td>
                         <!-- Laboratorio -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center whitespace-nowrap">
                             ${escaparHtml(producto.laboratorio ?? 'N/A')}
                         </td>
                         <!-- Fecha de registro -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-sm md:text-base text-center whitespace-nowrap">
                             ${producto.fecha_registro ? new Date(producto.fecha_registro).toLocaleDateString('es-ES') : 'N/A'}
                         </td>
                         <!-- Comentarios -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-center whitespace-nowrap">
                             ${producto.comentarios ? `
                                 <button 
                                     onclick="mostrarComentarios('${escaparHtml(producto.nombre)}', '${escaparHtml(producto.comentarios)}')"
@@ -126,7 +132,7 @@ $(document).ready(function() {
                             `}
                         </td>
                         <!-- Acciones (solo para administradores) -->
-                        <td class="px-3 md:px-8 py-3 md:py-5 text-center">
+                        <td class="px-3 md:px-8 py-3 md:py-5 text-center whitespace-nowrap">
                             <?php if (isset($_SESSION["usuario_rol"]) && $_SESSION["usuario_rol"] === "admin"): ?>
                                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-5 justify-center">
                                     <button 

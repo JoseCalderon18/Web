@@ -52,11 +52,38 @@ if (!isset($_SESSION['usuario_id'])) {
         .fc-daygrid-day-number{
             color: #2C5530 !important;
         }
-        
-        
+
+        /* Estilos responsivos para botones del calendario */
+        @media (max-width: 768px) {
+            .fc .fc-button {
+                padding: 0.2rem 0.4rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            .fc-toolbar-title {
+                font-size: 1rem !important;
+            }
+
+            .fc-header-toolbar {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                justify-content: center;
+            }
+
+            .fc-toolbar-chunk {
+                display: flex;
+                gap: 0.25rem;
+            }
+
+            /* Ajustar el tamaño de los botones de navegación */
+            .fc-prev-button, .fc-next-button {
+                padding: 0.2rem 0.3rem !important;
+            }
+        }
     </style>
 </head>
-<body class="flex flex-col bg-beige <?php echo isset($_SESSION['usuario_id']) ? 'usuario-autenticado' : ''; ?>">
+<body class="flex flex-col min-h-screen bg-beige text-sm sm:text-base">
     <?php include "../includes/header.php"; ?>
 
     <main class="flex-grow pt-44">
@@ -66,24 +93,24 @@ if (!isset($_SESSION['usuario_id'])) {
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-verde font-display-CormorantGaramond mb-4 py-4">
                     Gestión de Citas
                 </h1>
-                <p class="text-gray-700 text-center">
+                <p class="text-sm sm:text-base lg:text-lg text-gray-700 text-center">
                     Reserva tus citas para consultas generales o terapias específicas. Selecciona la fecha y hora que mejor se adapte a tus necesidades.
                 </p>
             </div>
              <!-- Instrucciones para usuarios -->
             <div class="mt-8 bg-green-50 p-6 rounded-xl shadow-md mx-auto">
-                <h3 class="text-lg font-semibold text-green-800 mb-2">
+                <h3 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-green-800 mb-2">
                    ¿Cómo gestionar las citas?
                 </h3>
                 
-                    <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                    <ol class="list-decimal pl-5 space-y-2 text-gray-700 text-sm sm:text-base lg:text-lg">
                         <li>Haz clic en el día y hora que desees reservar en el calendario.</li>
                         <li>Completa el formulario con el nombre del cliente y motivo de la cita.</li>
                         <li>Haz clic en "Reservar" para confirmar la cita.</li>
                         <li>Gestiona el estado de las citas desde el panel lateral.</li>
                     </ol>
                 
-                <p class="mt-4 text-sm text-gray-600">
+                <p class="mt-4 text-sm sm:text-base lg:text-lg text-gray-600">
                     <i class="fas fa-info-circle text-green-600 mr-1"></i>
                     Las citas tienen una duración predeterminada de 1 hora y solo están disponibles de lunes a viernes en horario de 10:00-14:00 y 17:00-20:00.
                     <br>

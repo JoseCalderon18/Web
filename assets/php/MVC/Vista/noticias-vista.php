@@ -4,8 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Incluir el controlador para obtener las noticias
-require_once '../Controlador/noticias-controlador.php';
+// Incluir el controlador
+require_once __DIR__ . '/../Controlador/noticias-controlador.php';
 
 // Crear instancia del controlador
 $controlador = new NoticiasControlador();
@@ -24,8 +24,8 @@ $total_paginas = ceil($total_noticias / 6);
     <div class="flex justify-between items-center mb-8">
         <!-- Título -->
         <div class="text-center flex-grow">
-            <h1 class="text-5xl font-bold text-green-800 mb-3 font-display-CormorantGaramond py-6">Noticias y Artículos</h1>
-            <p class="text-gray-600 max-w-2xl mx-auto">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-green-800 mb-3 font-display-CormorantGaramond py-6">Noticias y Artículos</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto text-sm md:text-base lg:text-lg">
                 Mantente informado sobre las últimas novedades en agricultura ecológica.
             </p>
         </div>
@@ -49,7 +49,7 @@ $total_paginas = ceil($total_noticias / 6);
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
         <?php if(empty($noticias)): ?>
             <div class="col-span-full text-center py-8">
-                <p class="text-gray-500">No hay noticias disponibles en este momento.</p>
+                <p class="text-gray-500 text-sm md:text-base lg:text-lg">No hay noticias disponibles en este momento.</p>
             </div>
         <?php else: ?>
             <?php foreach ($noticias as $noticia): ?>
@@ -66,7 +66,7 @@ $total_paginas = ceil($total_noticias / 6);
                     
                     <div class="p-4">
                         <h3 class="text-xl font-bold text-green-800 mb-2"><?= htmlspecialchars($noticia['titulo']) ?></h3>
-                        <p class="text-sm text-gray-500 mb-2">
+                        <p class="text-sm md:text-base lg:text-lg text-gray-500 mb-2">
                             <i class="far fa-calendar-alt mr-2"></i> <?= date('d/m/Y', strtotime($noticia['fecha_publicacion'])) ?>
                         </p>
                         <p class="text-gray-600 mb-4"><?= htmlspecialchars(substr($noticia['contenido'], 0, 150)) ?>...</p>

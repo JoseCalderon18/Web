@@ -20,8 +20,8 @@ session_start();
         <div class="bg-beige">
             <div class="pt-8 py-10 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900 px-4 md:px-8">
                 <div class="flex flex-col w-full sm:w-1/2 text-center sm:text-left mb-6 sm:mb-0 aparecer">
-                    <h1 class="text-3xl md:text-4xl font-bold font-display-CormorantGaramond mb-4 text-verde">Salas de Terapias Naturales</h1>
-                    <p class="text-sm md:text-base mb-2 aparecer-secuencial">En nuestro herbolario, hemos creado un espacio de armonía y bienestar donde cuerpo, mente y espíritu encuentran equilibrio.</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-display-CormorantGaramond mb-4 text-verde">Salas de Terapias</h1>
+                    <p class="text-sm md:text-base lg:text-lg mb-2 aparecer-secuencial">En nuestro herbolario, hemos creado un espacio de armonía y bienestar donde cuerpo, mente y espíritu encuentran equilibrio.</p>
                 </div>
                 <div class="w-full flex justify-center">
                     <img src="../assets/img/terapias/figura.jpg" alt="Imagen de terapias" class="w-full object-cover h-96 sm:h-96 rounded-lg imagen-aparecer">
@@ -66,9 +66,9 @@ session_start();
                 <div class="flex flex-col items-center w-3/4 mx-auto aparecer">
                     <div class="flex flex-col justify-center items-center text-center w-full mb-8">
                         <h1 class="font-display-CormorantGaramond text-4xl font-bold mb-6">"Encuentra la terapia que necesitas"</h1>
-                        <p class="mb-3 text-balance">En nuestro herbolario, contamos con <b>tarapeutas especializados</b> en distintas disciplinas naturales, cada
+                        <p class="mb-3 text-balance text-sm md:text-base lg:text-lg">En nuestro herbolario, contamos con <b>tarapeutas especializados</b> en distintas disciplinas naturales, cada
                          una enfocada en ayudarte a recuperar el equilibrio y mejorar tu bienestar. </p>
-                        <p class="mb-3 text-balance">Ya sea que busques alivio <b>físico</b>, apoyo <b>emocional</b> o simplemente un momento para <b>reconectar</b> 
+                        <p class="mb-3 text-balance text-sm md:text-base lg:text-lg">Ya sea que busques alivio <b>físico</b>, apoyo <b>emocional</b> o simplemente un momento para <b>reconectar</b> 
                             contigo, aquí encontrarás un espacio donde cuidarte de manera integral. Explora nuestras terapias y elige la que más resuene contigo.</p>
                     </div>
                     <div class="w-full flex justify-center">

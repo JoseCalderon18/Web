@@ -12,7 +12,7 @@ session_start();
     <link href="../assets/css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="text-sm sm:text-base">
     <?php include "../includes/header.php"; ?>
 
     <main class="bg-beige">
@@ -20,10 +20,10 @@ session_start();
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mx-auto w-3/4">
                 <!-- Columna de texto -->
                 <div class="flex flex-col justify-center aparecer-secuencial">
-                    <h1 class="text-3xl font-display-CormorantGaramond font-bold text-verde mb-4">"Porque el bienestar es un viaje, y aquí tienes un lugar donde te acompañamos"</h1>
-                    <p class="text-xs md:text-sm text-verde mb-4">Hola, somos <strong>Tessa y Beatriz</strong>.</p>
-                    <p class="text-xs md:text-sm text-verde mb-4">Os presentamos <strong>Bioespacio Bienestar</strong>, un herbolario diferente que comenzó hace unos años para Tessa como un refugio, un espacio de calma y equilibrio en un momento clave de su vida. Con el tiempo, su camino se cruzó con el de Beatriz, y juntas dieron forma a lo que hoy es mucho más que un herbolario: un espacio dedicado al cuidado personal físico y mental.</p>
-                    <p class="text-xs md:text-sm text-verde mb-4">Buscamos y ponemos a vuestra disposición las mejores terapias naturales, terapeutas y suplementos que podemos encontrar. Con trayectorias complementarias y una visión común, <strong>acompañamos a quienes buscan mejorar su calidad de vida a través de las terapias naturales y el poder de las plantas</strong>.</p>
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-display-CormorantGaramond font-bold text-verde mb-4">"Porque el bienestar es un viaje, y aquí tienes un lugar donde te acompañamos"</h1>
+                    <p class="text-sm sm:text-base lg:text-lg text-verde mb-4">Hola, somos <strong>Tessa y Beatriz</strong>.</p>
+                    <p class="text-sm sm:text-base lg:text-lg text-verde mb-4">Os presentamos <strong>Bioespacio Bienestar</strong>, un herbolario diferente que comenzó hace unos años para Tessa como un refugio, un espacio de calma y equilibrio en un momento clave de su vida. Con el tiempo, su camino se cruzó con el de Beatriz, y juntas dieron forma a lo que hoy es mucho más que un herbolario: un espacio dedicado al cuidado personal físico y mental.</p>
+                    <p class="text-sm sm:text-base lg:text-lg text-verde mb-4">Buscamos y ponemos a vuestra disposición las mejores terapias naturales, terapeutas y suplementos que podemos encontrar. Con trayectorias complementarias y una visión común, <strong>acompañamos a quienes buscan mejorar su calidad de vida a través de las terapias naturales y el poder de las plantas</strong>.</p>
                 </div>
                 
                 <!-- Columna del carrusel -->
@@ -68,21 +68,21 @@ session_start();
         </div>
 
         <!-- Sección de Misión y Valores -->
-        <section class="bg-beige py-5 aparecer">
-            <div class="max-w-7xl mx-auto">
-                <h2 class="text-4xl font-display-CormorantGaramond font-bold text-verde text-center mb-5">Misión y Valores</h2>
-                <p class="text-sm text-verde/80 text-center mb-8 max-w-2xl mx-auto">Comprometidas con tu bienestar integral a través de la naturaleza y el cuidado personalizado</p>
+        <div class="bg-beige py-5 aparecer">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display-CormorantGaramond font-bold text-verde text-center mb-5">Misión y Valores</h2>
+                <p class="text-sm sm:text-base lg:text-lg text-verde/80 text-center mb-8 max-w-2xl mx-auto">Comprometidas con tu bienestar integral a través de la naturaleza y el cuidado personalizado</p>
                 
-                <div class="flex flex-col gap-8 max-w-6xl mx-auto">
+                <div class="flex flex-col gap-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                     <!-- Misión -->
                     <div class="flex flex-col aparecer-secuencial w-full">
                         <div class="bg-white rounded-[2rem] p-8 shadow-lg h-full transform transition-all duration-500 hover:-translate-y-2">
                             <div class="absolute top-0 right-0 w-32 h-32 bg-verde/5 rounded-full -mr-16 -mt-16"></div>
                             <div class="absolute bottom-0 left-0 w-24 h-24 bg-verde/5 rounded-full -ml-12 -mb-12"></div>
                             <div class="relative">
-                                <span class="inline-block text-verde text-sm font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestra Misión</span>
-                                <h3 class="text-2xl font-display-CormorantGaramond font-bold text-verde mb-6">Acompañándote en tu camino hacia el bienestar</h3>
-                                <p class="text-gray-700 leading-relaxed text-base relative z-10">
+                                <span class="inline-block text-verde text-sm sm:text-base lg:text-lg font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestra Misión</span>
+                                <h3 class="text-2xl sm:text-3xl lg:text-4xl font-display-CormorantGaramond font-bold text-verde mb-6">Acompañándote en tu camino hacia el bienestar</h3>
+                                <p class="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed relative z-10">
                                     Acompañar a cada persona en su camino hacia el bienestar físico, emocional y mental, ofreciendo un espacio de calma y conexión con la naturaleza, a través de terapias naturales, productos seleccionados y atención cercana.
                                 </p>
                             </div>
@@ -94,7 +94,7 @@ session_start();
                         <div class="bg-white rounded-[2rem] p-8 shadow-lg">
                             <div class="absolute top-0 right-0 w-40 h-40 bg-verde/5 rounded-full -mr-20 -mt-20"></div>
                             <div class="relative">
-                                <span class="inline-block text-verde text-sm font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestros Valores</span>
+                                <span class="inline-block text-verde text-sm sm:text-base lg:text-lg font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestros Valores</span>
                                 <div class="space-y-8">
                                     <!-- Empatía -->
                                     <div class="flex items-start gap-6 group">
@@ -102,8 +102,8 @@ session_start();
                                             <i class="fas fa-heart text-verde text-xl"></i>
                                         </div>
                                         <div>
-                                            <h4 class="text-lg font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Empatía</h4>
-                                            <p class="text-sm text-gray-700 leading-relaxed">
+                                            <h4 class="text-lg sm:text-xl lg:text-2xl font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Empatía</h4>
+                                            <p class="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                                                 Escuchamos con el corazón para comprender las necesidades únicas de cada persona.
                                             </p>
                                         </div>
@@ -115,8 +115,8 @@ session_start();
                                             <i class="fas fa-hands text-verde text-xl"></i>
                                         </div>
                                         <div>
-                                            <h4 class="text-lg font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Respeto</h4>
-                                            <p class="text-sm text-gray-700 leading-relaxed">
+                                            <h4 class="text-lg sm:text-xl lg:text-2xl font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Respeto</h4>
+                                            <p class="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                                                 Valoramos profundamente el cuerpo, el tiempo y el proceso de cada cliente.
                                             </p>
                                         </div>
@@ -128,8 +128,8 @@ session_start();
                                             <i class="fas fa-star text-verde text-xl"></i>
                                         </div>
                                         <div>
-                                            <h4 class="text-lg font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Compromiso</h4>
-                                            <p class="text-sm text-gray-700 leading-relaxed">
+                                            <h4 class="text-lg sm:text-xl lg:text-2xl font-semibold text-verde mb-2 group-hover:translate-x-2 transition-transform duration-300">Compromiso</h4>
+                                            <p class="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
                                                 Buscamos constantemente la excelencia y calidad en cada producto y terapia.
                                             </p>
                                         </div>
@@ -140,7 +140,7 @@ session_start();
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </main>
 
     <?php include "../includes/footer.php"; ?>

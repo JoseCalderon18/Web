@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    const calendarEl = document.getElementById('calendario-citas');
-    if (!calendarEl) {
+    const elementoCalendario = document.getElementById('calendario-citas');
+    if (!elementoCalendario) {
         console.error('No se encontró el elemento del calendario');
         return;
     }
 
     // Obtener el valor de esAdmin para mostrar información diferente
-    const esAdmin = calendarEl.dataset.esAdmin === 'true';
+    const esAdmin = elementoCalendario.dataset.esAdmin === 'true';
     
     // Hacer esAdmin disponible globalmente
     window.esAdmin = esAdmin;
 
-    const calendar = new FullCalendar.Calendar(calendarEl, {
+    const calendario = new FullCalendar.Calendar(elementoCalendario, {
         initialView: 'timeGridWeek',
         locale: 'es',
         timeZone: 'local',
@@ -50,20 +50,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         ],
         selectConstraint: "businessHours",
-        selectAllow: function(selectInfo) {
+        selectAllow: function(infoSeleccion) {
             return true;
         },
         dateClick: function(info) {
             
-            const selectedDate = new Date(info.dateStr);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const fechaSeleccionada = new Date(info.dateStr);
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
             
-            if (selectedDate < today) {
+            if (fechaSeleccionada < hoy) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Fecha no disponible',
-                    text: 'No se pueden crear citas en fechas pasadas. Solo puedes agendar citas para hoy o fechas futuras.',
+                    text: 'No se pueden crear citas en fechas pasadas.',
                     confirmButtonColor: '#2C5530',
                     confirmButtonText: 'Entendido'
                 });
@@ -78,19 +78,19 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         select: function(info) {
 
-            const selectedDate = new Date(info.startStr);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const fechaSeleccionada = new Date(info.startStr);
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
             
-            if (selectedDate < today) {
+            if (fechaSeleccionada < hoy) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Fecha no disponible',
-                    text: 'No se pueden crear citas en fechas pasadas. Solo puedes agendar citas para hoy o fechas futuras.',
+                    text: 'No se pueden crear citas en fechas pasadas.',
                     confirmButtonColor: '#2C5530',
                     confirmButtonText: 'Entendido'
                 });
-                calendar.unselect();
+                calendario.unselect();
                 return;
             }
             
@@ -98,46 +98,47 @@ document.addEventListener('DOMContentLoaded', function() {
             const hora = info.startStr.split('T')[1].substring(0, 5);
             
             mostrarFormularioCita(fecha, hora);
-            calendar.unselect();
+            calendario.unselect();
         },
-        events: function(info, successCallback, failureCallback) {
+        events: function(info, exitoCallback, falloCallback) {
             
-            const formData = new FormData();
-            formData.append('accion', 'obtenerCitas');
+            const datosFormulario = new FormData();
+            datosFormulario.append('accion', 'obtenerCitas');
 
             fetch('../assets/php/MVC/Controlador/citas-controlador.php', {
                 method: 'POST',
-                body: formData
+                body: datosFormulario
             })
-            .then(response => response.text())
-            .then(text => {
+            .then(respuesta => respuesta.text())
+            .then(texto => {
                 try {
-                    const data = JSON.parse(text);
-                    if (data.exito) {
-                        const eventos = data.datos.map(cita => ({
+                    const datos = JSON.parse(texto);
+                    if (datos.exito) {
+                        const eventos = datos.datos.map(cita => ({
                             id: cita.id,
-                            title: esAdmin ? `${cita.nombre_cliente} - ${cita.motivo}` : cita.motivo,
-                            start: `${cita.fecha}T${cita.hora}`,
-                            backgroundColor: getColorByStatus(cita.estado),
-                            borderColor: getColorByStatus(cita.estado),
-                            extendedProps: {
+                            titulo: esAdmin ? `${cita.nombre_cliente} - ${cita.motivo}` : cita.motivo,
+                            inicio: `${cita.fecha}T${cita.hora}`,
+                            colorFondo: obtenerColorPorEstado(cita.estado),
+                            colorBorde: obtenerColorPorEstado(cita.estado),
+                            propiedadesExtendidas: {
                                 estado: cita.estado,
                                 motivo: cita.motivo,
-                                nombre_cliente: cita.nombre_cliente || 'Usuario'
+                                nombreCliente: cita.nombre_cliente || 'Usuario',
+                                idUsuario: cita.usuario_id
                             }
                         }));
-                        successCallback(eventos);
+                        exitoCallback(eventos);
                     } else {
-                        throw new Error(data.mensaje || 'Error al cargar las citas');
+                        throw new Error(datos.mensaje || 'Error al cargar las citas');
                     }
-                } catch (e) {
-                    console.error('Error al parsear JSON:', e);
+                } catch (error) {
+                    console.error('Error al parsear JSON:', error);
                     throw new Error('Error al parsear la respuesta del servidor');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                failureCallback(error);
+                falloCallback(error);
             });
         },
         eventClick: function(info) {
@@ -152,27 +153,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función personalizada para ir a hoy
     function irAHoy() {
         const hoy = new Date();
-        calendar.gotoDate(hoy);
+        calendario.gotoDate(hoy);
         
         // Si estamos en vista de semana, asegurar que muestre la semana actual
-        if (calendar.view.type === 'timeGridWeek') {
-            calendar.gotoDate(hoy);
+        if (calendario.view.type === 'timeGridWeek') {
+            calendario.gotoDate(hoy);
         }
     }
 
     // Sobrescribir el comportamiento del botón today después del render
-    calendar.render();
+    calendario.render();
     
     // Buscar y reemplazar el event listener del botón today
     setTimeout(() => {
-        const todayButton = document.querySelector('.fc-today-button');
-        if (todayButton) {
+        const botonHoy = document.querySelector('.fc-today-button');
+        if (botonHoy) {
             // Clonar el botón para remover todos los event listeners
-            const newTodayButton = todayButton.cloneNode(true);
-            todayButton.parentNode.replaceChild(newTodayButton, todayButton);
+            const nuevoBotonHoy = botonHoy.cloneNode(true);
+            botonHoy.parentNode.replaceChild(nuevoBotonHoy, botonHoy);
             
             // Agregar nuestro event listener personalizado
-            newTodayButton.addEventListener('click', function(e) {
+            nuevoBotonHoy.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 irAHoy();
@@ -182,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
 
     // Función para obtener color según el estado
-    function getColorByStatus(estado) {
+    function obtenerColorPorEstado(estado) {
         switch (estado) {
             case 'confirmada': return '#10B981';  // Verde
             case 'cancelada': return '#EF4444';   // Rojo
@@ -191,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Función para obtener texto según el estado
-    function getTextByStatus(estado) {
+    function obtenerTextoPorEstado(estado) {
         switch (estado) {
             case 'confirmada': return 'Confirmada';
             case 'cancelada': return 'Cancelada';
@@ -212,16 +213,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let html = '';
         citas.forEach(cita => {
-            const fechaFormateada = new Date(cita.fecha).toLocaleDateString('es-ES');
-            const estadoColor = getColorByStatus(cita.estado);
-            const estadoTexto = getTextByStatus(cita.estado);
+            const fechaFormateada = new Date(cita.inicio).toLocaleDateString('es-ES');
+            const estadoColor = obtenerColorPorEstado(cita.propiedadesExtendidas.estado);
+            const estadoTexto = obtenerTextoPorEstado(cita.propiedadesExtendidas.estado);
             
             html += `
                 <div class="bg-white rounded-lg shadow-md p-6 border-l-4" style="border-left-color: ${estadoColor}">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">${cita.nombre_cliente}</h3>
-                            <p class="text-gray-600">${fechaFormateada} a las ${cita.hora}</p>
+                            <h3 class="text-lg font-semibold text-gray-800">${cita.propiedadesExtendidas.nombreCliente}</h3>
+                            <p class="text-gray-600">${fechaFormateada} a las ${cita.inicio.split('T')[1].substring(0, 5)}</p>
                         </div>
                         <span class="px-3 py-1 rounded-full text-sm font-medium text-white" style="background-color: ${estadoColor}">
                             ${estadoTexto}
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="text-gray-700 mb-4">${cita.motivo}</p>
                     
                     <div class="flex gap-2">
-                        ${cita.estado === 'confirmada' ? `
+                        ${cita.propiedadesExtendidas.estado === 'confirmada' ? `
                             <button onclick="cambiarEstado(${cita.id}, 'completada')" 
                                     class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                                 Marcar Completada
@@ -259,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (estado === 'todos') {
             mostrarCitas(citasData);
         } else {
-            const citasFiltradas = citasData.filter(cita => cita.estado === estado);
+            const citasFiltradas = citasData.filter(cita => cita.propiedadesExtendidas.estado === estado);
             mostrarCitas(citasFiltradas);
         }
     }
@@ -400,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         showConfirmButton: true,
                         allowOutsideClick: false
                     }).then(() => {
-                        calendar.refetchEvents();
+                        calendario.refetchEvents();
                         location.reload();
                     });
                 } else {
@@ -450,12 +451,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function mostrarDetallesCita(cita, esAdmin) {
-        const nombreCliente = cita.extendedProps.nombre_cliente || 'Cliente';
-        const motivo = cita.extendedProps.motivo || 'Sin motivo especificado';
+        const nombreCliente = cita.propiedadesExtendidas.nombreCliente || 'Cliente';
+        const motivo = cita.motivo || 'Sin motivo especificado';
         
         let botonesAccion = '';
         // Solo mostrar botones de acción si es admin o si la cita pertenece al usuario actual
-        if (esAdmin || (cita.extendedProps.usuario_id === window.usuarioId)) {
+        if (esAdmin || (cita.propiedadesExtendidas.idUsuario === window.usuarioId)) {
             botonesAccion = `
                 <div class="mt-4 space-y-2">
                     <h4 class="font-semibold text-gray-700">Acciones:</h4>
@@ -487,9 +488,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="text-left space-y-3">
                     <div class="bg-gray-50 p-3 rounded-lg">
                         <p><strong>Cliente:</strong> ${nombreCliente}</p>
-                        <p><strong>Fecha:</strong> ${formatearFecha(cita.start)}</p>
-                        <p><strong>Hora:</strong> ${formatearHora(cita.start)}</p>
-                        <p><strong>Estado:</strong> <span class="estado-${cita.extendedProps.estado}">${cita.extendedProps.estado.toUpperCase()}</span></p>
+                        <p><strong>Fecha:</strong> ${formatearFecha(cita.inicio)}</p>
+                        <p><strong>Hora:</strong> ${formatearHora(cita.inicio)}</p>
+                        <p><strong>Estado:</strong> <span class="estado-${cita.propiedadesExtendidas.estado}">${cita.propiedadesExtendidas.estado.toUpperCase()}</span></p>
                     </div>
                     <div>
                         <p><strong>Motivo de la consulta:</strong></p>
@@ -532,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     allowOutsideClick: false,
                     allowEscapeKey: false
                 }).then(() => {
-                    calendar.refetchEvents();
+                    calendario.refetchEvents();
                     location.reload();
                 });
             } else {
@@ -590,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             showConfirmButton: true,
                             allowOutsideClick: false
                         }).then(() => {
-                            calendar.refetchEvents();
+                            calendario.refetchEvents();
                             location.reload();
                         });
                     } else {

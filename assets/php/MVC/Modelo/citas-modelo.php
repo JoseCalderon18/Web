@@ -97,7 +97,7 @@ class CitasModelo {
      */
     public function crearCita($usuarioId, $fecha, $hora, $motivo, $nombreCliente = null) {
         try {
-            // Eliminamos creado_por del INSERT
+            // Ya no necesitamos verificar disponibilidad aquí
             $query = "INSERT INTO citas (usuario_id, fecha, hora, motivo, nombre_cliente, estado) 
                      VALUES (:usuario_id, :fecha, :hora, :motivo, :nombre_cliente, 'confirmada')";
             
@@ -117,42 +117,9 @@ class CitasModelo {
 
     // Verificar disponibilidad de horario
     public function verificarDisponibilidad($fecha, $hora, $idExcluir = null) {
-        try {
-            error_log("=== VERIFICAR DISPONIBILIDAD ===");
-            error_log("Fecha: " . $fecha);
-            error_log("Hora: " . $hora);
-            error_log("ID a excluir: " . ($idExcluir ?? 'ninguno'));
-            
-            $sql = "SELECT COUNT(*) as total FROM citas 
-                    WHERE fecha = ? AND hora = ? 
-                    AND estado NOT IN ('cancelada')";
-            
-            $params = [$fecha, $hora];
-            
-            // Si se proporciona un ID, excluirlo (útil para actualizaciones)
-            if ($idExcluir) {
-                $sql .= " AND id != ?";
-                $params[] = $idExcluir;
-            }
-            
-            error_log("SQL: " . $sql);
-            error_log("Parámetros: " . print_r($params, true));
-            
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute($params);
-            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            error_log("Citas encontradas: " . $resultado['total']);
-            
-            $disponible = $resultado['total'] == 0;
-            error_log("¿Disponible?: " . ($disponible ? 'SÍ' : 'NO'));
-            
-            return $disponible;
-            
-        } catch (PDOException $e) {
-            error_log("Error en verificarDisponibilidad: " . $e->getMessage());
-            return false;
-        }
+        // Ya no verificamos la disponibilidad, siempre retornamos true
+        // para permitir múltiples citas en el mismo horario
+        return true;
     }
 
     /**
@@ -367,8 +334,13 @@ class CitasModelo {
      */
     public function eliminarCita($id) {
         try {
-            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
+            $rolUsuario = $_SESSION['usuario_rol'] ?? 'usuario';
             $usuarioLogueado = $_SESSION['usuario_id'];
+            
+            error_log("=== DEBUG eliminarCita ===");
+            error_log("ID Cita: " . $id);
+            error_log("Rol Usuario: " . $rolUsuario);
+            error_log("ID Usuario: " . $usuarioLogueado);
             
             // Verificar permisos
             if ($rolUsuario !== 'admin') {
@@ -390,7 +362,10 @@ class CitasModelo {
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             
-            return $stmt->execute();
+            $resultado = $stmt->execute();
+            error_log("Resultado de eliminar cita: " . ($resultado ? 'éxito' : 'fallo'));
+            return $resultado;
+            
         } catch (PDOException $e) {
             error_log("Error en eliminarCita: " . $e->getMessage());
             return false;
@@ -425,8 +400,14 @@ class CitasModelo {
                 return false;
             }
             
-            $rolUsuario = $_SESSION['rol'] ?? 'usuario';
+            $rolUsuario = $_SESSION['usuario_rol'] ?? 'usuario';
             $usuarioLogueado = $_SESSION['usuario_id'];
+            
+            error_log("=== DEBUG actualizarEstadoCita ===");
+            error_log("ID Cita: " . $id);
+            error_log("Estado: " . $estado);
+            error_log("Rol Usuario: " . $rolUsuario);
+            error_log("ID Usuario: " . $usuarioLogueado);
             
             // Verificar permisos
             if ($rolUsuario !== 'admin') {

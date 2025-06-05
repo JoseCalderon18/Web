@@ -18,11 +18,11 @@ session_start();
     <main>
         <!-- Primer div -->
         <div class="bg-beige">
-            <div class="pt-4 py-6 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900">
+            <div class="pt-4 flex flex-col sm:flex-row justify-center items-center h-full w-3/4 mx-auto text-gray-900 py-10">
                 <div class="flex flex-col w-full sm:w-1/2 text-center aparecer">
-                    <h1 class="text-4xl font-bold font-display-CormorantGaramond mb-4 text-verde">El Herbolario</h1>
-                    <p class="text-base aparecer-secuencial">Bienvenido a nuestro espacio dedicado a la salud natural</p>
-                    <p class="text-base aparecer-secuencial">Productos naturales seleccionados con cuidado para tu bienestar</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-display-CormorantGaramond mb-4 text-verde">El Herbolario</h1>
+                    <p class="text-sm md:text-base lg:text-lg aparecer-secuencial">Bienvenido a nuestro espacio dedicado a la salud natural</p>
+                    <p class="text-sm md:text-base lg:text-lg aparecer-secuencial">Productos naturales seleccionados con cuidado para tu bienestar</p>
                 </div>
                 <div class="w-full sm:w-2/3 flex justify-center mt-6 sm:mt-0">
                     <img src="../assets/img/el_herbolario/foto2.png" alt="El Herbolario" class="object-contain w-3/4 sm:w-1/2 imagen-aparecer">
@@ -38,10 +38,10 @@ session_start();
                         <img src="../assets/img/el_herbolario/foto3.jpg" alt="Productos naturales" class="object-cover rounded-lg w-full imagen-aparecer">
                     </div>
                     <div class="flex flex-col justify-center items-center text-center w-full sm:w-2/3 sm:pl-6 text-negro order-2 sm:order-none">
-                        <p class="mb-3 aparecer-secuencial">Somos un herbolario que funcionamos como un Stock limitado de productos, elegidos
+                        <p class="mb-3 text-sm md:text-base lg:text-lg aparecer-secuencial">Somos un herbolario que funcionamos como un Stock limitado de productos, elegidos
                         en base a la experiencia y que para nosotros son productos estrella para un número de
                         síntomas comunes.</p>
-                        <p class="text-balance aparecer-secuencial">El resto de productos funciona <b>BAJO PEDIDO</b>. Nos sirven con rapidez, de la mañana a
+                        <p class="text-sm md:text-base lg:text-lg text-balance aparecer-secuencial">El resto de productos funciona <b>BAJO PEDIDO</b>. Nos sirven con rapidez, de la mañana a
                         la tarde y de la tarde al día siguiente el producto está en nuestro espacio.</p>
                     </div>
                 </div>
@@ -51,10 +51,10 @@ session_start();
             <div class="bg-white border-y border-gray-200 py-24 w-full text-verde">
                 <div class="flex flex-col-reverse sm:flex-row items-center w-3/4 mx-auto aparecer">
                     <div class="flex flex-col justify-center items-center text-center w-full sm:w-2/3 sm:pr-6 order-2 sm:order-none">
-                        <p class="mb-3 aparecer-secuencial">Nuestros clientes suelen ser personas que empiezan un tratamiento con su Naturópata
+                        <p class="text-sm md:text-base lg:text-lg mb-3 aparecer-secuencial">Nuestros clientes suelen ser personas que empiezan un tratamiento con su Naturópata
                         o médico de referencia, y nosotros <b>nos encargamos de reunir sus productos</b> 
                         al mejor precio posible.</p>
-                        <p class="mb-3 text-balance aparecer-secuencial">Ponemos a tu disposición nuestro <a href="https://wa.me/+34XXXXXXXXX" class="font-bold hover:underline">Whatsapp</a> para realizar los pedidos en cualquier momento.</p>
+                        <p class="text-sm md:text-base lg:text-lg mb-3 text-balance aparecer-secuencial">Ponemos a tu disposición nuestro <a href="https://wa.me/+34640381556" class="font-bold hover:underline">Whatsapp</a> para realizar los pedidos en cualquier momento.</p>
                     </div>
                     <div class="w-full sm:w-1/3 mb-6 sm:mb-0 order-1 sm:order-none">
                         <img src="../assets/img/el_herbolario/puerta.jpeg" alt="Puerta de Bioespacio" class="object-cover rounded-lg w-full imagen-aparecer">
@@ -65,9 +65,9 @@ session_start();
             <!-- Tercer div -->
             <div class="bg-gray-200 py-24 w-full">
                 <div class="flex flex-col items-center justify-center w-3/4 mx-auto aparecer">
-                    <p class="mb-3 text-center">Nuestra disponibilidad en tienda es limitada...</p>
-                    <p class="text-xl font-semibold mb-3 text-negro">Lunes a Viernes: 11 - 13 y 17 - 19</p>
-                    <p class="text-negro font-medium">**Servicio de pedidos urgentes</p>
+                    <p class="mb-3 text-center text-sm md:text-base lg:text-lg">Nuestra disponibilidad en tienda es limitada...</p>
+                    <p class="text-lg sm:text-xl lg:text-2xl font-semibold mb-3 text-negro">Lunes a Viernes: 11 - 13 y 17 - 19</p>
+                    <p class="text-negro font-medium text-sm md:text-base lg:text-lg">**Servicio de pedidos urgentes</p>
                 </div>
             </div>
         </div>

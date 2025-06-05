@@ -12,13 +12,13 @@
     <main class="flex-grow flex items-center justify-center bg-beige">
         <div class="w-full px-4 py-10">
             <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-            <h1 class="text-4xl font-bold text-center mb-6 text-green-800 font-display-CormorantGaramond">Crear Cuenta</h1>
+            <h1 class="text-3xl sm:text-4xl font-bold text-center mb-6 text-green-800 font-display-CormorantGaramond">Crear Cuenta</h1>
             
             <!-- Formulario de Registro -->
             <form id="formularioRegistro" class="max-w-sm mx-auto mb-8 space-y-4" >
                 <!-- Campo de Usuario -->
                 <div class="mb-4">
-                    <label for="usuario" class="block mb-2 text-sm text-gray-900">Nombre del usuario</label>
+                    <label for="usuario" class="block mb-2 text-gray-900 text-sm md:text-base lg:text-lg">Nombre del usuario</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -29,14 +29,14 @@
                                id="usuario" 
                                name="usuario" 
                                autocomplete="username"
-                               class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" 
+                               class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full p-2.5 text-sm md:text-base lg:text-lg" 
                                placeholder="Ingrese su nombre de usuario">
                     </div>
                 </div>
                 
                 <!-- Campo de Email -->
                 <div class="mb-4">
-                    <label for="correo" class="block mb-2 text-sm text-gray-900">Email</label>
+                    <label for="correo" class="block mb-2 text-gray-900 text-sm md:text-base lg:text-lg">Email</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
@@ -48,14 +48,14 @@
                                id="correo" 
                                name="correo" 
                                autocomplete="email"
-                               class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" 
+                               class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full p-2.5 text-sm md:text-base lg:text-lg" 
                                placeholder="nombre@ejemplo.com">
                     </div>
                 </div>
                 
                 <!-- Campo de Contraseña -->
                 <div class="mb-4">
-                    <label for="contrasenia" class="block mb-2 text-sm text-gray-900">Contraseña</label>
+                    <label for="contrasenia" class="block mb-2 text-gray-900 text-sm md:text-base lg:text-lg">Contraseña</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
@@ -66,7 +66,7 @@
                                id="contrasenia" 
                                name="contrasenia" 
                                autocomplete="new-password"
-                               class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" 
+                               class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full p-2.5 text-sm md:text-base lg:text-lg" 
                                placeholder="Ingrese su contraseña(Min 8 dígitos)">
                         <!-- Botón para mostrar contraseña -->
                         <button type="button" id="mostrarContrasenia" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-s-0 border-gray-300 rounded-e-md hover:bg-gray-200 cursor-pointer">
@@ -80,7 +80,7 @@
 
                 <!-- Campo de Confirmar Contraseña -->
                 <div class="mb-4">
-                    <label for="confirmarContrasenia" class="block mb-2 text-sm text-gray-900">Confirmar Contraseña</label>
+                    <label for="confirmarContrasenia" class="block mb-2 text-sm md:text-base lg:text-lg text-gray-900">Confirmar Contraseña</label>
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
@@ -91,7 +91,7 @@
                                id="confirmarContrasenia" 
                                name="confirmarContrasenia" 
                                autocomplete="new-password"
-                               class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm p-2.5" 
+                               class="rounded-none bg-gray-50 border border-gray-300 text-gray-900 block flex-1 min-w-0 w-full text-sm md:text-base lg:text-lg p-2.5" 
                                placeholder="Confirme su contraseña">
                         <!-- Botón para mostrar contraseña -->
                         <button type="button" id="mostrarConfirmarContrasenia" class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-s-0 border-gray-300 rounded-e-md hover:bg-gray-200 cursor-pointer">
@@ -105,13 +105,13 @@
                 
                 <!-- Botón de Registrarse -->
                 <button type="submit" id="botonRegistro" 
-                    class="w-full text-white bg-green-700 hover:bg-green-800 rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer mt-6">
+                    class="w-full text-white bg-green-700 hover:bg-green-800 rounded-lg text-sm md:text-base lg:text-lg px-5 py-2.5 text-center cursor-pointer mt-6">
                     Crear Cuenta
                 </button>
 
                 <!-- Enlace a login -->
                 <div class="text-sm font-medium text-gray-500 text-center mt-4">
-                    ¿Ya tienes cuenta? <a href="login.php" class="text-green-700 hover:underline">Inicia sesión aquí</a>
+                    ¿Ya tienes cuenta? <a href="login.php" class="text-green-700 hover:underline text-sm md:text-base lg:text-lg">Inicia sesión aquí</a>
                 </div>
             </form>
             </div>

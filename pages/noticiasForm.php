@@ -53,7 +53,7 @@ if ($es_edicion) {
             <h1 class="text-3xl md:text-4xl font-bold text-green-800 mb-4 font-display-CormorantGaramond">
                 <?= $titulo_pagina ?>
             </h1>
-            <p class="text-gray-600 max-w-2xl my-5 mx-auto">
+            <p class="text-gray-600 max-w-2xl my-5 mx-auto text-sm md:text-base lg:text-lg">
                 Complete los detalles de la noticia a continuación.
             </p>
         </div>
@@ -70,7 +70,7 @@ if ($es_edicion) {
                 
                 <!-- Título -->
                 <div class="mb-4">
-                    <label for="titulo" class="block mb-2 text-sm font-medium text-gray-900">Título <span class="text-red-500">*</span></label>
+                    <label for="titulo" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Título <span class="text-red-500">*</span></label>
                     <input type="text" id="titulo" name="titulo" 
                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                            value="<?= $es_edicion ? htmlspecialchars($noticia['titulo']) : '' ?>" 
@@ -79,7 +79,7 @@ if ($es_edicion) {
                 
                 <!-- Contenido -->
                 <div class="mb-4">
-                    <label for="contenido" class="block mb-2 text-sm font-medium text-gray-900">Contenido <span class="text-red-500">*</span></label>
+                    <label for="contenido" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Contenido <span class="text-red-500">*</span></label>
                     <textarea id="contenido" name="contenido" rows="6" 
                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                               required><?= $es_edicion ? htmlspecialchars($noticia['contenido']) : '' ?></textarea>
@@ -88,7 +88,7 @@ if ($es_edicion) {
                 
                 <!-- Fecha de publicación -->
                 <div class="mb-4">
-                    <label for="fecha" class="block mb-2 text-sm font-medium text-gray-900">Fecha de publicación <span class="text-red-500">*</span></label>
+                    <label for="fecha" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Fecha de publicación <span class="text-red-500">*</span></label>
                     <input type="date" id="fecha" name="fecha" 
                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                            value="<?= $es_edicion ? $noticia['fecha_publicacion'] : date('Y-m-d') ?>" 
@@ -97,7 +97,7 @@ if ($es_edicion) {
                 
                 <!-- Imagen (opcional) -->
                 <div class="mb-4">
-                    <label for="imagen" class="block mb-2 text-sm font-medium text-gray-900">
+                    <label for="imagen" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">
                         Imagen <?= $es_edicion ? '(opcional)' : '(opcional)' ?>
                     </label>
                     <?php if ($es_edicion && !empty($noticia['imagen_url'])): ?>

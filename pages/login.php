@@ -28,7 +28,7 @@ if (isset($_SESSION['usuario_id'])) {
                 <form id="loginForm" class="w-full max-w-sm mx-auto mb-6 sm:mb-8 space-y-3 sm:space-y-4" >
                     <!-- Campo de correo electrónico -->
                     <div class="mb-3 sm:mb-4">
-                        <label for="correoElectronico" class="block mb-2 text-sm text-gray-900">Correo electrónico</label>
+                        <label for="correoElectronico" class="block mb-2 text-sm md:text-base lg:text-lg text-gray-900">Correo electrónico</label>
                         <div class="flex">
                             <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                                 <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
@@ -44,7 +44,7 @@ if (isset($_SESSION['usuario_id'])) {
                     
                     <!-- Campo de Contraseña -->
                     <div class="mb-3 sm:mb-4">
-                        <label for="contrasenia" class="block mb-2 text-sm text-gray-900">Contraseña</label>
+                        <label for="contrasenia" class="block mb-2 text-sm md:text-base lg:text-lg text-gray-900">Contraseña</label>
                         <div class="flex">
                             <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-100 border border-e-0 border-gray-300 rounded-s-md">
                                 <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
@@ -70,19 +70,19 @@ if (isset($_SESSION['usuario_id'])) {
                             <div class="flex items-center h-5 cursor-pointer">
                                 <input id="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50">
                             </div>
-                            <label for="remember" class="ms-2 text-sm text-gray-900">Recordarme</label>
+                            <label for="remember" class="ms-2 text-sm md:text-base lg:text-lg text-gray-900">Recordarme</label>
                         </div>
-                        <a href="#" class="text-sm text-green-700 hover:underline">¿Olvidaste tu contraseña?</a>
+                        <a href="#" class="text-sm md:text-base lg:text-lg text-green-700 hover:underline">¿Olvidaste tu contraseña?</a>
                     </div>
                     
                     <!-- Botón de Enviar -->
                     <button type="submit" id="btnLogin" 
-                        class="w-full text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer transition-colors duration-300">
+                        class="w-full text-white bg-green-700 hover:bg-green-800 font-medium rounded-lg text-sm md:text-base lg:text-lg px-5 py-2.5 text-center cursor-pointer transition-colors duration-300">
                         Iniciar Sesión
                     </button>
                     
                     <!-- Enlace a registro -->
-                    <div class="text-sm font-medium text-gray-500 text-center mt-4">
+                    <div class="text-sm md:text-base lg:text-lg font-medium text-gray-500 text-center mt-4">
                         ¿No tienes cuenta? <a href="registro.php" class="text-green-700 hover:underline">Regístrate aquí</a>
                     </div>
                 </form>

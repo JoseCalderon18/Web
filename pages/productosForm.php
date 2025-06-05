@@ -56,53 +56,53 @@ if ($esEdicion) {
                 
                 <!-- Nombre del producto -->
                 <div class="mb-4">
-                    <label for="nombre" class="block mb-2 text-sm font-medium text-gray-900">Nombre del producto</label>
+                    <label for="nombre" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Nombre del producto</label>
                     <input type="text" 
                            id="nombre" 
                            name="nombre" 
                            value="<?= $esEdicion ? htmlspecialchars($producto['nombre']) : '' ?>" 
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base lg:text-lg rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                            required>
                 </div>
                 
                 <!-- Stock con botones + y - -->
                 <div class="mb-4">
-                    <label for="stock" class="block mb-2 text-sm font-medium text-gray-900">Stock</label>
+                    <label for="stock" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Stock</label>
                     <div class="flex items-center gap-2">
                         <input type="number" 
                                id="stock" 
                                name="stock" 
                                value="<?= $esEdicion ? htmlspecialchars($producto['stock']) : '0' ?>" 
-                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base lg:text-lg rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                                required>
                     </div>
                 </div>
                 
                 <!-- Precio -->
                 <div class="mb-4">
-                    <label for="precio" class="block mb-2 text-sm font-medium text-gray-900">Precio</label>
+                    <label for="precio" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Precio</label>
                     <input type="number" 
                            id="precio" 
                            name="precio" 
                            step="0.01" 
                            value="<?= $esEdicion ? htmlspecialchars($producto['precio']) : '' ?>" 
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base lg:text-lg rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5" 
                            required>
                 </div>
                 
                 <!-- Laboratorio -->
                 <div class="mb-4">
-                    <label for="laboratorio" class="block mb-2 text-sm font-medium text-gray-900">Laboratorio (Opcional)</label>
+                    <label for="laboratorio" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Laboratorio (Opcional)</label>
                     <input type="text" 
                            id="laboratorio" 
                            name="laboratorio" 
                            value="<?= $esEdicion && isset($producto['laboratorio']) && $producto['laboratorio'] !== '' ? htmlspecialchars($producto['laboratorio']) : 'N/D' ?>" 
-                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm md:text-base lg:text-lg rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5">
                 </div>
                 
                 <!-- Foto del producto -->
                 <div class="mb-4">
-                    <label for="foto" class="block mb-2 text-sm font-medium text-gray-900">Foto del producto (Opcional)</label>
+                    <label for="foto" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Foto del producto (Opcional)</label>
                     <?php if ($esEdicion && !empty($producto['foto'])): ?>
                         <div class="mb-4">
                             <p class="text-sm text-gray-600 mb-2">Foto actual:</p>
@@ -110,10 +110,6 @@ if ($esEdicion) {
                                  alt="Foto actual del producto" 
                                  class="w-32 h-32 object-cover rounded-lg">
                             <input type="hidden" name="foto_actual" value="<?= htmlspecialchars($producto['foto']) ?>">
-                            <script>
-                                console.log('Ruta de la imagen actual: <?= htmlspecialchars($producto['foto']) ?>');
-                                console.log('URL completa: <?= htmlspecialchars('../' . $producto['foto']) ?>');
-                            </script>
                         </div>
                     <?php endif; ?>
                     <input type="file" 
@@ -137,7 +133,7 @@ if ($esEdicion) {
                 
                 <!-- Comentarios -->
                 <div class="mb-6">
-                    <label for="comentarios" class="block mb-2 text-sm font-medium text-gray-900">Comentarios (Opcional)</label>
+                    <label for="comentarios" class="block mb-2 text-sm md:text-base lg:text-lg font-medium text-gray-900">Comentarios (Opcional)</label>
                     <textarea id="comentarios" 
                               name="comentarios" 
                               rows="4" 
