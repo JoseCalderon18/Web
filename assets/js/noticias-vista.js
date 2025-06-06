@@ -24,38 +24,4 @@ document.addEventListener('DOMContentLoaded', function() {
         
         reader.readAsDataURL(file);
     });
-    
-    // Validación del formulario
-    const form = document.getElementById('newsForm');
-    
-    form.addEventListener('submit', function(e) {
-        const titulo = document.getElementById('titulo').value.trim();
-        const contenido = document.getElementById('contenido').value.trim();
-        const fecha = document.getElementById('fecha').value;
-        const imagen = document.getElementById('imagen').files[0];
-        
-        if (!titulo) {
-            e.preventDefault();
-            alert('Por favor, ingresa un título para la noticia.');
-            return;
-        }
-        
-        if (!contenido) {
-            e.preventDefault();
-            alert('Por favor, escribe el contenido de la noticia.');
-            return;
-        }
-        
-        if (!fecha) {
-            e.preventDefault();
-            alert('Por favor, selecciona una fecha de publicación.');
-            return;
-        }
-        
-        if (!imagen) {
-            e.preventDefault();
-            alert('Por favor, selecciona una imagen para la noticia.');
-            return;
-        }
-    });
 });
