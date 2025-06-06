@@ -25,7 +25,7 @@ session_start();
                     <p class="text-sm md:text-base lg:text-lg aparecer-secuencial">Productos naturales seleccionados con cuidado para tu bienestar</p>
                 </div>
                 <div class="w-full sm:w-2/3 flex justify-center mt-6 sm:mt-0">
-                    <img src="../assets/img/el_herbolario/foto2.png" alt="El Herbolario" class="object-contain w-3/4 sm:w-1/2 imagen-aparecer">
+                    <img src="../assets/img/el_herbolario/foto2.webp" alt="El Herbolario" class="object-contain w-3/4 sm:w-1/2 imagen-aparecer">
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@ session_start();
             <div class="bg-gray-200 py-24 w-full">
                 <div class="flex flex-col sm:flex-row items-center w-3/4 mx-auto aparecer">
                     <div class="w-full sm:w-1/3 mb-6 sm:mb-0 order-1 sm:order-none">
-                        <img src="../assets/img/el_herbolario/foto3.jpg" alt="Productos naturales" class="object-cover rounded-lg w-full imagen-aparecer">
+                        <img src="../assets/img/el_herbolario/foto3.avif" alt="Productos naturales" class="object-cover rounded-lg w-full imagen-aparecer">
                     </div>
                     <div class="flex flex-col justify-center items-center text-center w-full sm:w-2/3 sm:pl-6 text-negro order-2 sm:order-none">
                         <p class="mb-3 text-sm md:text-base lg:text-lg aparecer-secuencial">Somos un herbolario que funcionamos como un Stock limitado de productos, elegidos
@@ -57,7 +57,7 @@ session_start();
                         <p class="text-sm md:text-base lg:text-lg mb-3 text-balance aparecer-secuencial">Ponemos a tu disposición nuestro <a href="https://wa.me/+34640381556" class="font-bold hover:underline">Whatsapp</a> para realizar los pedidos en cualquier momento.</p>
                     </div>
                     <div class="w-full sm:w-1/3 mb-6 sm:mb-0 order-1 sm:order-none">
-                        <img src="../assets/img/el_herbolario/puerta.jpeg" alt="Puerta de Bioespacio" class="object-cover rounded-lg w-full imagen-aparecer">
+                        <img src="../assets/img/el_herbolario/puerta.avif" alt="Puerta de Bioespacio" class="object-cover rounded-lg w-full imagen-aparecer">
                     </div>
                 </div>
             </div>

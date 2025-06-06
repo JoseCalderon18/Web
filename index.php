@@ -98,19 +98,19 @@ if (session_status() === PHP_SESSION_NONE) {
             <div class="relative h-72 md:h-80 lg:h-96 xl:h-[54rem] overflow-hidden">
                 <!-- Item 1 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item aria-label="Diapositiva 1 del carrusel">
-                    <img src="assets/img/carousel/puerta.jpeg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Entrada principal de BioEspacio - Puerta de madera con detalles naturales">
+                    <img src="assets/img/carousel/fachada.avif" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Fachada principal de BioEspacio - Espacio de bienestar natural">
                 </div>
                 <!-- Item 2 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item aria-label="Diapositiva 2 del carrusel">
-                    <img src="assets/img/carousel/recepcion.jpeg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Área de recepción de BioEspacio - Mostrador acogedor con productos naturales">
+                    <img src="assets/img/carousel/entrada.avif" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Entrada de BioEspacio - Bienvenida a nuestro centro de bienestar">
                 </div>
                 <!-- Item 3 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item aria-label="Diapositiva 3 del carrusel">
-                    <img src="assets/img/carousel/sala_Masaje.jpeg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Sala de masajes principal - Ambiente relajante con camilla y decoración zen">
+                    <img src="assets/img/carousel/recepcion1.avif" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Recepción de BioEspacio - Espacio acogedor para nuestros clientes">
                 </div>
                 <!-- Item 4 -->
                 <div class="hidden duration-700 ease-in-out" data-carousel-item aria-label="Diapositiva 4 del carrusel">
-                    <img src="assets/img/carousel/sala_Masaje1.jpeg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Segunda sala de masajes - Espacio tranquilo con iluminación suave">
+                    <img src="assets/img/carousel/recepcion2.avif" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="Sala de espera de BioEspacio - Área de descanso y relax">
                 </div>
             </div>
             <!-- Controles del carrusel -->

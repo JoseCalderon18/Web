@@ -54,19 +54,23 @@ session_start();
                         <div class="relative h-full overflow-hidden rounded-lg ">
                             <!-- Item 1 -->
                             <div class="hidden duration-700 ease-in-out h-full" data-carousel-item>
-                                <img src="../assets/img/carousel/puerta.jpeg" class="absolute block w-full h-full object-cover" alt="Entrada principal">
+                                <img src="../assets/img/encuentranos/puerta.avif" class="absolute block w-full h-full object-cover" alt="Entrada principal">
                             </div>
                             <!-- Item 2 -->
                             <div class="hidden duration-700 ease-in-out h-full" data-carousel-item>
-                                <img src="../assets/img/carousel/recepcion.jpeg" class="absolute block w-full h-full object-cover" alt="Recepción">
+                                <img src="../assets/img/encuentranos/recepcion.avif" class="absolute block w-full h-full object-cover" alt="Recepción">
                             </div>
                             <!-- Item 3 -->
                             <div class="hidden duration-700 ease-in-out h-full" data-carousel-item>
-                                <img src="../assets/img/carousel/sala_Masaje.jpeg" class="absolute block w-full h-full object-cover" alt="Sala de masajes">
+                                <img src="../assets/img/encuentranos/sala_Masaje.avif" class="absolute block w-full h-full object-cover" alt="Sala de masajes">
                             </div>
                             <!-- Item 4 -->
                             <div class="hidden duration-700 ease-in-out h-full" data-carousel-item>
-                                <img src="../assets/img/carousel/sala_Masaje1.jpeg" class="absolute block w-full h-full object-cover" alt="Segunda sala de masajes">
+                                <img src="../assets/img/encuentranos/sala_Masaje1.avif" class="absolute block w-full h-full object-cover" alt="Segunda sala de masajes">
+                            </div>
+                            <!-- Item 5 -->
+                            <div class="hidden duration-700 ease-in-out h-full" data-carousel-item>
+                                <img src="../assets/img/encuentranos/fachada.avif" class="absolute block w-full h-full object-cover" alt="Fachada del herbolario">
                             </div>
                         </div>
                         <!-- Controles -->
