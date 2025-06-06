@@ -3,7 +3,7 @@
     <div class="flex flex-col sm:flex-row w-2/3 sm:w-2/3 p-5 pt-8 mx-auto me-auto h-full text-white gap-2">
         <!--Primer bloque-->
         <div class="flex flex-col gap-3 w-full sm:w-1/3 p-4 m-4 sm:mb-0">
-            <img src="../assets/img/logoBlanco.png" alt="Logotipo en blanco de BioSpace - Centro de bienestar natural" class="w-auto h-20 sm:h-24 md:h-28 lg:h-32 object-contain">
+            <img src="../assets/img/logoBlanco.webp" alt="Logotipo en blanco de BioSpace - Centro de bienestar natural" class="w-auto h-20 sm:h-24 md:h-28 lg:h-32 object-contain">
             <p class="text-xs">Bio epacio tu herbolario de confianza en Madrid</p>
             <!--Telefono de contacto-->
             <p class="flex flex-row gap-2 text-xs">
