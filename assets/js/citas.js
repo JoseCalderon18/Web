@@ -116,11 +116,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (datos.exito) {
                         const eventos = datos.datos.map(cita => ({
                             id: cita.id,
-                            titulo: esAdmin ? `${cita.nombre_cliente} - ${cita.motivo}` : cita.motivo,
-                            inicio: `${cita.fecha}T${cita.hora}`,
-                            colorFondo: obtenerColorPorEstado(cita.estado),
-                            colorBorde: obtenerColorPorEstado(cita.estado),
-                            propiedadesExtendidas: {
+                            title: esAdmin ? `${cita.nombre_cliente} - ${cita.motivo}` : cita.motivo,
+                            start: `${cita.fecha}T${cita.hora}`,
+                            end: `${cita.fecha}T${addHour(cita.hora)}`,
+                            backgroundColor: obtenerColorPorEstado(cita.estado),
+                            borderColor: obtenerColorPorEstado(cita.estado),
+                            extendedProps: {
                                 estado: cita.estado,
                                 motivo: cita.motivo,
                                 nombreCliente: cita.nombre_cliente || 'Usuario',
@@ -213,26 +214,26 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let html = '';
         citas.forEach(cita => {
-            const fechaFormateada = new Date(cita.inicio).toLocaleDateString('es-ES');
-            const estadoColor = obtenerColorPorEstado(cita.propiedadesExtendidas.estado);
-            const estadoTexto = obtenerTextoPorEstado(cita.propiedadesExtendidas.estado);
+            const fechaFormateada = new Date(cita.start).toLocaleDateString('es-ES');
+            const estadoColor = obtenerColorPorEstado(cita.extendedProps.estado);
+            const estadoTexto = obtenerTextoPorEstado(cita.extendedProps.estado);
             
             html += `
                 <div class="bg-white rounded-lg shadow-md p-6 border-l-4" style="border-left-color: ${estadoColor}">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">${cita.propiedadesExtendidas.nombreCliente}</h3>
-                            <p class="text-gray-600">${fechaFormateada} a las ${cita.inicio.split('T')[1].substring(0, 5)}</p>
+                            <h3 class="text-lg font-semibold text-gray-800">${cita.extendedProps.nombreCliente}</h3>
+                            <p class="text-gray-600">${fechaFormateada} a las ${cita.start.split('T')[1].substring(0, 5)}</p>
                         </div>
                         <span class="px-3 py-1 rounded-full text-sm font-medium text-white" style="background-color: ${estadoColor}">
                             ${estadoTexto}
                         </span>
                     </div>
                     
-                    <p class="text-gray-700 mb-4">${cita.motivo}</p>
+                    <p class="text-gray-700 mb-4">${cita.title}</p>
                     
                     <div class="flex gap-2">
-                        ${cita.propiedadesExtendidas.estado === 'confirmada' ? `
+                        ${cita.extendedProps.estado === 'confirmada' ? `
                             <button onclick="cambiarEstado(${cita.id}, 'completada')" 
                                     class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                                 Marcar Completada
@@ -260,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (estado === 'todos') {
             mostrarCitas(citasData);
         } else {
-            const citasFiltradas = citasData.filter(cita => cita.propiedadesExtendidas.estado === estado);
+            const citasFiltradas = citasData.filter(cita => cita.extendedProps.estado === estado);
             mostrarCitas(citasFiltradas);
         }
     }
@@ -451,12 +452,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function mostrarDetallesCita(cita, esAdmin) {
-        const nombreCliente = cita.propiedadesExtendidas.nombreCliente || 'Cliente';
-        const motivo = cita.motivo || 'Sin motivo especificado';
+        const nombreCliente = cita.extendedProps.nombreCliente || 'Cliente';
+        const motivo = cita.title || 'Sin motivo especificado';
         
         let botonesAccion = '';
         // Solo mostrar botones de acción si es admin o si la cita pertenece al usuario actual
-        if (esAdmin || (cita.propiedadesExtendidas.idUsuario === window.usuarioId)) {
+        if (esAdmin || (cita.extendedProps.idUsuario === window.usuarioId)) {
             botonesAccion = `
                 <div class="mt-4 space-y-2">
                     <h4 class="font-semibold text-gray-700">Acciones:</h4>
@@ -488,9 +489,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="text-left space-y-3">
                     <div class="bg-gray-50 p-3 rounded-lg">
                         <p><strong>Cliente:</strong> ${nombreCliente}</p>
-                        <p><strong>Fecha:</strong> ${formatearFecha(cita.inicio)}</p>
-                        <p><strong>Hora:</strong> ${formatearHora(cita.inicio)}</p>
-                        <p><strong>Estado:</strong> <span class="estado-${cita.propiedadesExtendidas.estado}">${cita.propiedadesExtendidas.estado.toUpperCase()}</span></p>
+                        <p><strong>Fecha:</strong> ${formatearFecha(cita.start)}</p>
+                        <p><strong>Hora:</strong> ${formatearHora(cita.start)}</p>
+                        <p><strong>Estado:</strong> <span class="estado-${cita.extendedProps.estado}">${cita.extendedProps.estado.toUpperCase()}</span></p>
                     </div>
                     <div>
                         <p><strong>Motivo de la consulta:</strong></p>
@@ -612,5 +613,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
+    }
+
+    // Función auxiliar para añadir una hora a la hora de inicio
+    function addHour(time) {
+        const [hours, minutes] = time.split(':');
+        let newHours = parseInt(hours) + 1;
+        if (newHours === 24) newHours = 0;
+        return `${String(newHours).padStart(2, '0')}:${minutes}`;
     }
 });
