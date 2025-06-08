@@ -75,7 +75,16 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response){
                 if(response.success) {
-                    window.location.href = response.redirect;
+                    Swal.fire({
+                        icon: "success",
+                        title: "¡Bienvenido!",
+                        text: "Inicio de sesión exitoso",
+                        timer: 1500,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = response.redirect;
+                    });
                 } else {
                     Swal.fire({
                         icon: "error",  

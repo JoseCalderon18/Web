@@ -72,7 +72,6 @@ if (isset($_SESSION['usuario_id'])) {
                             </div>
                             <label for="remember" class="ms-2 text-sm md:text-base lg:text-lg text-gray-900">Recordarme</label>
                         </div>
-                        <a href="#" class="text-sm md:text-base lg:text-lg text-green-700 hover:underline">¿Olvidaste tu contraseña?</a>
                     </div>
                     
                     <!-- Botón de Enviar -->

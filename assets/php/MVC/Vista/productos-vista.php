@@ -170,16 +170,16 @@ if (!is_array($productos)) {
 
         <!-- Paginación -->
         <?php if ($totalPaginas > 0): ?>
-            <div class="flex justify-center mt-4 gap-2 pt-8">
+            <div class="flex justify-center mt-4 gap-2 sm:gap-3 pt-8">
                 <!-- Primera página -->
                 <a href="?pagina=1" 
-                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                   class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-double-left"></i>
                 </a>
 
                 <!-- Botón Anterior -->
                 <a href="?pagina=<?= max(1, $paginaActual - 1) ?>" 
-                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                   class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-left"></i>
                 </a>
 
@@ -211,26 +211,26 @@ if (!is_array($productos)) {
                     $esActual = $i == $paginaActual;
                 ?>
                     <a href="?pagina=<?= $i ?>" 
-                       class="px-3 py-2 rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                       class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                         <?= $i ?>
                     </a>
                 <?php endfor; ?>
 
                 <!-- Botón Siguiente -->
                 <a href="?pagina=<?= min($totalPaginas, $paginaActual + 1) ?>" 
-                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                   class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-right"></i>
                 </a>
 
                 <!-- Última página -->
                 <a href="?pagina=<?= $totalPaginas ?>" 
-                   class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+                   class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-double-right"></i>
                 </a>
             </div>
 
             <!-- Información de paginación -->
-            <div class="text-center mt-4 text-gray-600 pb-8">
+            <div class="text-center mt-4 text-gray-600 pb-8 text-sm sm:text-base">
                 Mostrando página <?= $paginaActual ?> de <?= $totalPaginas ?> 
                 (<?= $total ?> productos en total)
             </div>

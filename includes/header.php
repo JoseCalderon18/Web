@@ -10,6 +10,10 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- jQuery debe ser lo primero que se carga -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Script de cerrar sesión -->
+    <script src="../assets/js/cerrarSesion.js"></script>
     <!-- Resto de tus etiquetas head -->
 </head>    
     <header class="fixed top-0 left-0 right-0 z-50 mb-10">
@@ -79,10 +83,10 @@ if (session_status() === PHP_SESSION_NONE) {
                        class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-green-700 hover:bg-green-800 rounded-lg transition-colors text-center">
                         <i class="fas fa-calendar-check mr-1 sm:mr-2"></i>Citas
                     </a>
-                    <a href="../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
-                       class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-red-600 hover:bg-red-800 rounded-lg transition-colors text-center">
+                    <button type="button" onclick="cerrarSesion()" 
+                           class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-red-600 hover:bg-red-800 rounded-lg transition-colors text-center">
                         <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Cerrar sesión
-                    </a>
+                    </button>
             </div>
         </div>
     </div>

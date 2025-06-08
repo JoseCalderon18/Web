@@ -24,7 +24,7 @@ $total_paginas = ceil($total_noticias / 6);
     <div class="flex justify-between items-center mb-8">
         <!-- Título -->
         <div class="text-center flex-grow">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-green-800 mb-3 font-display-CormorantGaramond py-6">Noticias y Artículos</h1>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-green-800 mb-3 font-display-CormorantGaramond py-6">Noticias </h1>
             <p class="text-gray-600 max-w-2xl mx-auto text-sm md:text-base lg:text-lg">
                 Mantente informado sobre las últimas novedades en agricultura ecológica.
             </p>
@@ -39,7 +39,7 @@ $total_paginas = ceil($total_noticias / 6);
                 <a href="noticiasForm.php" 
                    class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
                     <i class="fas fa-plus-circle mr-2"></i>
-                    Añadir Artículo
+                    Añadir Noticia
                 </a>
             <?php endif; ?>
         </div>
@@ -96,16 +96,16 @@ $total_paginas = ceil($total_noticias / 6);
 
     <!-- Paginación -->
     <?php if ($total_paginas > 1): ?>
-        <div class="flex justify-center mt-4 gap-2 pt-8">
+        <div class="flex justify-center mt-4 gap-2 sm:gap-3 pt-8">
             <!-- Primera página -->
             <a href="?pagina=1" 
-               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+               class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-double-left"></i>
             </a>
 
             <!-- Botón Anterior -->
             <a href="?pagina=<?= max(1, $pagina - 1) ?>" 
-               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
+               class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-left"></i>
             </a>
 
@@ -137,26 +137,26 @@ $total_paginas = ceil($total_noticias / 6);
                 $esActual = $i == $pagina;
             ?>
                 <a href="?pagina=<?= $i ?>" 
-                   class="px-3 py-2 rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
+                   class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                     <?= $i ?>
                 </a>
             <?php endfor; ?>
 
             <!-- Botón Siguiente -->
             <a href="?pagina=<?= min($total_paginas, $pagina + 1) ?>" 
-               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+               class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-right"></i>
             </a>
 
             <!-- Última página -->
             <a href="?pagina=<?= $total_paginas ?>" 
-               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
+               class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-double-right"></i>
             </a>
         </div>
 
         <!-- Información de paginación -->
-        <div class="text-center mt-4 text-gray-600 pb-8">
+        <div class="text-center mt-4 text-gray-600 pb-8 text-sm sm:text-base">
             Mostrando página <?= $pagina ?> de <?= $total_paginas ?> 
             (<?= $total_noticias ?> noticias en total)
         </div>

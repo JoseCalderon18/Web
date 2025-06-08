@@ -23,6 +23,7 @@ class CitasControlador {
             $idUsuario = $_SESSION['usuario_id'] ?? null;
             $rolUsuario = $_SESSION['usuario_rol'] ?? 'usuario';
             
+            // Obtener las citas (esto ya incluye la actualización automática)
             if ($rolUsuario === 'admin') {
                 $citas = $this->modelo->obtenerTodasLasCitas();
             } else {
@@ -251,12 +252,14 @@ class CitasControlador {
         }
     }
 
-    // Métodos para obtener citas (sin AJAX)
+    // Obtener citas sin AJAX
     public function obtenerTodasLasCitas() {
-        return $this->modelo->obtenerTodasLasCitas();
+        return $this->modelo->obtenerTodasLasCitas(); // Ya incluye la actualización automática
     }
 
     public function obtenerCitasUsuario($usuarioId) {
+        // Primero actualizar todas las citas
+        $this->modelo->obtenerTodasLasCitas(); // Esto ejecuta la actualización
         return $this->modelo->obtenerCitasUsuario($usuarioId);
     }
 }

@@ -17,7 +17,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <body>
     <header class="fixed top-0 left-0 right-0 z-50 mb-10">
         <nav class="flex flex-wrap justify-between items-center p-4 w-full h-32 bg-logo" aria-label="Navegación principal">
-            <a href="index.php"><img src="assets/img/logo.png" alt="Logotipo de BioSpace - Centro de bienestar natural" class="h-24 md:h-26 lg:h-28"></a>
+            <a href="index.php"><img src="assets/img/logo.webp" alt="Logotipo de BioSpace - Centro de bienestar natural" class="h-24 md:h-26 lg:h-28"></a>
             
             <!-- Botón hamburguesa solo visible en móvil -->  
             <button class="block sm:hidden p-2" id="botonHamburguesa" aria-label="Botón para abrir menú de navegación">
@@ -82,10 +82,10 @@ if (session_status() === PHP_SESSION_NONE) {
                        class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-green-700 hover:bg-green-800 rounded-lg transition-colors text-center">
                         <i class="fas fa-calendar-check mr-1 sm:mr-2"></i>Citas
                     </a>
-                    <a href="assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion" 
+                    <button type="button" onclick="cerrarSesion()" 
                        class="px-3 sm:px-5 py-2 sm:py-3 text-sm sm:text-base bg-red-600 hover:bg-red-700 rounded-lg transition-colors text-center">
                         <i class="fas fa-sign-out-alt mr-1 sm:mr-2"></i>Cerrar sesión
-                    </a>
+                    </button>
             </div>
         </div>
     </div>
@@ -246,7 +246,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <div class="flex flex-col sm:flex-row w-2/3 sm:w-2/3 p-5 pt-8 mx-auto me-auto h-full text-white gap-2">
             <!--Primer bloque-->
             <div class="flex flex-col gap-3 w-full sm:w-1/3 p-4 m-4 sm:mb-0">
-                <img src="assets/img/logoBlanco.png" alt="Logotipo en blanco de BioSpace - Centro de bienestar natural" class="w-auto h-20 sm:h-24 md:h-28 lg:h-32 object-contain">
+                <img src="assets/img/logoBlanco.webp" alt="Logotipo en blanco de BioSpace - Centro de bienestar natural" class="w-auto h-20 sm:h-24 md:h-28 lg:h-32 object-contain">
                 <p class="text-xs">Bio epacio tu herbolario de confianza en Madrid</p>
                 <!--Telefono de contacto-->
                 <p class="flex flex-row gap-2 text-xs">
@@ -319,6 +319,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <!-- Scripts al final del body -->
     <script src="assets/js/cookies.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="assets/js/cerrarSesion.js"></script>
     <script src="node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="assets/js/script.js"></script>
     <script src="assets/js/animaciones.js"></script>

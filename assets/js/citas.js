@@ -615,6 +615,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Función para mostrar/ocultar citas pasadas
+    window.toggleCitasPasadas = function() {
+        const listaCitasPasadas = document.getElementById('lista-citas-pasadas');
+        const botonToggle = document.getElementById('toggleCitasPasadas');
+        
+        if (listaCitasPasadas.classList.contains('hidden')) {
+            // Mostrar citas pasadas
+            listaCitasPasadas.classList.remove('hidden');
+            botonToggle.innerHTML = `
+                <i class="fas fa-times mr-2"></i>
+                Ocultar citas pasadas
+            `;
+            botonToggle.style.backgroundColor = '#DC2626'; // Rojo para indicar que puede cerrar
+        } else {
+            // Ocultar citas pasadas
+            listaCitasPasadas.classList.add('hidden');
+            botonToggle.innerHTML = `
+                <i class="fas fa-history mr-2"></i>
+                Ver citas pasadas
+            `;
+            botonToggle.style.backgroundColor = '#2C5530'; // Verde original
+        }
+    }
+
     // Función auxiliar para añadir una hora a la hora de inicio
     function addHour(time) {
         const [hours, minutes] = time.split(':');

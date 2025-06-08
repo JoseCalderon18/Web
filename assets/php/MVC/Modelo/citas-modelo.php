@@ -13,6 +13,9 @@ class CitasModelo {
      */
     public function obtenerTodasLasCitas() {
         try {
+            // Primero actualizar las citas vencidas
+            $this->actualizarCitasVencidas();
+            
             // CONSULTA CORREGIDA: Especificar bien los alias para evitar conflictos
             $sql = "SELECT 
                         c.id,
@@ -59,14 +62,13 @@ class CitasModelo {
      */
     private function actualizarCitasVencidas() {
         try {
-            $ahora = date('Y-m-d H:i:s');
             $fechaHoy = date('Y-m-d');
             $horaActual = date('H:i:s');
             
-            // Actualizar citas que ya pasaron su fecha y hora
+            // Actualizar citas que ya pasaron su fecha y hora, excluyendo las canceladas
             $query = "UPDATE citas 
                      SET estado = 'completada' 
-                     WHERE estado IN ('confirmada') 
+                     WHERE estado NOT IN ('cancelada', 'completada')
                      AND (
                          fecha < :fecha_hoy 
                          OR (fecha = :fecha_hoy AND hora <= :hora_actual)

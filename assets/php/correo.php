@@ -30,16 +30,21 @@ try {
     $mail->Port = 587;
 
     // Configuración del correo
-    $mail->setFrom($_POST['email'], $_POST['nombre']);
-    $mail->addAddress('josse1808042@gmail.com'); // Correo donde recibirás los mensajes
+    $mail->setFrom('josse1808042@gmail.com', 'BioEspacio'); // El correo se envía desde BioEspacio
+    $mail->addReplyTo($_POST['email'], $_POST['nombre']); // El reply-to será el correo del usuario
+    $mail->addAddress('josse1808042@gmail.com', 'BioEspacio'); // Correo donde recibirás los mensajes
     
     // Contenido
     $mail->isHTML(true);
     $mail->Subject = 'Formulario de contacto: ' . $_POST['asunto'];
-    $mail->Body = "Nombre: {$_POST['nombre']}<br>".
-                  "Email: {$_POST['email']}<br>".
-                  "Asunto: {$_POST['asunto']}<br>".
-                  "Mensaje: {$_POST['mensaje']}";
+    $mail->Body = "
+        <h2>Nuevo mensaje de contacto</h2>
+        <p><strong>Nombre:</strong> {$_POST['nombre']}</p>
+        <p><strong>Email:</strong> {$_POST['email']}</p>
+        <p><strong>Asunto:</strong> {$_POST['asunto']}</p>
+        <p><strong>Mensaje:</strong></p>
+        <p>{$_POST['mensaje']}</p>
+    ";
 
     $mail->send();
     
