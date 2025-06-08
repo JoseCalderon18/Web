@@ -20,7 +20,20 @@ function cerrarSesion() {
                 showConfirmButton: false,
                 allowOutsideClick: false
             }).then(() => {
-                window.location.href = '/Web_BioSpace/Web/assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion';
+                // Obtener la ruta actual
+                const currentPath = window.location.pathname;
+                let logoutPath;
+
+                // Si estamos en index.php o en la raíz
+                if (currentPath.includes('index.php') || currentPath.endsWith('/')) {
+                    logoutPath = 'assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion';
+                } 
+                // Si estamos en una página dentro de /pages/
+                else {
+                    logoutPath = '../assets/php/MVC/Controlador/usuarios-controlador.php?accion=cerrarSesion';
+                }
+
+                window.location.href = logoutPath;
             });
         }
     });

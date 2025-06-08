@@ -11,6 +11,7 @@ session_start();
     <link href="../assets/css/src/output.css" rel="stylesheet">
     <link href="../assets/css/styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../assets/img/iconoBio.ico" type="image/x-icon">
 </head>
 <body>
     <!-- Header -->
@@ -155,4 +156,5 @@ session_start();
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
 <script src="../assets/js/animaciones.js"></script>
+<script src="../assets/js/cerrarSesion.js"></script>
 </html>

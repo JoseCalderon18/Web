@@ -3,19 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- jQuery debe ser lo primero que se carga -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Script de cerrar sesión -->
-    <script src="../assets/js/cerrarSesion.js"></script>
-    <!-- Resto de tus etiquetas head -->
-</head>    
     <header class="fixed top-0 left-0 right-0 z-50 mb-10">
         <nav class="flex flex-wrap justify-between items-center p-4 w-full h-32 bg-logo" aria-label="Navegación principal">
             <a href="../index.php"><img src="../assets/img/logo.webp" alt="Logotipo de BioSpace - Centro de bienestar natural" class="h-24 md:h-26 lg:h-28"></a>
@@ -91,4 +78,3 @@ if (session_status() === PHP_SESSION_NONE) {
         </div>
     </div>
     <?php endif; ?>
-</html>

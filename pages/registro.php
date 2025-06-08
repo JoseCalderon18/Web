@@ -6,6 +6,7 @@
     <title>Registro - BioEspacio</title>
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
+    <link rel="icon" href="../assets/img/iconoBio.ico" type="image/x-icon">
 </head>
 <body class="flex flex-col xl:min-h-screen min-h-screen">
     <?php include "../includes/header.php"; ?>
@@ -125,6 +126,7 @@
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/registro-usuarios.js"></script>
+    <script src="../assets/js/cerrarSesion.js"></script>
 
 </body>
 </html>

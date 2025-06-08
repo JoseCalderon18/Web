@@ -13,6 +13,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <link href="assets/css/src/output.css" rel="stylesheet" alt="Estilos personalizados">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="assets/img/iconoBio.ico" type="image/x-icon">
+
 </head>
 <body>
     <header class="fixed top-0 left-0 right-0 z-50 mb-10">

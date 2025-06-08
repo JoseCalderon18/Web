@@ -20,6 +20,7 @@ if (!isset($_SESSION['usuario_id'])) {
     <link href="../node_modules/flowbite/dist/flowbite.min.css" rel="stylesheet">
     <link href="../assets/css/src/output.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../assets/img/iconoBio.ico" type="image/x-icon">
     
     <!-- FullCalendar CSS -->
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/index.global.min.js'></script>
@@ -132,5 +133,6 @@ if (!isset($_SESSION['usuario_id'])) {
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script src="../assets/js/animaciones.js"></script>
+    <script src="../assets/js/cerrarSesion.js"></script>
 </body>
 </html>
