@@ -80,5 +80,6 @@ session_start();
     <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
     <script src="../assets/js/script.js" alt="Script principal"></script>
     <script src="../assets/js/animaciones.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/cerrarSesion.js"></script>
 </html>

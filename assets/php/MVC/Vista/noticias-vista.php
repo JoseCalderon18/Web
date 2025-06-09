@@ -99,12 +99,14 @@ $total_paginas = ceil($total_noticias / 6);
         <div class="flex justify-center mt-4 gap-2 sm:gap-3 pt-8">
             <!-- Primera página -->
             <a href="?pagina=1" 
+               aria-label="Ir a la primera página"
                class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-double-left"></i>
             </a>
 
             <!-- Botón Anterior -->
             <a href="?pagina=<?= max(1, $pagina - 1) ?>" 
+               aria-label="Ir a la página anterior"
                class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-left"></i>
             </a>
@@ -137,6 +139,8 @@ $total_paginas = ceil($total_noticias / 6);
                 $esActual = $i == $pagina;
             ?>
                 <a href="?pagina=<?= $i ?>" 
+                   aria-label="Ir a la página <?= $i ?>"
+                   aria-current="<?= $esActual ? 'page' : 'false' ?>"
                    class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                     <?= $i ?>
                 </a>
@@ -144,12 +148,14 @@ $total_paginas = ceil($total_noticias / 6);
 
             <!-- Botón Siguiente -->
             <a href="?pagina=<?= min($total_paginas, $pagina + 1) ?>" 
+               aria-label="Ir a la página siguiente"
                class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-right"></i>
             </a>
 
             <!-- Última página -->
             <a href="?pagina=<?= $total_paginas ?>" 
+               aria-label="Ir a la última página"
                class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $pagina === $total_paginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                 <i class="fas fa-angle-double-right"></i>
             </a>

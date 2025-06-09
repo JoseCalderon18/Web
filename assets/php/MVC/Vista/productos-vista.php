@@ -173,12 +173,14 @@ if (!is_array($productos)) {
             <div class="flex justify-center mt-4 gap-2 sm:gap-3 pt-8">
                 <!-- Primera página -->
                 <a href="?pagina=1" 
+                   aria-label="Ir a la primera página"
                    class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-double-left"></i>
                 </a>
 
                 <!-- Botón Anterior -->
                 <a href="?pagina=<?= max(1, $paginaActual - 1) ?>" 
+                   aria-label="Ir a la página anterior"
                    class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === 1 ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-left"></i>
                 </a>
@@ -211,6 +213,8 @@ if (!is_array($productos)) {
                     $esActual = $i == $paginaActual;
                 ?>
                     <a href="?pagina=<?= $i ?>" 
+                       aria-label="Ir a la página <?= $i ?>"
+                       aria-current="<?= $esActual ? 'page' : 'false' ?>"
                        class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base rounded-lg <?= $esActual ? 'bg-green-800 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' ?>">
                         <?= $i ?>
                     </a>
@@ -218,12 +222,14 @@ if (!is_array($productos)) {
 
                 <!-- Botón Siguiente -->
                 <a href="?pagina=<?= min($totalPaginas, $paginaActual + 1) ?>" 
+                   aria-label="Ir a la página siguiente"
                    class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-right"></i>
                 </a>
 
                 <!-- Última página -->
                 <a href="?pagina=<?= $totalPaginas ?>" 
+                   aria-label="Ir a la última página"
                    class="px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 <?= $paginaActual === $totalPaginas ? 'opacity-50 cursor-not-allowed' : '' ?>">
                     <i class="fas fa-angle-double-right"></i>
                 </a>

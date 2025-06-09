@@ -150,11 +150,11 @@ session_start();
     <?php include "../includes/footer.php"; ?>
 </body>
 <!-- Scripts -->
-<script src="../assets/js/script.js"></script>
-<script src="../assets/js/formulario.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../node_modules/flowbite/dist/flowbite.min.js"></script>
+<script src="../assets/js/script.js"></script>
 <script src="../assets/js/animaciones.js"></script>
 <script src="../assets/js/cerrarSesion.js"></script>
+<script src="../assets/js/formulario.js"></script>
 </html>
