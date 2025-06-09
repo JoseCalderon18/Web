@@ -71,7 +71,7 @@ session_start();
         <!-- Sección de Misión y Valores -->
         <div class="bg-beige py-5 aparecer">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display-CormorantGaramond font-bold text-verde text-center mb-5">Misión y Valores</h2>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-display-CormorantGaramond font-bold text-verde text-center mb-5">Misión y Valores</h2>
                 <p class="text-sm sm:text-base lg:text-lg text-verde/80 text-center mb-8 max-w-2xl mx-auto">Comprometidas con tu bienestar integral a través de la naturaleza y el cuidado personalizado</p>
                 
                 <div class="flex flex-col gap-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -82,7 +82,7 @@ session_start();
                             <div class="absolute bottom-0 left-0 w-24 h-24 bg-verde/5 rounded-full -ml-12 -mb-12"></div>
                             <div class="relative">
                                 <span class="inline-block text-verde text-sm sm:text-base lg:text-lg font-semibold py-2 bg-verde/10 rounded-full mb-6">Nuestra Misión</span>
-                                <h3 class="text-2xl sm:text-3xl lg:text-4xl font-display-CormorantGaramond font-bold text-verde mb-6">Acompañándote en tu camino hacia el bienestar</h3>
+                                <h3 class="text-xl sm:text-2xl lg:text-3xl font-display-CormorantGaramond font-bold text-verde mb-6">Acompañándote en tu camino hacia el bienestar</h3>
                                 <p class="text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed relative z-10">
                                     Acompañar a cada persona en su camino hacia el bienestar físico, emocional y mental, ofreciendo un espacio de calma y conexión con la naturaleza, a través de terapias naturales, productos seleccionados y atención cercana.
                                 </p>
