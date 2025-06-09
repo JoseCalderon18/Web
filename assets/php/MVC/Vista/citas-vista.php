@@ -60,12 +60,23 @@ try {
                         <h3 class="text-lg font-semibold text-green-700 mb-3 bg-green-50 p-2 rounded">Próximas citas</h3>
                         <div id="lista-citas" class="space-y-4">
                             <?php 
-                            $citasMostradas = 0;
                             if (!empty($citas)):
-                                foreach ($citas as $cita):
-                                    if ($citasMostradas >= 2) break; // Solo mostrar 2 citas
-                                    if (strtotime($cita['fecha']) >= strtotime('today')):
-                                        $citasMostradas++;
+                                // Filtrar y ordenar las citas
+                                $citasFuturas = array_filter($citas, function($cita) {
+                                    return strtotime($cita['fecha']) >= strtotime('today');
+                                });
+                                
+                                // Ordenar por fecha y hora
+                                usort($citasFuturas, function($a, $b) {
+                                    $fecha1 = strtotime($a['fecha'] . ' ' . $a['hora']);
+                                    $fecha2 = strtotime($b['fecha'] . ' ' . $b['hora']);
+                                    return $fecha1 - $fecha2;
+                                });
+
+                                // Mostrar solo las 2 primeras citas
+                                $citasMostradas = 0;
+                                foreach (array_slice($citasFuturas, 0, 2) as $cita):
+                                    $citasMostradas++;
                             ?>
                                 <div class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                                     <div class="flex justify-between items-start">
@@ -101,7 +112,6 @@ try {
                                     </div>
                                 </div>
                             <?php 
-                                    endif;
                                 endforeach;
                                 if ($citasMostradas === 0):
                             ?>
