@@ -37,7 +37,7 @@ $total_paginas = ceil($total_noticias / 6);
         <div>
             <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'admin'): ?>
                 <a href="noticiasForm.php" 
-                   class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
+                   class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-800 transition-colors shadow-md">
                     <i class="fas fa-plus-circle mr-2"></i>
                     Añadir Noticia
                 </a>
@@ -55,7 +55,7 @@ $total_paginas = ceil($total_noticias / 6);
             <?php foreach ($noticias as $noticia): ?>
                 <div class="bg-white rounded-lg shadow-md overflow-hidden h-full aparecer-secuencial">
                     <?php if (!empty($noticia['imagen_url'])): ?>
-                        <img src="/<?= htmlspecialchars($noticia['imagen_url']) ?>" 
+                        <img src="../<?= htmlspecialchars($noticia['imagen_url']) ?>" 
                              alt="<?= htmlspecialchars($noticia['titulo']) ?>" 
                              class="w-full h-48 object-cover">
                     <?php else: ?>

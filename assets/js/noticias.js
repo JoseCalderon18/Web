@@ -169,7 +169,7 @@ $(document).ready(function() {
                             title: noticia.titulo,
                             html: `
                                 <div class="text-left">
-                                    ${noticia.imagen_url ? `<img src="/${noticia.imagen_url}" class="mx-auto mb-4 max-w-full h-auto rounded-lg">` : 
+                                    ${noticia.imagen_url ? `<img src="../${noticia.imagen_url}" class="mx-auto mb-4 max-w-full h-auto rounded-lg">` : 
                                     `<div class="w-full h-48 bg-green-100 flex items-center justify-center mb-4 rounded-lg">
                                         <i class="fas fa-newspaper text-green-800 text-4xl"></i>
                                     </div>`}

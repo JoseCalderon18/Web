@@ -177,7 +177,7 @@ class NoticiasControlador {
     private function procesarImagen($archivo) {
         try {
             $directorio_destino = 'assets/img/noticias/';
-            $ruta_completa = $_SERVER['DOCUMENT_ROOT'] . '/' . $directorio_destino;
+            $ruta_completa = $_SERVER['DOCUMENT_ROOT'] . '/Web_BioSpace/Web/' . $directorio_destino;
             
             // Crear directorio si no existe
             if (!file_exists($ruta_completa)) {
@@ -197,7 +197,7 @@ class NoticiasControlador {
             // Generar nombre único
             $nombre_archivo = uniqid() . '_' . basename($archivo['name']);
             $ruta_archivo = $directorio_destino . $nombre_archivo;
-            $ruta_completa_archivo = $_SERVER['DOCUMENT_ROOT'] . '/' . $ruta_archivo;
+            $ruta_completa_archivo = $ruta_completa . $nombre_archivo;
             
             // Mover archivo
             if (move_uploaded_file($archivo['tmp_name'], $ruta_completa_archivo)) {
